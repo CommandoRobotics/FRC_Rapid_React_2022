@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.networktables.NetworkTable;
@@ -13,8 +14,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.ConstantInversions;
 import frc.robot.constants.ConstantPorts;
+import frc.robot.constants.ConstantValues;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -51,12 +52,19 @@ public class ShooterSubsystem extends SubsystemBase {
     bottomFlywheelThree = new CANSparkMax(ConstantPorts.bottomFlywheelThreeId, MotorType.kBrushless);
     kickwheel = new CANSparkMax(ConstantPorts.kickwheelId, MotorType.kBrushless);
 
+    // Set the motor controllers to coast mode
+    topFlywheel.setIdleMode(IdleMode.kCoast);
+    bottomFlywheelOne.setIdleMode(IdleMode.kCoast);
+    bottomFlywheelTwo.setIdleMode(IdleMode.kCoast);
+    bottomFlywheelThree.setIdleMode(IdleMode.kCoast);
+    kickwheel.setIdleMode(IdleMode.kCoast);
+
     // Set motor controller inversions
-    topFlywheel.setInverted(ConstantInversions.isTopFlywheelInverted);
-    bottomFlywheelOne.setInverted(ConstantInversions.isBottomFlywheelOneInverted);
-    bottomFlywheelTwo.setInverted(ConstantInversions.isBottomFlywheelTwoInverted);
-    bottomFlywheelThree.setInverted(ConstantInversions.isBottomFlywheelThreeInverted);
-    kickwheel.setInverted(ConstantInversions.isKickwheelInverted);
+    topFlywheel.setInverted(false);
+    bottomFlywheelOne.setInverted(false);
+    bottomFlywheelTwo.setInverted(false);
+    bottomFlywheelThree.setInverted(false);
+    kickwheel.setInverted(false);
 
     // Instantiate the encoders
     topFlywheelEncoder = topFlywheel.getEncoder();
@@ -66,11 +74,19 @@ public class ShooterSubsystem extends SubsystemBase {
     kickwheelEncoder = kickwheel.getEncoder();
 
     // Set encoder inversions
-    topFlywheelEncoder.setInverted(ConstantInversions.isTopFlywheelEncoderInverted);
-    bottomFlywheelOneEncoder.setInverted(ConstantInversions.isBottomFlywheelOneEncoderInverted);
-    bottomFlywheelTwoEncoder.setInverted(ConstantInversions.isBottomFlywheelTwoEncoderInverted);
-    bottomFlywheelThreeEncoder.setInverted(ConstantInversions.isBottomFlywheelThreeEncoderInverted);
-    kickwheelEncoder.setInverted(ConstantInversions.isKickwheelEncoderInverted);
+    topFlywheelEncoder.setInverted(false);
+    bottomFlywheelOneEncoder.setInverted(false);
+    bottomFlywheelTwoEncoder.setInverted(false);
+    bottomFlywheelThreeEncoder.setInverted(false);
+    kickwheelEncoder.setInverted(false);
+
+    // Set the velocity conversion factors
+    topFlywheelEncoder.setVelocityConversionFactor(ConstantValues.topFlywheelVelocityConversionFactor);
+    bottomFlywheelOneEncoder.setVelocityConversionFactor(ConstantValues.bottomFlywheelVelocityConversionFactor);
+    bottomFlywheelTwoEncoder.setVelocityConversionFactor(ConstantValues.bottomFlywheelVelocityConversionFactor);
+    bottomFlywheelThreeEncoder.setVelocityConversionFactor(ConstantValues.bottomFlywheelVelocityConversionFactor);
+    kickwheelEncoder.setVelocityConversionFactor(ConstantValues.kickwheelVelocityConversionFactor);
+
 
     // Instantiate the motor controller groups
     bottomFlywheel = new MotorControllerGroup(bottomFlywheelOne, bottomFlywheelTwo, bottomFlywheelThree);
@@ -206,6 +222,161 @@ public class ShooterSubsystem extends SubsystemBase {
   public double getLongestSideLength() {
     return longestSideLength.getDouble(0.0);
   }
+
+  /**
+   * Set the voltage of the bottom flywheel
+   * @param volts
+   */
+  public void setBottomFlywheelVoltage(double volts) {
+    bottomFlywheel.setVoltage(volts);
+  }
+
+  /**
+   * Set the voltage of the top flywheel
+   * @param volts
+   */
+  public void setTopFlywheelVoltage(double volts) {
+    topFlywheel.setVoltage(volts);
+  }
+
+  /**
+   * Set the voltage of both the top and bottom flywheels
+   * @param volts
+   */
+  public void setBothFlywheelsVoltage(double volts) {
+    topFlywheel.setVoltage(volts);
+    bottomFlywheel.setVoltage(volts);
+  }
+
+  /**
+   * Set the voltage of the kickwheel
+   * @param volts
+   */
+  public void setKickwheelVoltage(double volts) {
+    kickwheel.setVoltage(volts);
+  }
+
+  /**
+   * Set the speed of the bottom flywheel
+   * @param speed
+   */
+  public void setBottomFlywheelSpeed(double speed) {
+    bottomFlywheel.set(speed);
+  }
+
+  /**
+   * Set the speed of the top flywheel
+   * @param speed
+   */
+  public void setTopFlywheelSpeed(double speed) {
+    topFlywheel.set(speed);
+  }
+
+  /**
+   * Set the speed of the kickwheel
+   * @param speed
+   */
+  public void setKickwheelSpeed(double speed) {
+    kickwheel.set(speed);
+  }
+
+  /**
+   * Set the speed of both the top and bottom flywheels
+   * @param speed
+   */
+  public void setBothFlywheelsSpeed(double speed) {
+    topFlywheel.set(speed);
+    bottomFlywheel.set(speed);
+  }
+
+  /**
+   * Get the position of the top flywheel
+   * @return The position of the top flywheel in ticks
+   */
+  public double getTopFlywheelPosition() {
+    return topFlywheelEncoder.getPosition();
+  }
+
+  /**
+   * Get the position of the bottom flywheel
+   * @return The position of the bottom flywheel in ticks
+   */
+  public double getBottomFlywheelPosition() {
+    return bottomFlywheelOneEncoder.getPosition();
+  }
+/**
+ * Get the position of the kickwheel
+ * @return The position of the kickwheel in ticks
+ */
+  public double getKickwheelPosition() {
+    return kickwheelEncoder.getPosition();
+  }
+
+  /**
+   * Get the velocity of the top flywheel
+   * @return The velocity of the top flywheel in meters per second
+   */
+  public double getTopFlywheelVelocity() {
+    return topFlywheelEncoder.getVelocity();
+  }
+
+  /**
+   * Get the velocity of the bottom flywheel
+   * @return The velocity of the bottom flywheel in meters per second
+   */
+  public double getBottomFlywheelVelocity() {
+    return bottomFlywheelOneEncoder.getVelocity();
+  }
+
+  /**
+   * Get the velocity of the kickwheel
+   * @return The velocity of the kickwheel in meters per second
+   */
+  public double getKickwheelVelocity() {
+    return kickwheelEncoder.getVelocity();
+  }
+
+  /**
+   * Stop the top flywheel
+   */
+  public void stopTopFlywheel() {
+    topFlywheel.set(0);
+  }
+
+  /**
+   * Stop the bottom flywheel
+   */
+  public void stopBottomFlywheel() {
+    bottomFlywheel.set(0);
+  }
+
+  /**
+   * Stop the kickwheel
+   */
+  public void stopKickwheel() {
+    kickwheel.set(0);
+  }
+
+  /**
+   * Stop both flywheels
+   */
+  public void stopBothFlywheels() {
+    stopTopFlywheel();
+    stopBottomFlywheel();
+  }
+
+  /**
+   * Stop both flywheels and the kickwheel
+   */
+  public void stopAll() {
+    stopTopFlywheel();
+    stopBottomFlywheel();
+    stopKickwheel();
+  }
+
+  //TODO add PID methods
+
+  //TODO add "set velocity (RPM)" methods
 
   @Override
   public void periodic() {
