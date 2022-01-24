@@ -9,6 +9,7 @@ public class ConstantsValues {
     public static final double kickwheelVelocityConversionFactor = 1;
 
     // Shooter PID values
+    //TODO set shooter PID values
     public static final double topFlywheelP = 0;
     public static final double topFlywheelI = 0;
     public static final double topFlywheelD = 0;

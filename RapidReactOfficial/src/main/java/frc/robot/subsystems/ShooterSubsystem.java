@@ -59,6 +59,7 @@ public class ShooterSubsystem extends SubsystemBase {
     kickwheel.setIdleMode(IdleMode.kCoast);
 
     // Set motor controller inversions
+    //TODO set the proper motor inversions
     topFlywheel.setInverted(false);
     bottomFlywheel.setInverted(false);
     // Other bottom flywheel inversions are set in the section below
