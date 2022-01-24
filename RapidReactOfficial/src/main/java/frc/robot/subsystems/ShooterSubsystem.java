@@ -12,7 +12,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ConstantsPorts;
 import frc.robot.constants.ConstantsValues;
@@ -30,14 +29,10 @@ public class ShooterSubsystem extends SubsystemBase {
   private final int SNAPSHOT_MODE_ENABLED = 1;
 
   // Motor controllers
-  CANSparkMax topFlywheel, bottomFlywheelOne, bottomFlywheelTwo, bottomFlywheelThree, kickwheel;
-
-  // Motor controller groups
-  MotorControllerGroup bottomFlywheel;
+  CANSparkMax topFlywheel, bottomFlywheel, bottomFlywheelTwo, bottomFlywheelThree, kickwheel;
 
   // Encoders
-  RelativeEncoder topFlywheelEncoder, bottomFlywheelOneEncoder, bottomFlywheelTwoEncoder, 
-  bottomFlywheelThreeEncoder, kickwheelEncoder;
+  RelativeEncoder topFlywheelEncoder, bottomFlywheelEncoder, kickwheelEncoder;
 
   // Limelight
   NetworkTable limelight;
@@ -47,49 +42,44 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
     // Instantiate the shooter motor controllers
     topFlywheel = new CANSparkMax(ConstantsPorts.topFlywheelId, MotorType.kBrushless);
-    bottomFlywheelOne = new CANSparkMax(ConstantsPorts.bottomFlywheelOneId, MotorType.kBrushless);
+    bottomFlywheel = new CANSparkMax(ConstantsPorts.bottomFlywheelOneId, MotorType.kBrushless);
     bottomFlywheelTwo = new CANSparkMax(ConstantsPorts.bottomFlywheelTwoId, MotorType.kBrushless);
     bottomFlywheelThree = new CANSparkMax(ConstantsPorts.bottomFlywheelThreeId, MotorType.kBrushless);
     kickwheel = new CANSparkMax(ConstantsPorts.kickwheelId, MotorType.kBrushless);
 
     // Set the motor controllers to coast mode
     topFlywheel.setIdleMode(IdleMode.kCoast);
-    bottomFlywheelOne.setIdleMode(IdleMode.kCoast);
+    bottomFlywheel.setIdleMode(IdleMode.kCoast);
     bottomFlywheelTwo.setIdleMode(IdleMode.kCoast);
     bottomFlywheelThree.setIdleMode(IdleMode.kCoast);
     kickwheel.setIdleMode(IdleMode.kCoast);
 
     // Set motor controller inversions
     topFlywheel.setInverted(false);
-    bottomFlywheelOne.setInverted(false);
-    bottomFlywheelTwo.setInverted(false);
-    bottomFlywheelThree.setInverted(false);
+    bottomFlywheel.setInverted(false);
+    // Other bottom flywheel inversions are set in the section below
     kickwheel.setInverted(false);
+
+    // Set all bottom flywheel motor controllers to follow the main.
+    // The boolean value represents whether the motor controller that is following
+    // should be inverted relative to the main motor controller.
+    bottomFlywheelTwo.follow(bottomFlywheel, false);
+    bottomFlywheelThree.follow(bottomFlywheel, false);
 
     // Instantiate the encoders
     topFlywheelEncoder = topFlywheel.getEncoder();
-    bottomFlywheelOneEncoder = bottomFlywheelOne.getEncoder();
-    bottomFlywheelTwoEncoder = bottomFlywheelTwo.getEncoder();
-    bottomFlywheelThreeEncoder = bottomFlywheelThree.getEncoder();
+    bottomFlywheelEncoder = bottomFlywheel.getEncoder();
     kickwheelEncoder = kickwheel.getEncoder();
 
     // Set encoder inversions
     topFlywheelEncoder.setInverted(false);
-    bottomFlywheelOneEncoder.setInverted(false);
-    bottomFlywheelTwoEncoder.setInverted(false);
-    bottomFlywheelThreeEncoder.setInverted(false);
+    bottomFlywheelEncoder.setInverted(false);
     kickwheelEncoder.setInverted(false);
 
     // Set the velocity conversion factors
     topFlywheelEncoder.setVelocityConversionFactor(ConstantsValues.topFlywheelVelocityConversionFactor);
-    bottomFlywheelOneEncoder.setVelocityConversionFactor(ConstantsValues.bottomFlywheelVelocityConversionFactor);
-    bottomFlywheelTwoEncoder.setVelocityConversionFactor(ConstantsValues.bottomFlywheelVelocityConversionFactor);
-    bottomFlywheelThreeEncoder.setVelocityConversionFactor(ConstantsValues.bottomFlywheelVelocityConversionFactor);
+    bottomFlywheelEncoder.setVelocityConversionFactor(ConstantsValues.bottomFlywheelVelocityConversionFactor);
     kickwheelEncoder.setVelocityConversionFactor(ConstantsValues.kickwheelVelocityConversionFactor);
-
-
-    // Instantiate the motor controller groups
-    bottomFlywheel = new MotorControllerGroup(bottomFlywheelOne, bottomFlywheelTwo, bottomFlywheelThree);
 
     // Instantiate the limelight and its network table entries
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
@@ -302,7 +292,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * @return The position of the bottom flywheel in ticks
    */
   public double getBottomFlywheelPosition() {
-    return bottomFlywheelOneEncoder.getPosition();
+    return bottomFlywheelEncoder.getPosition();
   }
 /**
  * Get the position of the kickwheel
@@ -325,7 +315,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * @return The velocity of the bottom flywheel in meters per second
    */
   public double getBottomFlywheelVelocity() {
-    return bottomFlywheelOneEncoder.getVelocity();
+    return bottomFlywheelEncoder.getVelocity();
   }
 
   /**
