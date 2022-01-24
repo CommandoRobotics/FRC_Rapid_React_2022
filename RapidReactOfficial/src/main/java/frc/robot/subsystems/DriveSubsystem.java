@@ -46,10 +46,10 @@ public class DriveSubsystem extends SubsystemBase {
     rearRightSpark = new CANSparkMax(DriveConstants.rearRightSparkId, MotorType.kBrushless);
 
     // Invert the Spark Maxes
-    frontLeftSpark.setInverted(DriveConstants.isFrontLeftSparkInverted);
-    frontRightSpark.setInverted(DriveConstants.isFrontRightSparkInverted);
-    rearLeftSpark.setInverted(DriveConstants.isRearLeftSparkInverted);
-    rearRightSpark.setInverted(DriveConstants.isRearRightSparkInverted);
+    frontLeftSpark.setInverted(false);
+    frontRightSpark.setInverted(false);
+    rearLeftSpark.setInverted(false);
+    rearRightSpark.setInverted(false);
 
     // Instantiate the drive encoders
     frontLeftEncoder = frontLeftSpark.getEncoder();
@@ -58,10 +58,10 @@ public class DriveSubsystem extends SubsystemBase {
     rearRightEncoder = rearRightSpark.getEncoder();
 
     // Invert the drive encoders
-    frontLeftEncoder.setInverted(DriveConstants.isFrontLeftEncoderInverted);
-    frontRightEncoder.setInverted(DriveConstants.isFrontRightEncoderInverted);
-    rearLeftEncoder.setInverted(DriveConstants.isRearLeftEncoderInverted);
-    rearRightEncoder.setInverted(DriveConstants.isRearRightEncoderInverted);
+    frontLeftEncoder.setInverted(false);
+    frontRightEncoder.setInverted(false);
+    rearLeftEncoder.setInverted(false);
+    rearRightEncoder.setInverted(false);
 
     // Set the drive encoder conversion factors
     frontLeftEncoder.setVelocityConversionFactor(DriveConstants.distancePerMotorRotationMeters);

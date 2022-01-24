@@ -12,18 +12,6 @@ public class DriveConstants {
     public static final int rearLeftSparkId = 0;
     public static final int rearRightSparkId = 0;
 
-    // Motor controller inversions
-    public static final boolean isFrontLeftSparkInverted = false;
-    public static final boolean isFrontRightSparkInverted = false;
-    public static final boolean isRearLeftSparkInverted = false;
-    public static final boolean isRearRightSparkInverted = false;
-
-    // Encoder inversions
-    public static final boolean isFrontLeftEncoderInverted = false;
-    public static final boolean isFrontRightEncoderInverted = false;
-    public static final boolean isRearLeftEncoderInverted = false;
-    public static final boolean isRearRightEncoderInverted = false;
-
     // Encoder conversion factor math and finals
     public static final double wheelDiameterMeters = Units.inchesToMeters(6);
     public static final double wheelCircumferenceMeters = wheelDiameterMeters*Math.PI;
