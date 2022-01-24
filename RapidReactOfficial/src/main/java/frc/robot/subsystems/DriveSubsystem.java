@@ -23,8 +23,8 @@ import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
-import frc.robot.Constants.DriveConstants;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -47,10 +47,10 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem() {
 
     // Instantiate the Spark Maxes
-    frontLeftSpark = new CANSparkMax(DriveConstants.frontLeftSparkId, MotorType.kBrushless);
-    frontRightSpark = new CANSparkMax(DriveConstants.frontRightSparkId, MotorType.kBrushless);
-    rearLeftSpark = new CANSparkMax(DriveConstants.rearLeftSparkId, MotorType.kBrushless);
-    rearRightSpark = new CANSparkMax(DriveConstants.rearRightSparkId, MotorType.kBrushless);
+    frontLeftSpark = new CANSparkMax(ConstantsPorts.frontLeftSparkId, MotorType.kBrushless);
+    frontRightSpark = new CANSparkMax(ConstantsPorts.frontRightSparkId, MotorType.kBrushless);
+    rearLeftSpark = new CANSparkMax(ConstantsPorts.rearLeftSparkId, MotorType.kBrushless);
+    rearRightSpark = new CANSparkMax(ConstantsPorts.rearRightSparkId, MotorType.kBrushless);
 
     // Invert the Spark Maxes
     frontLeftSpark.setInverted(false);
@@ -71,10 +71,10 @@ public class DriveSubsystem extends SubsystemBase {
     rearRightEncoder.setInverted(false);
 
     // Set the drive encoder conversion factors
-    frontLeftEncoder.setVelocityConversionFactor(DriveConstants.distancePerMotorRotationMeters);
-    frontRightEncoder.setVelocityConversionFactor(DriveConstants.distancePerMotorRotationMeters);
-    rearLeftEncoder.setVelocityConversionFactor(DriveConstants.distancePerMotorRotationMeters);
-    rearRightEncoder.setVelocityConversionFactor(DriveConstants.distancePerMotorRotationMeters);
+    frontLeftEncoder.setVelocityConversionFactor(ConstantsValues.distancePerMotorRotationMeters);
+    frontRightEncoder.setVelocityConversionFactor(ConstantsValues.distancePerMotorRotationMeters);
+    rearLeftEncoder.setVelocityConversionFactor(ConstantsValues.distancePerMotorRotationMeters);
+    rearRightEncoder.setVelocityConversionFactor(ConstantsValues.distancePerMotorRotationMeters);
     //TODO add position conversion factors
 
     // Instantiate the drive PID controllers
@@ -84,30 +84,30 @@ public class DriveSubsystem extends SubsystemBase {
     rearRightPidController = rearRightSpark.getPIDController();
 
     // Set PID controller values
-    frontLeftPidController.setP(ConstantsValues.driveP);
-    frontLeftPidController.setI(ConstantsValues.driveI);
-    frontLeftPidController.setD(ConstantsValues.driveD);
-    frontLeftPidController.setIZone(ConstantsValues.driveIZone);
-    frontLeftPidController.setFF(ConstantsValues.driveFeedForward);
-    frontLeftPidController.setOutputRange(ConstantsValues.driveMinimumOutput, ConstantsValues.driveMaximumOutput);
-    frontRightPidController.setP(ConstantsValues.driveP);
-    frontRightPidController.setI(ConstantsValues.driveI);
-    frontRightPidController.setD(ConstantsValues.driveD);
-    frontRightPidController.setIZone(ConstantsValues.driveIZone);
-    frontRightPidController.setFF(ConstantsValues.driveFeedForward);
-    frontRightPidController.setOutputRange(ConstantsValues.driveMinimumOutput, ConstantsValues.driveMaximumOutput);
-    rearLeftPidController.setP(ConstantsValues.driveP);
-    rearLeftPidController.setI(ConstantsValues.driveI);
-    rearLeftPidController.setD(ConstantsValues.driveD);
-    rearLeftPidController.setIZone(ConstantsValues.driveIZone);
-    rearLeftPidController.setFF(ConstantsValues.driveFeedForward);
-    rearLeftPidController.setOutputRange(ConstantsValues.driveMinimumOutput, ConstantsValues.driveMaximumOutput);
-    rearRightPidController.setP(ConstantsValues.driveP);
-    rearRightPidController.setI(ConstantsValues.driveI);
-    rearRightPidController.setD(ConstantsValues.driveD);
-    rearRightPidController.setIZone(ConstantsValues.driveIZone);
-    rearRightPidController.setFF(ConstantsValues.driveFeedForward);
-    rearRightPidController.setOutputRange(ConstantsValues.driveMinimumOutput, ConstantsValues.driveMaximumOutput);
+    frontLeftPidController.setP(ConstantsValues.driveWheelP);
+    frontLeftPidController.setI(ConstantsValues.driveWheelI);
+    frontLeftPidController.setD(ConstantsValues.driveWheelD);
+    frontLeftPidController.setIZone(ConstantsValues.driveWheelIZone);
+    frontLeftPidController.setFF(ConstantsValues.driveWheelFeedForward);
+    frontLeftPidController.setOutputRange(ConstantsValues.driveWheelMinOutput, ConstantsValues.driveWheelMaxOutput);
+    frontRightPidController.setP(ConstantsValues.driveWheelP);
+    frontRightPidController.setI(ConstantsValues.driveWheelI);
+    frontRightPidController.setD(ConstantsValues.driveWheelD);
+    frontRightPidController.setIZone(ConstantsValues.driveWheelIZone);
+    frontRightPidController.setFF(ConstantsValues.driveWheelFeedForward);
+    frontRightPidController.setOutputRange(ConstantsValues.driveWheelMinOutput, ConstantsValues.driveWheelMaxOutput);
+    rearLeftPidController.setP(ConstantsValues.driveWheelP);
+    rearLeftPidController.setI(ConstantsValues.driveWheelI);
+    rearLeftPidController.setD(ConstantsValues.driveWheelD);
+    rearLeftPidController.setIZone(ConstantsValues.driveWheelIZone);
+    rearLeftPidController.setFF(ConstantsValues.driveWheelFeedForward);
+    rearLeftPidController.setOutputRange(ConstantsValues.driveWheelMinOutput, ConstantsValues.driveWheelMaxOutput);
+    rearRightPidController.setP(ConstantsValues.driveWheelP);
+    rearRightPidController.setI(ConstantsValues.driveWheelI);
+    rearRightPidController.setD(ConstantsValues.driveWheelD);
+    rearRightPidController.setIZone(ConstantsValues.driveWheelIZone);
+    rearRightPidController.setFF(ConstantsValues.driveWheelFeedForward);
+    rearRightPidController.setOutputRange(ConstantsValues.driveWheelMinOutput, ConstantsValues.driveWheelMaxOutput);
 
     // Instantiate the NavX
     navX = new AHRS(SPI.Port.kMXP);
