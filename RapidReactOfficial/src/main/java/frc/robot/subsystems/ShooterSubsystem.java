@@ -11,11 +11,14 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.ConstantInversions;
 import frc.robot.constants.ConstantPorts;
 
 public class ShooterSubsystem extends SubsystemBase {
 
+  // Declare different Limelight modes
   private final int LED_MODE_DEFAULT = 0;
   private final int LED_MODE_OFF = 1;
   private final int LED_MODE_BLINK = 2;
@@ -26,26 +29,51 @@ public class ShooterSubsystem extends SubsystemBase {
   private final int SNAPSHOT_MODE_ENABLED = 1;
 
   // Motor controllers
-  CANSparkMax flywheelOne, flywheelTwo, kickwheel;
+  CANSparkMax topFlywheel, bottomFlywheelOne, bottomFlywheelTwo, bottomFlywheelThree, kickwheel;
+
+  // Motor controller groups
+  MotorControllerGroup bottomFlywheel;
 
   // Encoders
-  RelativeEncoder flywheelOneEncoder, flywheelTwoEncoder, kickwheelEncoder;
+  RelativeEncoder topFlywheelEncoder, bottomFlywheelOneEncoder, bottomFlywheelTwoEncoder, 
+  bottomFlywheelThreeEncoder, kickwheelEncoder;
 
   // Limelight
   NetworkTable limelight;
-  NetworkTableEntry validTargets, xOfTarget, yOfTarget, areaOfTarget, latency, currentPipeline, shortestSideLength, longestSideLength;
+  NetworkTableEntry validTargets, xOfTarget, yOfTarget, areaOfTarget, 
+  latency, currentPipeline, shortestSideLength, longestSideLength;
 
   public ShooterSubsystem() {
-
     // Instantiate the shooter motor controllers
-    flywheelOne = new CANSparkMax(ConstantPorts.flywheelOnePort, MotorType.kBrushless);
-    flywheelTwo = new CANSparkMax(ConstantPorts.flywheelTwoPort, MotorType.kBrushless);
-    kickwheel = new CANSparkMax(ConstantPorts.kickwheelPort, MotorType.kBrushless);
+    topFlywheel = new CANSparkMax(ConstantPorts.topFlywheelId, MotorType.kBrushless);
+    bottomFlywheelOne = new CANSparkMax(ConstantPorts.bottomFlywheelOneId, MotorType.kBrushless);
+    bottomFlywheelTwo = new CANSparkMax(ConstantPorts.bottomFlywheelTwoId, MotorType.kBrushless);
+    bottomFlywheelThree = new CANSparkMax(ConstantPorts.bottomFlywheelThreeId, MotorType.kBrushless);
+    kickwheel = new CANSparkMax(ConstantPorts.kickwheelId, MotorType.kBrushless);
+
+    // Set motor controller inversions
+    topFlywheel.setInverted(ConstantInversions.isTopFlywheelInverted);
+    bottomFlywheelOne.setInverted(ConstantInversions.isBottomFlywheelOneInverted);
+    bottomFlywheelTwo.setInverted(ConstantInversions.isBottomFlywheelTwoInverted);
+    bottomFlywheelThree.setInverted(ConstantInversions.isBottomFlywheelThreeInverted);
+    kickwheel.setInverted(ConstantInversions.isKickwheelInverted);
 
     // Instantiate the encoders
-    flywheelOneEncoder = flywheelOne.getEncoder();
-    flywheelTwoEncoder = flywheelTwo.getEncoder();
+    topFlywheelEncoder = topFlywheel.getEncoder();
+    bottomFlywheelOneEncoder = bottomFlywheelOne.getEncoder();
+    bottomFlywheelTwoEncoder = bottomFlywheelTwo.getEncoder();
+    bottomFlywheelThreeEncoder = bottomFlywheelThree.getEncoder();
     kickwheelEncoder = kickwheel.getEncoder();
+
+    // Set encoder inversions
+    topFlywheelEncoder.setInverted(ConstantInversions.isTopFlywheelEncoderInverted);
+    bottomFlywheelOneEncoder.setInverted(ConstantInversions.isBottomFlywheelOneEncoderInverted);
+    bottomFlywheelTwoEncoder.setInverted(ConstantInversions.isBottomFlywheelTwoEncoderInverted);
+    bottomFlywheelThreeEncoder.setInverted(ConstantInversions.isBottomFlywheelThreeEncoderInverted);
+    kickwheelEncoder.setInverted(ConstantInversions.isKickwheelEncoderInverted);
+
+    // Instantiate the motor controller groups
+    bottomFlywheel = new MotorControllerGroup(bottomFlywheelOne, bottomFlywheelTwo, bottomFlywheelThree);
 
     // Instantiate the limelight and its network table entries
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
@@ -57,7 +85,6 @@ public class ShooterSubsystem extends SubsystemBase {
     currentPipeline = limelight.getEntry("getpipe");
     shortestSideLength = limelight.getEntry("tshort");
     longestSideLength = limelight.getEntry("tlong");
-
   }
 
   /**
