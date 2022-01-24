@@ -1,6 +1,6 @@
 package frc.robot.constants;
 
-public class ConstantPorts {
+public class ConstantsPorts {
 
     public static final int topFlywheelId = 0;
     public static final int bottomFlywheelOneId = 0;

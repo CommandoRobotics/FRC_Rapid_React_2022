@@ -14,8 +14,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.constants.ConstantPorts;
-import frc.robot.constants.ConstantValues;
+import frc.robot.constants.ConstantsPorts;
+import frc.robot.constants.ConstantsValues;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -46,11 +46,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public ShooterSubsystem() {
     // Instantiate the shooter motor controllers
-    topFlywheel = new CANSparkMax(ConstantPorts.topFlywheelId, MotorType.kBrushless);
-    bottomFlywheelOne = new CANSparkMax(ConstantPorts.bottomFlywheelOneId, MotorType.kBrushless);
-    bottomFlywheelTwo = new CANSparkMax(ConstantPorts.bottomFlywheelTwoId, MotorType.kBrushless);
-    bottomFlywheelThree = new CANSparkMax(ConstantPorts.bottomFlywheelThreeId, MotorType.kBrushless);
-    kickwheel = new CANSparkMax(ConstantPorts.kickwheelId, MotorType.kBrushless);
+    topFlywheel = new CANSparkMax(ConstantsPorts.topFlywheelId, MotorType.kBrushless);
+    bottomFlywheelOne = new CANSparkMax(ConstantsPorts.bottomFlywheelOneId, MotorType.kBrushless);
+    bottomFlywheelTwo = new CANSparkMax(ConstantsPorts.bottomFlywheelTwoId, MotorType.kBrushless);
+    bottomFlywheelThree = new CANSparkMax(ConstantsPorts.bottomFlywheelThreeId, MotorType.kBrushless);
+    kickwheel = new CANSparkMax(ConstantsPorts.kickwheelId, MotorType.kBrushless);
 
     // Set the motor controllers to coast mode
     topFlywheel.setIdleMode(IdleMode.kCoast);
@@ -81,11 +81,11 @@ public class ShooterSubsystem extends SubsystemBase {
     kickwheelEncoder.setInverted(false);
 
     // Set the velocity conversion factors
-    topFlywheelEncoder.setVelocityConversionFactor(ConstantValues.topFlywheelVelocityConversionFactor);
-    bottomFlywheelOneEncoder.setVelocityConversionFactor(ConstantValues.bottomFlywheelVelocityConversionFactor);
-    bottomFlywheelTwoEncoder.setVelocityConversionFactor(ConstantValues.bottomFlywheelVelocityConversionFactor);
-    bottomFlywheelThreeEncoder.setVelocityConversionFactor(ConstantValues.bottomFlywheelVelocityConversionFactor);
-    kickwheelEncoder.setVelocityConversionFactor(ConstantValues.kickwheelVelocityConversionFactor);
+    topFlywheelEncoder.setVelocityConversionFactor(ConstantsValues.topFlywheelVelocityConversionFactor);
+    bottomFlywheelOneEncoder.setVelocityConversionFactor(ConstantsValues.bottomFlywheelVelocityConversionFactor);
+    bottomFlywheelTwoEncoder.setVelocityConversionFactor(ConstantsValues.bottomFlywheelVelocityConversionFactor);
+    bottomFlywheelThreeEncoder.setVelocityConversionFactor(ConstantsValues.bottomFlywheelVelocityConversionFactor);
+    kickwheelEncoder.setVelocityConversionFactor(ConstantsValues.kickwheelVelocityConversionFactor);
 
 
     // Instantiate the motor controller groups

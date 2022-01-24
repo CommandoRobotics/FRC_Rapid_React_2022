@@ -1,6 +1,6 @@
 package frc.robot.constants;
 
-public class ConstantValues {
+public class ConstantsValues {
 
     // Shooter velocity conversion factors
     //TODO set the shooter velocity conversion factors
