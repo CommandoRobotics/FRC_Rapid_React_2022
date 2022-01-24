@@ -1,4 +1,4 @@
-package frc.robot.Projectile;
+package frc.robot.projectile;
 
 public class Vector {
     
