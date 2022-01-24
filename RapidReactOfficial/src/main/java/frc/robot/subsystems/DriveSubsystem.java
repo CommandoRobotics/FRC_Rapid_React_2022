@@ -9,9 +9,13 @@ import java.util.function.DoubleSupplier;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.MecanumDriveMotorVoltages;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.SPI;
@@ -19,6 +23,7 @@ import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ConstantsValues;
 import frc.robot.Constants.DriveConstants;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -28,6 +33,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   // Drive encoders
   RelativeEncoder frontLeftEncoder, frontRightEncoder, rearLeftEncoder, rearRightEncoder;
+
+  SparkMaxPIDController frontLeftPidController, frontRightPidController, rearLeftPidController, rearRightPidController;
 
   // NavX
   AHRS navX;
@@ -69,6 +76,38 @@ public class DriveSubsystem extends SubsystemBase {
     rearLeftEncoder.setVelocityConversionFactor(DriveConstants.distancePerMotorRotationMeters);
     rearRightEncoder.setVelocityConversionFactor(DriveConstants.distancePerMotorRotationMeters);
     //TODO add position conversion factors
+
+    // Instantiate the drive PID controllers
+    frontLeftPidController = frontLeftSpark.getPIDController();
+    frontRightPidController = frontRightSpark.getPIDController();
+    rearLeftPidController = rearLeftSpark.getPIDController();
+    rearRightPidController = rearRightSpark.getPIDController();
+
+    // Set PID controller values
+    frontLeftPidController.setP(ConstantsValues.driveP);
+    frontLeftPidController.setI(ConstantsValues.driveI);
+    frontLeftPidController.setD(ConstantsValues.driveD);
+    frontLeftPidController.setIZone(ConstantsValues.driveIZone);
+    frontLeftPidController.setFF(ConstantsValues.driveFeedForward);
+    frontLeftPidController.setOutputRange(ConstantsValues.driveMinimumOutput, ConstantsValues.driveMaximumOutput);
+    frontRightPidController.setP(ConstantsValues.driveP);
+    frontRightPidController.setI(ConstantsValues.driveI);
+    frontRightPidController.setD(ConstantsValues.driveD);
+    frontRightPidController.setIZone(ConstantsValues.driveIZone);
+    frontRightPidController.setFF(ConstantsValues.driveFeedForward);
+    frontRightPidController.setOutputRange(ConstantsValues.driveMinimumOutput, ConstantsValues.driveMaximumOutput);
+    rearLeftPidController.setP(ConstantsValues.driveP);
+    rearLeftPidController.setI(ConstantsValues.driveI);
+    rearLeftPidController.setD(ConstantsValues.driveD);
+    rearLeftPidController.setIZone(ConstantsValues.driveIZone);
+    rearLeftPidController.setFF(ConstantsValues.driveFeedForward);
+    rearLeftPidController.setOutputRange(ConstantsValues.driveMinimumOutput, ConstantsValues.driveMaximumOutput);
+    rearRightPidController.setP(ConstantsValues.driveP);
+    rearRightPidController.setI(ConstantsValues.driveI);
+    rearRightPidController.setD(ConstantsValues.driveD);
+    rearRightPidController.setIZone(ConstantsValues.driveIZone);
+    rearRightPidController.setFF(ConstantsValues.driveFeedForward);
+    rearRightPidController.setOutputRange(ConstantsValues.driveMinimumOutput, ConstantsValues.driveMaximumOutput);
 
     // Instantiate the NavX
     navX = new AHRS(SPI.Port.kMXP);
@@ -112,7 +151,6 @@ public class DriveSubsystem extends SubsystemBase {
   public void setRearRightSpeed(double speed) {
     rearRightSpark.set(speed);
   }
-
 
   /**
    * Set the volts of the front left spark
@@ -208,40 +246,8 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * Get the front left encoder velocity
-   * @return The front left encoder velocity
-   */
-  public double getFrontLeftVelocity() {
-    return frontLeftEncoder.getVelocity();
-  }
-
-  /**
-   * Get the front right encoder velocity
-   * @return The front right encoder velocity
-   */
-  public double getFrontRightVelocity() {
-    return frontRightEncoder.getVelocity();
-  }
-
-  /**
-   * Get the rear left encoder velocity
-   * @return The rear left encoder velocity
-   */
-  public double getRearLeftVelocity() {
-    return frontRightEncoder.getVelocity();
-  }
-
-  /**
-   * Get the rear right encoder velocity
-   * @return The rear right encoder velocity
-   */
-  public double getRearRightVelocity() {
-    return rearRightEncoder.getVelocity();
-  }
-
-  /**
    * Get the current wheel speeds
-   * @return A MecanumDriveWheelSpeeds object containing the current wheel speeds
+   * @return A MecanumDriveWheelSpeeds object containing the current wheel speeds in meters per second
    */
   public MecanumDriveWheelSpeeds getWheelSpeeds() {
     return new MecanumDriveWheelSpeeds(
@@ -249,6 +255,28 @@ public class DriveSubsystem extends SubsystemBase {
       frontRightEncoder.getVelocity(), 
       rearLeftEncoder.getVelocity(), 
       rearRightEncoder.getVelocity());
+  }
+
+  /**
+   * Set the wheel voltages
+   * @param wheelVoltages A MecanumDriveMotorVoltages object containing the voltages to set each wheel to
+   */
+  public void setVoltages(MecanumDriveMotorVoltages wheelVoltages) {
+    frontLeftSpark.setVoltage(wheelVoltages.frontLeftVoltage);
+    frontRightSpark.setVoltage(wheelVoltages.frontRightVoltage);
+    rearLeftSpark.setVoltage(wheelVoltages.rearLeftVoltage);
+    rearRightSpark.setVoltage(wheelVoltages.rearRightVoltage);
+  }
+
+  /**
+   * Set the drive wheel speeds
+   * @param wheelSpeeds A MecanumDriveWheelSpeeds object containing the speeds to set each wheel to
+   */
+  public void setWheelSpeeds(MecanumDriveWheelSpeeds wheelSpeeds) {
+    frontLeftPidController.setReference(wheelSpeeds.frontLeftMetersPerSecond, ControlType.kVelocity);
+    frontRightPidController.setReference(wheelSpeeds.frontRightMetersPerSecond, ControlType.kVelocity);
+    rearLeftPidController.setReference(wheelSpeeds.rearLeftMetersPerSecond, ControlType.kVelocity);
+    rearRightPidController.setReference(wheelSpeeds.rearRightMetersPerSecond, ControlType.kVelocity);
   }
 
   /**
@@ -299,6 +327,14 @@ public class DriveSubsystem extends SubsystemBase {
     } else {
       drive.driveCartesian(y.getAsDouble(), x.getAsDouble(), rotation.getAsDouble());
     }
+  }
+
+  /**
+   * Get the robot pose in meters
+   * @return A Pose2D object representing the robot pose in meters
+   */
+  public Pose2d getPose() {
+    return odometry.getPoseMeters();
   }
 
   @Override
