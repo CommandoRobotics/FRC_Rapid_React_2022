@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -38,6 +40,8 @@ public class ShooterSubsystem extends SubsystemBase {
   NetworkTable limelight;
   NetworkTableEntry validTargets, xOfTarget, yOfTarget, areaOfTarget, 
   latency, currentPipeline, shortestSideLength, longestSideLength;
+
+  SparkMaxPIDController topFlywheelPidController, bottomFlywheelPidController, kickwheelPidController;
 
   public ShooterSubsystem() {
     // Instantiate the shooter motor controllers
@@ -80,6 +84,31 @@ public class ShooterSubsystem extends SubsystemBase {
     topFlywheelEncoder.setVelocityConversionFactor(ConstantsValues.topFlywheelVelocityConversionFactor);
     bottomFlywheelEncoder.setVelocityConversionFactor(ConstantsValues.bottomFlywheelVelocityConversionFactor);
     kickwheelEncoder.setVelocityConversionFactor(ConstantsValues.kickwheelVelocityConversionFactor);
+
+    // Instantiate the PID controllers
+    topFlywheelPidController = topFlywheel.getPIDController();
+    bottomFlywheelPidController = bottomFlywheel.getPIDController();
+    kickwheelPidController = kickwheel.getPIDController();
+
+    // Set PID controller values
+    topFlywheelPidController.setP(ConstantsValues.topFlywheelP);
+    topFlywheelPidController.setI(ConstantsValues.topFlywheelI);
+    topFlywheelPidController.setD(ConstantsValues.topFlywheelD);
+    topFlywheelPidController.setIZone(ConstantsValues.topFlywheelIZone);
+    topFlywheelPidController.setFF(ConstantsValues.topFlywheelFeedForward);
+    topFlywheelPidController.setOutputRange(ConstantsValues.topFlywheelMinOutput, ConstantsValues.topFlywheelMaxOutput);
+    bottomFlywheelPidController.setP(ConstantsValues.bottomFlywheelP);
+    bottomFlywheelPidController.setI(ConstantsValues.bottomFlywheelI);
+    bottomFlywheelPidController.setD(ConstantsValues.bottomFlywheelD);
+    bottomFlywheelPidController.setIZone(ConstantsValues.bottomFlywheelIZone);
+    bottomFlywheelPidController.setFF(ConstantsValues.bottomFlywheelFeedForward);
+    bottomFlywheelPidController.setOutputRange(ConstantsValues.bottomFlywheelMinOutput, ConstantsValues.bottomFlywheelMaxOutput);
+    kickwheelPidController.setP(ConstantsValues.kickwheelP);
+    kickwheelPidController.setI(ConstantsValues.kickwheelI);
+    kickwheelPidController.setD(ConstantsValues.kickwheelD);
+    kickwheelPidController.setIZone(ConstantsValues.kickwheelIZone);
+    kickwheelPidController.setFF(ConstantsValues.kickwheelFeedForward);
+    kickwheelPidController.setOutputRange(ConstantsValues.kickwheelMinOutput, ConstantsValues.kickwheelMaxOutput);
 
     // Instantiate the limelight and its network table entries
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
@@ -364,9 +393,29 @@ public class ShooterSubsystem extends SubsystemBase {
     stopKickwheel();
   }
 
-  //TODO add PID methods
+  /**
+   * Set the RPM of the bottom flywheel
+   * @param targetRPM
+   */
+  public void setBottomFlywheelRPM(double targetRPM) {
+    bottomFlywheelPidController.setReference(targetRPM, ControlType.kVelocity);
+  }
 
-  //TODO add "set velocity (RPM)" methods
+  /**
+   * Set the RPM of the top flywheel
+   * @param targetRPM
+   */
+  public void setTopFlywheelRPM(double targetRPM) {
+    topFlywheelPidController.setReference(targetRPM, ControlType.kVelocity);
+  }
+
+  /**
+   * Set the RPM of the kickwheel
+   * @param targetRPM
+   */
+  public void setKickwheelRPM(double targetRPM) {
+    kickwheelPidController.setReference(targetRPM, ControlType.kVelocity);
+  }
 
   @Override
   public void periodic() {
