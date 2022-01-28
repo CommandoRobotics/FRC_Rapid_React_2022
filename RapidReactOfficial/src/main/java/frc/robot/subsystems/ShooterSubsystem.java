@@ -11,10 +11,12 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.ConstantsField;
 import frc.robot.constants.ConstantsPorts;
 import frc.robot.constants.ConstantsValues;
 
@@ -38,8 +40,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
   // Limelight
   NetworkTable limelight;
-  NetworkTableEntry validTargets, xOfTarget, yOfTarget, areaOfTarget, 
-  latency, currentPipeline, shortestSideLength, longestSideLength;
 
   SparkMaxPIDController topFlywheelPidController, bottomFlywheelPidController, kickwheelPidController;
 
@@ -76,11 +76,6 @@ public class ShooterSubsystem extends SubsystemBase {
     bottomFlywheelEncoder = bottomFlywheel.getEncoder();
     kickwheelEncoder = kickwheel.getEncoder();
 
-    // Set encoder inversions
-    topFlywheelEncoder.setInverted(false);
-    bottomFlywheelEncoder.setInverted(false);
-    kickwheelEncoder.setInverted(false);
-
     // Set the velocity conversion factors
     topFlywheelEncoder.setVelocityConversionFactor(ConstantsValues.topFlywheelVelocityConversionFactor);
     bottomFlywheelEncoder.setVelocityConversionFactor(ConstantsValues.bottomFlywheelVelocityConversionFactor);
@@ -111,43 +106,35 @@ public class ShooterSubsystem extends SubsystemBase {
     kickwheelPidController.setFF(ConstantsValues.kickwheelFeedForward);
     kickwheelPidController.setOutputRange(ConstantsValues.kickwheelMinOutput, ConstantsValues.kickwheelMaxOutput);
 
-    // Instantiate the limelight and its network table entries
+    // Instantiate the limelight
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
-    validTargets = limelight.getEntry("tv");
-    xOfTarget = limelight.getEntry("tx");
-    yOfTarget = limelight.getEntry("ty");
-    areaOfTarget = limelight.getEntry("ta");
-    latency = limelight.getEntry("tl");
-    currentPipeline = limelight.getEntry("getpipe");
-    shortestSideLength = limelight.getEntry("tshort");
-    longestSideLength = limelight.getEntry("tlong");
   }
 
   /**
    * Force the LED on the Limelight to be enabled
    */
-  public void enableLed() {
+  public void enableLimelightLed() {
     limelight.getEntry("ledMode").setNumber(LED_MODE_ON);
   }
 
   /**
    * Force the LED on the Limelight to be disabled
    */
-  public void disableLed() {
+  public void disableLimelightLed() {
     limelight.getEntry("ledMode").setNumber(LED_MODE_OFF);
   }
 
   /**
    * Set the LED on the Limelight to the default value in the current pipeline
    */
-  public void ledDefault() {
+  public void limelightLedDefault() {
     limelight.getEntry("ledMode").setNumber(LED_MODE_DEFAULT);
   }
 
   /**
    * Enable vision processing on the Limelight
    */
-  public void enableVisionProcessing() {
+  public void enableLimelightVisionProcessing() {
     limelight.getEntry("camMode").setNumber(CAM_MODE_VISION_PROCESSOR);
   }
 
@@ -155,7 +142,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Disable vision processing on the Limelight.
    * This increases exposure to let the camera feed function as a normal camera for the drivers.
    */
-  public void disableVisionProcessing() {
+  public void disableLimelightVisionProcessing() {
     limelight.getEntry("camMode").setNumber(CAM_MODE_DRIVER_CAMERA);
   }
 
@@ -163,7 +150,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Set the Limelight's pipeline
    * @param pipeline An integer between and including 0 and 9 representing the new pipeline
    */
-  public void setPipeline(int pipeline) {
+  public void setLimelightPipeline(int pipeline) {
     if(pipeline < 0 || pipeline > 9) {
       System.out.println("setLimelightPipeline ran into a number out of range");
       return;
@@ -175,14 +162,14 @@ public class ShooterSubsystem extends SubsystemBase {
    * Enable taking snapshots on the Limelight.
    * This will take two snapshots per second.
    */
-  public void enableSnapshot() {
+  public void enableLimelightSnapshot() {
     limelight.getEntry("snapshot").setNumber(SNAPSHOT_MODE_ENABLED);
   }
 
   /**
    * Disable taking snapshots on the Limelight.
    */
-  public void disableSnapshot() {
+  public void disableLimelightSnapshot() {
     limelight.getEntry("snapshot").setNumber(SNAPSHOT_MODE_DISABLED);
   }
 
@@ -191,56 +178,63 @@ public class ShooterSubsystem extends SubsystemBase {
    * @return Whether the Limelight current sees any targets.
    */
   public boolean isTargetSeen() {
-    return validTargets.getBoolean(false);
+    return limelight.getEntry("tv").getDouble(0) > 0;
   }
 
   /**
-   * Get a value representing the target's horizontal offset from the crosshair
-   * @return A value representing the target's horizontal offset from the crosshair
-   */
-  public double getXOfTarget() {
-    return xOfTarget.getDouble(0.0);
-  }
-
-  /**
-   * Get a value representing the target's vertical offset from the crosshair
-   * @return A value representing the target's vertical offset from the crosshair
-   */
-  public double getYOfTarget() {
-    return yOfTarget.getDouble(0.0);
-  }
-
-  /**
-   * Get a value representing the percent area of the target
-   * @return A value representing the ratio of target area to screen area
-   */
-  public double getAreaOfTarget() {
-    return areaOfTarget.getDouble(0.0);
-  }
-
-  /**
-   * Get the latency of the Limelight, including image capture latency
-   * @return The latency of the Limelight
+   * Get the Limelight pipeline's latency contribution in ms.
+   * Note: This does add 11ms extra to account for image capture latency
+   * @return The Limelight pipeline's latency contribution in ms.
    */
   public double getLimelightLatency() {
-    // Add 11 due to the image capture latency
-    return latency.getDouble(0.0)+11;
+    return limelight.getEntry("tl").getDouble(0)+11;
   }
 
   /**
-   * Get the length, in pixels, of the shortest side of the fitted box
-   * @return The length, in pixels, of the shortest side of the fitted box
+   * Get the x offset of the target seen by the Limelight.
+   * Note: This offset exists on a plane where the origin (or (0,0)) is the upper left corner.
+   * Values to the right or down from this origin are positive in the x and y directions respectively.
+   * Values can not be left or up relative to the origin of this plane.
+   * @return The x offset of the target as seen by the limelight in pixels.
    */
-  public double getShortestSideLength() {
-    return shortestSideLength.getDouble(0.0);
+  public double getLimelightXOffset() {
+    double tx = limelight.getEntry("tx").getDouble(0);
+    SmartDashboard.putNumber("tx", tx);
+    return tx;
   }
 
   /**
-   * Get the length, in pixels, of the longest side of the fitted box
-   * @return The length, in pixels, of the longest side of the fitted box
+   * Get the x offset of the target seen by the Limelight.
+   * Note: This offset exists on a plane where the origin (or (0,0)) is the upper left corner.
+   * Values to the right or down from this origin are positive in the x and y directions respectively.
+   * Values can not be left or up relative to the origin of this plane.
+   * @return The x offset of the target as seen by the limelight in pixels.
    */
-  public double getLongestSideLength() {
-    return longestSideLength.getDouble(0.0);
+  public double getLimelightYOffset() {
+    return limelight.getEntry("ty").getDouble(0);
+  }
+
+  /**
+   * Get the horizontal distance to the hub.
+   * @return The horizontal distance to the hub in meters. 
+   * Note: This value will be -1 in no target is visible.
+   */
+  public double getHorizontalDistanceToHub() {
+    if(isTargetSeen()) {
+      double changeInHeightMeters = ConstantsField.highHubRimHeightMeters-ConstantsValues.shooterHeightMeters;
+      double totalAngle = getVerticalAngleToTarget();
+      return changeInHeightMeters/Math.tan(Math.toRadians(totalAngle));
+    } else {
+      return -1;
+    }
+  }
+
+  /**
+   * Get the vertical angle to the target
+   * @return The vertical angle to the target in degrees.
+   */
+  public double getVerticalAngleToTarget() {
+    return getLimelightYOffset()+ConstantsValues.limelightMountingAngle;
   }
 
   /**
@@ -420,6 +414,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    
   }
 }

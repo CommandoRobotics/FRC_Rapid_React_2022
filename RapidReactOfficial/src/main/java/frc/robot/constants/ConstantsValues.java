@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.util.Units;
+
 public class ConstantsValues {
 
     // Shooter velocity conversion factors
@@ -33,5 +35,11 @@ public class ConstantsValues {
     public static final double kickwheelFeedForward = 0;
     public static final double kickwheelMinOutput = 0;
     public static final double kickwheelMaxOutput = 0;
+
+    // Other shooter values
+    public static final double shooterHeightMeters = Units.inchesToMeters(10);
+
+    // Limelight values
+    public static final double limelightMountingAngle = 17; // The angle at which the Limelight is mounted above the horizon in degrees.
 
 }
