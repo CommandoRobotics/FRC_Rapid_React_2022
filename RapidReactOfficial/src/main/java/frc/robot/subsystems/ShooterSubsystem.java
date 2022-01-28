@@ -328,7 +328,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /**
    * Get the velocity of the top flywheel
-   * @return The velocity of the top flywheel in meters per second
+   * @return The velocity of the top flywheel in meters per second/
    */
   public double getTopFlywheelVelocity() {
     return topFlywheelEncoder.getVelocity();
@@ -336,7 +336,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /**
    * Get the velocity of the bottom flywheel
-   * @return The velocity of the bottom flywheel in meters per second
+   * @return The velocity of the bottom flywheel in meters per second.
    */
   public double getBottomFlywheelVelocity() {
     return bottomFlywheelEncoder.getVelocity();
@@ -344,7 +344,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /**
    * Get the velocity of the kickwheel
-   * @return The velocity of the kickwheel in meters per second
+   * @return The velocity of the kickwheel in meters per second.
    */
   public double getKickwheelVelocity() {
     return kickwheelEncoder.getVelocity();
@@ -389,27 +389,27 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   /**
-   * Set the RPM of the bottom flywheel
-   * @param targetRPM
+   * Set the velocity of the bottom flywheel.
+   * @param target The target velocity in meters per second.
    */
-  public void setBottomFlywheelRPM(double targetRPM) {
-    bottomFlywheelPidController.setReference(targetRPM, ControlType.kVelocity);
+  public void setBottomFlywheelVelocity(double target) {
+    bottomFlywheelPidController.setReference(target, ControlType.kVelocity);
   }
 
   /**
-   * Set the RPM of the top flywheel
-   * @param targetRPM
+   * Set the velocity of the top flywheel.
+   * @param target The target velocity in meters per second.
    */
-  public void setTopFlywheelRPM(double targetRPM) {
-    topFlywheelPidController.setReference(targetRPM, ControlType.kVelocity);
+  public void setTopFlywheelRPM(double target) {
+    topFlywheelPidController.setReference(target, ControlType.kVelocity);
   }
 
   /**
-   * Set the RPM of the kickwheel
-   * @param targetRPM
+   * Set the velocity of the kickwheel.
+   * @param target The target velocity in meters per second.
    */
-  public void setKickwheelRPM(double targetRPM) {
-    kickwheelPidController.setReference(targetRPM, ControlType.kVelocity);
+  public void setKickwheelRPM(double target) {
+    kickwheelPidController.setReference(target, ControlType.kVelocity);
   }
 
   @Override
