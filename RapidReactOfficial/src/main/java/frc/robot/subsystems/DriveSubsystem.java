@@ -64,12 +64,6 @@ public class DriveSubsystem extends SubsystemBase {
     rearLeftEncoder = rearLeftSpark.getEncoder();
     rearRightEncoder = rearRightSpark.getEncoder();
 
-    // Invert the drive encoders
-    frontLeftEncoder.setInverted(false);
-    frontRightEncoder.setInverted(false);
-    rearLeftEncoder.setInverted(false);
-    rearRightEncoder.setInverted(false);
-
     // Set the drive encoder conversion factors
     frontLeftEncoder.setVelocityConversionFactor(ConstantsValues.distancePerMotorRotationMeters);
     frontRightEncoder.setVelocityConversionFactor(ConstantsValues.distancePerMotorRotationMeters);
