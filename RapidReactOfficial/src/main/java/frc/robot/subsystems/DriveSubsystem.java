@@ -114,6 +114,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Instantiate other mecanum drive utilities
     drive = new MecanumDrive(frontLeftSpark, rearLeftSpark, frontRightSpark, rearRightSpark);
+    odometry = new MecanumDriveOdometry(ConstantsValues.mecanumDriveKinematics, Rotation2d.fromDegrees(getHeading()));
     field = new Field2d();
 
     // Add our field to the smart dash
