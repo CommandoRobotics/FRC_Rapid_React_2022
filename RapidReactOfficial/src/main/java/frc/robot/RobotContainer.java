@@ -21,6 +21,10 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    // Disable the Limelight LED on robot startup
+    shooterSubsystem.disableLimelightLed();
+
     // Configure the button bindings
     configureButtonBindings();
   }
