@@ -400,7 +400,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Set the velocity of the top flywheel.
    * @param target The target velocity in meters per second.
    */
-  public void setTopFlywheelRPM(double target) {
+  public void setTopFlywheelVelocity(double target) {
     topFlywheelPidController.setReference(target, ControlType.kVelocity);
   }
 
@@ -408,7 +408,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Set the velocity of the kickwheel.
    * @param target The target velocity in meters per second.
    */
-  public void setKickwheelRPM(double target) {
+  public void setKickwheelVelocity(double target) {
     kickwheelPidController.setReference(target, ControlType.kVelocity);
   }
 
