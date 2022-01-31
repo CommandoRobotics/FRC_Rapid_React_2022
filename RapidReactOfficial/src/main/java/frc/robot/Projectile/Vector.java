@@ -2,8 +2,8 @@ package frc.robot.projectile;
 
 public class Vector {
     
-    double velocity;
-    double angle;
+    public double velocity;
+    public double angle;
 
     public Vector(double velocity, double angle) {
         this.velocity = velocity;

@@ -1,6 +1,10 @@
 package frc.robot.constants;
 
+import java.util.TreeMap;
+
 import edu.wpi.first.math.util.Units;
+import frc.robot.projectile.Range;
+import frc.robot.projectile.Vector;
 
 public class ConstantsValues {
 
@@ -31,6 +35,8 @@ public class ConstantsValues {
     public static final double kickwheelKv = 0;
     public static final double kickwheelKa = 0;
 
+    // Vector tree map
+    public static final TreeMap<Range, Vector> vectorMap = new TreeMap<Range, Vector>();
 
     // Other shooter values
     public static final double shooterHeightMeters = Units.inchesToMeters(10);

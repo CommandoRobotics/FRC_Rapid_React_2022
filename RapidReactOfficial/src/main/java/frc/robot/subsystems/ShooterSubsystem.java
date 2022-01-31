@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import java.util.Map;
+import java.util.Set;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -20,6 +23,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ConstantsField;
 import frc.robot.constants.ConstantsPorts;
 import frc.robot.constants.ConstantsValues;
+import frc.robot.projectile.Range;
+import frc.robot.projectile.Vector;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -109,6 +114,35 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Instantiate the limelight
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
+
+    // Create a default angle for the vectors below
+    double defaultShotAngle = 15;
+
+    // Add ranges and vectors to the vector treemap
+    // Note: Velocities are in RPM, angles are in degrees, and ranges are in meters.
+    addToVectorMap(0, 3, 2000, defaultShotAngle);
+    addToVectorMap(3, 10, 4000, defaultShotAngle);
+    //TODO adjust the above vectors, as they're just examples
+  }
+
+  /**
+   * Add an entry with a given range and vector object to the VectorMap
+   * @param range The range object
+   * @param vector The vector objects
+   */
+  private void addToVectorMap(Range range, Vector vector) {
+    ConstantsValues.vectorMap.put(range, vector);
+  }
+
+  /**
+   * Add an entry with given values to the VectorMap
+   * @param minRange The minimum range value this vector applies to
+   * @param maxRange The maximum range value this vector applies to
+   * @param velocity The velocity of the vector
+   * @param angle The angle of the vector
+   */
+  private void addToVectorMap(double minRange, double maxRange, double velocity, double angle) {
+    ConstantsValues.vectorMap.put(new Range(minRange, maxRange), new Vector(velocity, angle));
   }
 
   /**
@@ -353,7 +387,52 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("flywheelFF", flywheelFF.calculate(targetRPM));
   }
 
-  //TODO add a method for the kickwheel similar to the method above
+  /**
+   * Find the range object in the treemap that contains the specified distance.
+   * @param distance The distance, in meters, from the hub.
+   * @return The range object from the vector treemap containing that distance. 
+   * Returns null if no range containing the given distance exists in the treemap.
+   */
+  public Range findRangeGivenDistance(double distance) {
+    for(Range i : ConstantsValues.vectorMap.keySet()) {
+      if(i.isValueInRange(distance)) {
+        return i;
+      }
+    } 
+    return null;
+  }
+
+  /**
+   * Calculate the ideal launch vector.
+   * @return The ideal launch vector. This will return a vector with no magnitude
+   * or direction if no target is found, or if an ideal vector does not exist
+   * for the given distance.
+   */
+  public Vector calculateIdealLaunchVector() {
+    // Capture the distance to the hub before it fluctuates
+    double distanceToHubMeters = getHorizontalDistanceToHub();
+
+    // Make sure we can see a target
+    if(getHorizontalDistanceToHub() == -1) {
+      // We can not see the target, so return a vector with no magnitude or direction.
+      return new Vector(0, 0);
+    }
+
+    // Find the shot range our current distance fits into
+    Range shotRange = findRangeGivenDistance(distanceToHubMeters);
+
+    // The shot range will be null if no range exists in the treemap
+    // for the given distance. In this case, we should return a 
+    // vector with no magnitude or direction.
+    if(shotRange == null) {
+      return new Vector(0, 0);
+    }
+
+    // Find the vector for that range
+    Vector idealVector = ConstantsValues.vectorMap.get(shotRange);
+
+    return idealVector;
+  }
 
   @Override
   public void periodic() {
