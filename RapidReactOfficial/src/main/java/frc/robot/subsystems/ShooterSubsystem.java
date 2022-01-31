@@ -7,9 +7,12 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -39,7 +42,13 @@ public class ShooterSubsystem extends SubsystemBase {
   // Limelight
   NetworkTable limelight;
 
+  // PID Controllers
   SparkMaxPIDController flywheelPidController, kickwheelPidController;
+
+  // Feedforward
+  SimpleMotorFeedforward flywheelFF, kickwheelFF;
+
+  double previousP = ConstantsValues.flywheelP;
 
   public ShooterSubsystem() {
     // Instantiate the shooter motor controllers
@@ -85,14 +94,18 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheelPidController.setI(ConstantsValues.flywheelI);
     flywheelPidController.setD(ConstantsValues.flywheelD);
     flywheelPidController.setIZone(ConstantsValues.flywheelIZone);
-    flywheelPidController.setFF(ConstantsValues.flywheelFeedForward);
+    flywheelPidController.setFF(ConstantsValues.flywheelFF);
     flywheelPidController.setOutputRange(ConstantsValues.flywheelMinOutput, ConstantsValues.flywheelMaxOutput);
     kickwheelPidController.setP(ConstantsValues.kickwheelP);
     kickwheelPidController.setI(ConstantsValues.kickwheelI);
     kickwheelPidController.setD(ConstantsValues.kickwheelD);
     kickwheelPidController.setIZone(ConstantsValues.kickwheelIZone);
-    kickwheelPidController.setFF(ConstantsValues.kickwheelFeedForward);
+    kickwheelPidController.setFF(ConstantsValues.kickwheelFF);
     kickwheelPidController.setOutputRange(ConstantsValues.kickwheelMinOutput, ConstantsValues.kickwheelMaxOutput);
+
+    // Instantiate motor feedforwards
+    flywheelFF = new SimpleMotorFeedforward(ConstantsValues.flywheelKs, ConstantsValues.flywheelKv, ConstantsValues.flywheelKa);
+    kickwheelFF = new SimpleMotorFeedforward(ConstantsValues.kickwheelKs, ConstantsValues.kickwheelKv, ConstantsValues.kickwheelKa);
 
     // Instantiate the limelight
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
@@ -311,16 +324,55 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   /**
-   * Set the velocity of the top flywheel.
-   * @param target The target velocity in meters per second.
+   * Set the RPM of the flywheel.
+   * @param target The target RPM of the flywheel.
    */
-  public void setFlywheelRPM(double targetRPM) {
+  public void setFlywheelTargetRPM(double targetRPM) {
+    flywheelPidController.setReference(
+      targetRPM, 
+      ControlType.kVelocity, 
+      0, 
+      //TODO might need to be in m/s
+      flywheelFF.calculate(targetRPM), 
+      ArbFFUnits.kVoltage);
+    SmartDashboard.putNumber("flywheelFF", flywheelFF.calculate(targetRPM));
+  }
+
+  /**
+   * Set the RPM of the flywheel.
+   * @param target The target RPM
+   */
+  public void setKickwheelTargetRPM(double targetRPM) {
+    kickwheelPidController.setReference(
+      targetRPM, 
+      ControlType.kVelocity, 
+      0, 
+      //TODO might need to be in m/s
+      kickwheelFF.calculate(targetRPM), 
+      ArbFFUnits.kVoltage);
+    SmartDashboard.putNumber("flywheelFF", flywheelFF.calculate(targetRPM));
   }
 
   //TODO add a method for the kickwheel similar to the method above
 
   @Override
   public void periodic() {
-    
+
+    // Get the current flywheel values from the Smart dashboard
+    // This will allow us to adjust these values on the fly from the Smart Dashboard
+    double currentFlywheelP = SmartDashboard.getNumber("flywheelP", 0);
+    double currentKickwheelP = SmartDashboard.getNumber("kickwheelP", 0);
+
+    // Check if the numbers on the Smart Dashboard have changed, and change our values if they have.
+    if (SmartDashboard.getNumber("flywheelP", ConstantsValues.flywheelP) != previousP) {
+      flywheelPidController.setP(currentFlywheelP);
+    }
+    if (SmartDashboard.getNumber("kickwheelP", ConstantsValues.kickwheelP) != previousP) {
+      kickwheelPidController.setP(currentKickwheelP);
+    }
+
+    // Write the feedforward values to the Smartdash
+    SmartDashboard.putNumber("flywheelFF", ConstantsValues.flywheelFF);
+    SmartDashboard.putNumber("kickwheelFF", ConstantsValues.kickwheelFF);
   }
 }
