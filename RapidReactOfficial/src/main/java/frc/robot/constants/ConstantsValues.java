@@ -44,4 +44,23 @@ public class ConstantsValues {
     // Limelight values
     public static final double limelightMountingAngle = 17; // The angle at which the Limelight is mounted above the horizon in degrees.
 
+    /**
+    * Add an entry with a given range and vector object to the VectorMap
+    * @param range The range object
+    * @param vector The vector objects
+    */
+    public static void addToVectorMap(Range range, Vector vector) {
+        ConstantsValues.vectorMap.put(range, vector);
+    }
+
+    /**
+    * Add an entry with given values to the VectorMap
+    * @param minRange The minimum range value this vector applies to
+    * @param maxRange The maximum range value this vector applies to
+    * @param velocity The velocity of the vector
+    * @param angle The angle of the vector
+    */
+    public static void addToVectorMap(double minRange, double maxRange, double velocity, double angle) {
+        ConstantsValues.vectorMap.put(new Range(minRange, maxRange), new Vector(velocity, angle));
+    }
 }

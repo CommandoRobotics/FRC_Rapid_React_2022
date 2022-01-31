@@ -120,29 +120,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Add ranges and vectors to the vector treemap
     // Note: Velocities are in RPM, angles are in degrees, and ranges are in meters.
-    addToVectorMap(0, 3, 2000, defaultShotAngle);
-    addToVectorMap(3, 10, 4000, defaultShotAngle);
+    ConstantsValues.addToVectorMap(0, 3, 2000, defaultShotAngle);
+    ConstantsValues.addToVectorMap(3, 10, 4000, defaultShotAngle);
     //TODO adjust the above vectors, as they're just examples
-  }
-
-  /**
-   * Add an entry with a given range and vector object to the VectorMap
-   * @param range The range object
-   * @param vector The vector objects
-   */
-  private void addToVectorMap(Range range, Vector vector) {
-    ConstantsValues.vectorMap.put(range, vector);
-  }
-
-  /**
-   * Add an entry with given values to the VectorMap
-   * @param minRange The minimum range value this vector applies to
-   * @param maxRange The maximum range value this vector applies to
-   * @param velocity The velocity of the vector
-   * @param angle The angle of the vector
-   */
-  private void addToVectorMap(double minRange, double maxRange, double velocity, double angle) {
-    ConstantsValues.vectorMap.put(new Range(minRange, maxRange), new Vector(velocity, angle));
   }
 
   /**
