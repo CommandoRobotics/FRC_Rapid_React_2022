@@ -44,6 +44,10 @@ public class ConstantsValues {
     // Limelight values
     public static final double limelightMountingAngle = 17; // The angle at which the Limelight is mounted above the horizon in degrees.
 
+
+    /*
+    Methods for adding values to vector treemap
+    */
     /**
     * Add an entry with a given range and vector object to the VectorMap
     * @param range The range object
