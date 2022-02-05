@@ -20,6 +20,7 @@ public class DriveNotFieldCentric extends CommandBase {
     this.y = y;
     this.x = x;
     this.rotation = rotation;
+    addRequirements(driveSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
