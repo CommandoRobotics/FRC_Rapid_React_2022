@@ -3,8 +3,8 @@ package frc.robot.constants;
 import java.util.TreeMap;
 
 import edu.wpi.first.math.util.Units;
-import frc.robot.projectile.Range;
-import frc.robot.projectile.Vector;
+import frc.robot.Projectile.Range;
+import frc.robot.Projectile.Vector;
 
 public class ConstantsValues {
 

@@ -23,8 +23,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ConstantsField;
 import frc.robot.constants.ConstantsPorts;
 import frc.robot.constants.ConstantsValues;
-import frc.robot.projectile.Range;
-import frc.robot.projectile.Vector;
+import frc.robot.Projectile.Range;
+import frc.robot.Projectile.Vector;
 
 public class ShooterSubsystem extends SubsystemBase {
 

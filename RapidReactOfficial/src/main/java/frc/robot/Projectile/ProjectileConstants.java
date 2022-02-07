@@ -1,4 +1,4 @@
-package frc.robot.projectile;
+package frc.robot.Projectile;
 
 public class ProjectileConstants {
 
