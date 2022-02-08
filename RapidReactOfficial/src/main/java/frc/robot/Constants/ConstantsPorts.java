@@ -10,4 +10,10 @@ public class ConstantsPorts {
     public static final int rearLeftSparkId = 0;
     public static final int rearRightSparkId = 0;
     
+    //Intake
+
+    public static final int lifterID = 0;
+    public static final int intakeID = 0;
+    public static final double IntakePower = 0;
+    public static final double EjectPower = 0;
 }
