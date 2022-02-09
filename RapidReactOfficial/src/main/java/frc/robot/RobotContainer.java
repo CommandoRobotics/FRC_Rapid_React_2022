@@ -32,8 +32,8 @@ public class RobotContainer {
     // Set any default commands
     driveSubsystem.setDefaultCommand(new DriveNotFieldCentric(driveSubsystem, 
     () -> driverController.getLeftY(),
-    () -> driverController.getLeftX(), 
-    () -> driverController.getRightX()));
+    () -> -driverController.getLeftX(), 
+    () -> -driverController.getRightX()));
 
     configureButtonBindings();
   }

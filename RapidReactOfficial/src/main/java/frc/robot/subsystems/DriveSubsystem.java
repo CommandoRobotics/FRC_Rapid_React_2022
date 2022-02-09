@@ -53,9 +53,9 @@ public class DriveSubsystem extends SubsystemBase {
     rearRightSpark = new CANSparkMax(ConstantsPorts.rearRightSparkId, MotorType.kBrushless);
 
     // Invert the Spark Maxes
-    frontLeftSpark.setInverted(false);
+    frontLeftSpark.setInverted(true);
     frontRightSpark.setInverted(false);
-    rearLeftSpark.setInverted(false);
+    rearLeftSpark.setInverted(true);
     rearRightSpark.setInverted(false);
 
     // Instantiate the drive encoders
@@ -63,12 +63,6 @@ public class DriveSubsystem extends SubsystemBase {
     frontRightEncoder = frontRightSpark.getEncoder();
     rearLeftEncoder = rearLeftSpark.getEncoder();
     rearRightEncoder = rearRightSpark.getEncoder();
-
-    // Invert the drive encoders
-    frontLeftEncoder.setInverted(false);
-    frontRightEncoder.setInverted(false);
-    rearLeftEncoder.setInverted(false);
-    rearRightEncoder.setInverted(false);
 
     // Set the drive encoder conversion factors
     frontLeftEncoder.setVelocityConversionFactor(ConstantsValues.distancePerMotorRotationMeters);
@@ -116,6 +110,8 @@ public class DriveSubsystem extends SubsystemBase {
     drive = new MecanumDrive(frontLeftSpark, rearLeftSpark, frontRightSpark, rearRightSpark);
     odometry = new MecanumDriveOdometry(ConstantsValues.mecanumDriveKinematics, Rotation2d.fromDegrees(getHeading()));
     field = new Field2d();
+
+    drive.setDeadband(0.05);
 
     // Add our field to the smart dash
     SmartDashboard.putData("Field", field);
