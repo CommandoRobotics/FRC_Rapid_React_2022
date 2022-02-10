@@ -30,7 +30,7 @@ public class DriveFieldCentric extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveSubsystem.driveMecanum(y, x, rotation, true);
+    driveSubsystem.driveMecanum(y.getAsDouble(), x.getAsDouble(), rotation.getAsDouble(), true);
   }
 
   // Called once the command ends or is interrupted.

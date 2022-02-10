@@ -308,8 +308,8 @@ public class DriveSubsystem extends SubsystemBase {
    * @param x
    * @param rotation
    */
-  public void driveMecanum(DoubleSupplier y, DoubleSupplier x, DoubleSupplier rotation) {
-    drive.driveCartesian(y.getAsDouble(), x.getAsDouble(), MathUtil.applyDeadband(rotation.getAsDouble(), ConstantsValues.driveDeadband));
+  public void driveMecanum(double y, double x, double rotation) {
+    drive.driveCartesian(y, x, MathUtil.applyDeadband(rotation, ConstantsValues.driveDeadband));
   }
 
   /**
@@ -319,11 +319,11 @@ public class DriveSubsystem extends SubsystemBase {
    * @param rotation
    * @param fieldCentric True if the robot should drive field centrically, false if it should not.
    */
-  public void driveMecanum(DoubleSupplier y, DoubleSupplier x, DoubleSupplier rotation, boolean fieldCentric) {
+  public void driveMecanum(double y, double x, double rotation, boolean fieldCentric) {
     if(fieldCentric) {
-      drive.driveCartesian(y.getAsDouble(), x.getAsDouble(), MathUtil.applyDeadband(rotation.getAsDouble(), ConstantsValues.driveDeadband), getHeading());
+      drive.driveCartesian(y, x, MathUtil.applyDeadband(rotation, ConstantsValues.driveDeadband), getHeading());
     } else {
-      drive.driveCartesian(y.getAsDouble(), x.getAsDouble(), MathUtil.applyDeadband(rotation.getAsDouble(), ConstantsValues.driveDeadband));
+      drive.driveCartesian(y, x, MathUtil.applyDeadband(rotation, ConstantsValues.driveDeadband));
     }
   }
 
