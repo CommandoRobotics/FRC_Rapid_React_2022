@@ -1,6 +1,8 @@
 package frc.robot.Projectile;
 
-public class Range {
+public class Range implements Comparable<Range>{
+
+    int id;
 
     public double minValue;
     public double maxValue;
@@ -13,6 +15,9 @@ public class Range {
     public Range(double minValue, double maxValue) {
         this.minValue = minValue;
         this.maxValue = maxValue;
+        // Convert min value to an int and set it as the ID.
+        // This is necessary for this object to be comparable.
+        id = Math.round((float)minValue);
     }
 
     /**
@@ -24,6 +29,11 @@ public class Range {
      */
     public boolean isValueInRange(double valueToCheck) {
         return valueToCheck >= minValue && valueToCheck < maxValue;
+    }
+
+    @Override
+    public int compareTo(Range object) {
+        return id-object.id;
     }
     
 }
