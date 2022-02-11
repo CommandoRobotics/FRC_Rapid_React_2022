@@ -40,6 +40,8 @@ public class ConstantsValues {
 
     // Other shooter values
     public static final double shooterHeightMeters = Units.inchesToMeters(10);
+    public static final double defaultKickwheelRpm = 0;
+    public static final double defaultKickwheelVoltage = 0;
 
     // Limelight values
     public static final double limelightMountingAngle = 17; // The angle at which the Limelight is mounted above the horizon in degrees.
