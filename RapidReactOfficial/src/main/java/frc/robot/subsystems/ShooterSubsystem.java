@@ -4,10 +4,8 @@
 
 package frc.robot.subsystems;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
@@ -16,6 +14,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.ConstantsField;
 import frc.robot.constants.ConstantsPorts;
 import frc.robot.constants.ConstantsValues;
+import frc.robot.Robot;
 import frc.robot.Projectile.Range;
 import frc.robot.Projectile.Vector;
 
@@ -123,6 +123,14 @@ public class ShooterSubsystem extends SubsystemBase {
     ConstantsValues.addToVectorMap(0, 3, 2000, defaultShotAngle);
     ConstantsValues.addToVectorMap(3, 10, 4000, defaultShotAngle);
     //TODO adjust the above vectors, as they're just examples
+
+    // Add motors to the simulation
+    if(Robot.isSimulation()) {
+      REVPhysicsSim.getInstance().addSparkMax(flywheelLeader, DCMotor.getNEO(1));
+      REVPhysicsSim.getInstance().addSparkMax(flywheelFollowerOne, DCMotor.getNEO(1));
+      REVPhysicsSim.getInstance().addSparkMax(flywheelFollowerTwo, DCMotor.getNEO(1));
+      REVPhysicsSim.getInstance().addSparkMax(kickwheel, DCMotor.getNEO(1));
+    }
   }
 
   /**
@@ -416,7 +424,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-
     // Get the current flywheel values from the Smart dashboard
     // This will allow us to adjust these values on the fly from the Smart Dashboard
     double currentFlywheelP = SmartDashboard.getNumber("flywheelP", 0);
@@ -429,9 +436,12 @@ public class ShooterSubsystem extends SubsystemBase {
     if (SmartDashboard.getNumber("kickwheelP", ConstantsValues.kickwheelP) != previousP) {
       kickwheelPidController.setP(currentKickwheelP);
     }
-
-    // Write the feedforward values to the Smartdash
-    SmartDashboard.putNumber("flywheelFF", ConstantsValues.flywheelFF);
-    SmartDashboard.putNumber("kickwheelFF", ConstantsValues.kickwheelFF);
   }
+
+  @Override
+  public void simulationPeriodic() {
+    // Update Spark Maxes
+    REVPhysicsSim.getInstance().run();
+  }
+
 }
