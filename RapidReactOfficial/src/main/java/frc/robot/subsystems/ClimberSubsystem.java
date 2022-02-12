@@ -10,7 +10,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsPorts;
 
@@ -18,6 +17,10 @@ public class ClimberSubsystem extends SubsystemBase {
 
   Solenoid midClimb, traversalClimb;
   CANSparkMax leftWinch, rightWinch;
+  
+  DigitalInput toplimitSwitch = new DigitalInput(0);
+  DigitalInput bottomlimitSwitch = new DigitalInput(1);
+  
   //TODO add Limit Switches
 
 
@@ -29,6 +32,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     leftWinch = new CANSparkMax(ConstantsPorts.leftWinchId, MotorType.kBrushless);
     rightWinch = new CANSparkMax(ConstantsPorts.rightWinchId, MotorType.kBrushless);
+
   }
 
   @Override
@@ -36,49 +40,57 @@ public class ClimberSubsystem extends SubsystemBase {
     // This method will be called once per schedule run 
   }
    //Extend Middle Solenoid
-   public void MidUp() {
-    boolean on = true;
-    midClimb.set(on);
+   public void midUp() {
+    midClimb.set(true);
   }
 
   //Retract Middle Solenoid
-  public void MidDown() {
-    boolean on = false;
-    midClimb.set(on);
+  public void midDown() {
+    midClimb.set(false);
   }
-  //Toggle Middle Solenoid
-  
-  public void ToggleMid() {
-    boolean on;
-    if (on = true) {
-      MidDown();
-    } else {
-      MidUp();
-    }
+
+  //Toggle Middle Solenoid 
+  public void toggleMid() {
+    midClimb.toggle();
+
   }
+
   //Extend Traversal Solenoid
-  public void TraversalUp() {
-    boolean on = true;
-    midClimb.set(on);
+  public void traversalUp() {
+    midClimb.set(true);
   }
+
   //Retract Traversal Solenoid
-  public void TraversalDown() {
-    boolean on = false;
-    midClimb.set(on);
+  public void traversalDown() {
+    midClimb.set(false);
   }
+
   //Toggle Traversal Solenoid
-  public void ToggleTraversal() {
-    boolean on;
-    if (on = true) {
-      TraversalDown();
-    } else {
-      TraversalUp();
-    }
+  public void toggleTraversal() {
+    traversalClimb.toggle();
   }
   //Set the Power of the Right Winch
-   
+   public void setPowerRightWinch(double power) {
+    if(power < 0) {
+      if (bottomlimitSwitch.get()) {
+        rightWinch.set(0);
+      } else {
+        rightWinch.set(power);
+      }
+    }
+   }
   
   //Set the Power of the Left Winch
+  public void setPowerLeftWinch(double power) {
+    if(power > 0) {
+      if (bottomlimitSwitch.get()) {
+        leftWinch.set(0);
+      } else {
+        leftWinch.set(power);
+      }
+    }
+  }
+
   
 
 }
