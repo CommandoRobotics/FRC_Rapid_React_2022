@@ -4,14 +4,21 @@
 
 package frc.robot;
 
+import com.revrobotics.REVPhysicsSim;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.ShootAtRPMCommand;
+import frc.robot.subsystems.ShooterSubsystem;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DriveFieldCentric;
 import frc.robot.commands.DriveNotFieldCentric;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -20,13 +27,14 @@ import frc.robot.subsystems.DriveSubsystem;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-
+  
   // Define controllers
   XboxController driverController = new XboxController(0);
 
   // Define subsystems
   DriveSubsystem driveSubsystem = new DriveSubsystem();
   ClimberSubsystem climberSubsystem = new ClimberSubsystem(); 
+  ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -56,7 +64,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
     return null;
   }
+
 }
