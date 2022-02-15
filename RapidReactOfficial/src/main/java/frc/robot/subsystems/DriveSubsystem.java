@@ -13,6 +13,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveMotorVoltages;
@@ -53,9 +54,9 @@ public class DriveSubsystem extends SubsystemBase {
     rearRightSpark = new CANSparkMax(ConstantsPorts.rearRightSparkId, MotorType.kBrushless);
 
     // Invert the Spark Maxes
-    frontLeftSpark.setInverted(false);
+    frontLeftSpark.setInverted(true);
     frontRightSpark.setInverted(false);
-    rearLeftSpark.setInverted(false);
+    rearLeftSpark.setInverted(true);
     rearRightSpark.setInverted(false);
 
     // Instantiate the drive encoders
@@ -63,12 +64,6 @@ public class DriveSubsystem extends SubsystemBase {
     frontRightEncoder = frontRightSpark.getEncoder();
     rearLeftEncoder = rearLeftSpark.getEncoder();
     rearRightEncoder = rearRightSpark.getEncoder();
-
-    // Invert the drive encoders
-    frontLeftEncoder.setInverted(false);
-    frontRightEncoder.setInverted(false);
-    rearLeftEncoder.setInverted(false);
-    rearRightEncoder.setInverted(false);
 
     // Set the drive encoder conversion factors
     frontLeftEncoder.setVelocityConversionFactor(ConstantsValues.distancePerMotorRotationMeters);
@@ -116,6 +111,8 @@ public class DriveSubsystem extends SubsystemBase {
     drive = new MecanumDrive(frontLeftSpark, rearLeftSpark, frontRightSpark, rearRightSpark);
     odometry = new MecanumDriveOdometry(ConstantsValues.mecanumDriveKinematics, Rotation2d.fromDegrees(getHeading()));
     field = new Field2d();
+
+    drive.setDeadband(ConstantsValues.driveDeadband);
 
     // Add our field to the smart dash
     SmartDashboard.putData("Field", field);
@@ -311,8 +308,8 @@ public class DriveSubsystem extends SubsystemBase {
    * @param x
    * @param rotation
    */
-  public void driveMecanum(DoubleSupplier y, DoubleSupplier x, DoubleSupplier rotation) {
-    drive.driveCartesian(y.getAsDouble(), x.getAsDouble(), rotation.getAsDouble());
+  public void driveMecanum(double y, double x, double rotation) {
+    drive.driveCartesian(y, x, MathUtil.applyDeadband(rotation, ConstantsValues.driveDeadband));
   }
 
   /**
@@ -322,11 +319,11 @@ public class DriveSubsystem extends SubsystemBase {
    * @param rotation
    * @param fieldCentric True if the robot should drive field centrically, false if it should not.
    */
-  public void driveMecanum(DoubleSupplier y, DoubleSupplier x, DoubleSupplier rotation, boolean fieldCentric) {
+  public void driveMecanum(double y, double x, double rotation, boolean fieldCentric) {
     if(fieldCentric) {
-      drive.driveCartesian(y.getAsDouble(), x.getAsDouble(), rotation.getAsDouble(), getHeading());
+      drive.driveCartesian(y, x, MathUtil.applyDeadband(rotation, ConstantsValues.driveDeadband), getHeading());
     } else {
-      drive.driveCartesian(y.getAsDouble(), x.getAsDouble(), rotation.getAsDouble());
+      drive.driveCartesian(y, x, MathUtil.applyDeadband(rotation, ConstantsValues.driveDeadband));
     }
   }
 

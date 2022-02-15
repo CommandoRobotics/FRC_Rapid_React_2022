@@ -4,8 +4,14 @@
 
 package frc.robot;
 
+import com.revrobotics.REVPhysicsSim;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.ShootAtRPMCommand;
+import frc.robot.subsystems.ShooterSubsystem;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -14,6 +20,8 @@ import frc.robot.commands.DriveNotFieldCentric;
 import frc.robot.commands.SetIntake;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -22,22 +30,24 @@ import frc.robot.subsystems.IntakeSubsystem;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-
+  
   // Define controllers
   XboxController driverController = new XboxController(0);
 
   // Define subsystems
   DriveSubsystem driveSubsystem = new DriveSubsystem();
   IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  ClimberSubsystem climberSubsystem = new ClimberSubsystem(); 
+  ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     
     // Set any default commands
-    driveSubsystem.setDefaultCommand(new DriveNotFieldCentric(driveSubsystem, 
+    driveSubsystem.setDefaultCommand(new DriveFieldCentric(driveSubsystem, 
     () -> driverController.getLeftY(),
-    () -> driverController.getLeftX(), 
-    () -> driverController.getRightX()));
+    () -> -driverController.getLeftX(), 
+    () -> -driverController.getRightX()));
 
     configureButtonBindings();
   }
@@ -49,11 +59,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(driverController, XboxController.Button.kA.value)
-      .whileActiveContinuous(new SetIntake(true, intakeSubsystem))
-      .whenInactive(intakeSubsystem::stop);
-
-
   }
 
   /**
@@ -62,7 +67,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
     return null;
   }
+
 }

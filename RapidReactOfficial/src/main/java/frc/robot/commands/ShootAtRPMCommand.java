@@ -4,39 +4,39 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.constants.ConstantsValues;
+import frc.robot.subsystems.ShooterSubsystem;
 
-public class DriveFieldCentric extends CommandBase {
+public class ShootAtRPMCommand extends CommandBase {
 
-  DriveSubsystem driveSubsystem;
-  DoubleSupplier y, x, rotation;
+  double rpm;
+  ShooterSubsystem shooterSubsystem;
 
-  /** Creates a new DriveFieldCentric. */
-  public DriveFieldCentric(DriveSubsystem driveSubsystem, DoubleSupplier y, DoubleSupplier x, DoubleSupplier rotation) {
-    this.driveSubsystem = driveSubsystem;
-    this.y = y;
-    this.x = x;
-    this.rotation = rotation;
-    addRequirements(driveSubsystem);
+  public ShootAtRPMCommand(double rpm, ShooterSubsystem shooterSubsystem) {
+    this.rpm = rpm;
+    this.shooterSubsystem = shooterSubsystem;
+    addRequirements(shooterSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveSubsystem.driveMecanum(y.getAsDouble(), x.getAsDouble(), rotation.getAsDouble(), true);
+    shooterSubsystem.setTopTargetRPM(rpm);
+    shooterSubsystem.setBottomTargetRpm(rpm);
+    shooterSubsystem.setKickwheelRpm(ConstantsValues.defaultKickwheelRpm);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    driveSubsystem.stop();
+    shooterSubsystem.stopAll();
   }
 
   // Returns true when the command should end.
