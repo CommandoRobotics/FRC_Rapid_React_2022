@@ -10,6 +10,9 @@ public class ConstantsValues {
     /**
      * DRIVE VALUES
      */
+
+
+    public static final double driveDeadband = 0.1;
     // PID and feedforward values for each wheel on the drivetrain
     public static final double driveWheelP = 0;
     public static final double driveWheelI = 0;

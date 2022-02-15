@@ -20,6 +20,7 @@ public class DriveNotFieldCentric extends CommandBase {
     this.y = y;
     this.x = x;
     this.rotation = rotation;
+    addRequirements(driveSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -30,7 +31,7 @@ public class DriveNotFieldCentric extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveSubsystem.driveMecanum(y, x, rotation);
+    driveSubsystem.driveMecanum(y.getAsDouble(), x.getAsDouble(), rotation.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.
