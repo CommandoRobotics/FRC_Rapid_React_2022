@@ -12,6 +12,13 @@ import frc.robot.commands.ShootAtRPMCommand;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.DriveFieldCentric;
+import frc.robot.commands.DriveNotFieldCentric;
+import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -20,20 +27,24 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  
+  // Define controllers
+  XboxController driverController = new XboxController(0);
 
-  // Controllers
-  XboxController controller = new XboxController(0);
-
-  // Subsystems
+  // Define subsystems
+  DriveSubsystem driveSubsystem = new DriveSubsystem();
+  ClimberSubsystem climberSubsystem = new ClimberSubsystem(); 
   ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    
+    // Set any default commands
+    driveSubsystem.setDefaultCommand(new DriveFieldCentric(driveSubsystem, 
+    () -> driverController.getLeftY(),
+    () -> -driverController.getLeftX(), 
+    () -> -driverController.getRightX()));
 
-    // Disable the Limelight LED on robot startup
-    shooterSubsystem.disableLimelightLed();
-
-    // Configure the button bindings
     configureButtonBindings();
   }
 
@@ -44,7 +55,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-
+    
   }
 
   /**
