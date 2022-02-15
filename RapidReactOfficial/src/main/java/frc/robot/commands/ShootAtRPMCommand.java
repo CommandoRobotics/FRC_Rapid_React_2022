@@ -28,8 +28,9 @@ public class ShootAtRPMCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooterSubsystem.setFlywheelTargetRPM(rpm);
-    shooterSubsystem.setKickwheelTargetRPM(ConstantsValues.defaultKickwheelRpm);
+    shooterSubsystem.setTopTargetRPM(rpm);
+    shooterSubsystem.setBottomTargetRpm(rpm);
+    shooterSubsystem.setKickwheelRpm(ConstantsValues.defaultKickwheelRpm);
   }
 
   // Called once the command ends or is interrupted.

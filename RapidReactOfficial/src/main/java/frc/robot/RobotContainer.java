@@ -45,9 +45,6 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    // Set the shooter to 2000 RPM
-    new Trigger(() -> true)
-      .whileActiveContinuous(new ShootAtRPMCommand(2000, shooterSubsystem));
   }
 
   /**
