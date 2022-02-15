@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsPorts;
+import frc.robot.Constants.ConstantsValues;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -46,12 +48,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
     //intakeIn()
     public void intakeIn() {
-        intake.set(ConstantsPorts.IntakePower);
+        intake.set(ConstantsValues.intakePower);
     }
 
     //intakeOut()
     public void intakeOut() {
-        intake.set(ConstantsPorts.EjectPower);
+        intake.set(ConstantsValues.ejectPower);
     }
 
     //lifting/solenoid stuff
