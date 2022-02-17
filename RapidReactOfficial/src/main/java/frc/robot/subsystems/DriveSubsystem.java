@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
@@ -52,6 +53,16 @@ public class DriveSubsystem extends SubsystemBase {
     frontRightSpark = new CANSparkMax(ConstantsPorts.frontRightSparkId, MotorType.kBrushless);
     rearLeftSpark = new CANSparkMax(ConstantsPorts.rearLeftSparkId, MotorType.kBrushless);
     rearRightSpark = new CANSparkMax(ConstantsPorts.rearRightSparkId, MotorType.kBrushless);
+
+    frontLeftSpark.restoreFactoryDefaults();
+    frontRightSpark.restoreFactoryDefaults();
+    rearLeftSpark.restoreFactoryDefaults();
+    rearRightSpark.restoreFactoryDefaults();
+
+    frontLeftSpark.setIdleMode(IdleMode.kBrake);
+    frontRightSpark.setIdleMode(IdleMode.kBrake);
+    rearLeftSpark.setIdleMode(IdleMode.kBrake);
+    rearRightSpark.setIdleMode(IdleMode.kBrake);
 
     // Invert the Spark Maxes
     frontLeftSpark.setInverted(true);

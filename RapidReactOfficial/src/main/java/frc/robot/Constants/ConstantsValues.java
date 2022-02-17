@@ -149,7 +149,7 @@ public class ConstantsValues {
      * AUTO AIM
      */
     // PID
-    public static final double panP = 0;
+    public static final double panP = 0.03;
     public static final double panI = 0;
     public static final double panD = 0;
     public static final double panSetPoint = 0;

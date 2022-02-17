@@ -28,6 +28,8 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
     this.y = y;
     this.x = x;
     this.rotation = rotation;
+    this.driveSubsystem = driveSubsystem;
+    this.autoAimSubsystem = autoAimSubsystem;
     addRequirements(driveSubsystem);
     addRequirements(autoAimSubsystem);
   }
