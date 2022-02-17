@@ -145,5 +145,23 @@ public class ConstantsValues {
     public static final double intakePower = 0;
     public static final double ejectPower = 0;
 
+    /**
+     * AUTO AIM
+     */
+    // PID
+    public static final double panP = 0;
+    public static final double panI = 0;
+    public static final double panD = 0;
+    public static final double panSetPoint = 0;
+    public static final double tiltP = 0;
+    public static final double tiltI = 0;
+    public static final double tiltD = 0;
+    public static final double tiltSetPoint = 0;
+
+    public static final double panPositionConversionFactor = 1;
+    public static final double tiltPositionConversionFactor = 1;
+
+    public static final double panPidDeadzone = 0.05;
+    public static final double panPidMaxOutput = 0.5;
 
 }

@@ -30,5 +30,13 @@ public class ConstantsPorts {
     public static final int intakeID = 0;
     public static final int lifterID = 0;
 
+    /**
+     * AUTO AIM
+     */
+    public static final int panId = 0;
+    public static final int tiltId = 0;
+    public static final int panLimitSwitchPort = 0;
+    public static final int tiltLimitSwitchPort = 0;
+
 
 }
