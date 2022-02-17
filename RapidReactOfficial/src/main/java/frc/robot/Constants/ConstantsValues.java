@@ -145,5 +145,13 @@ public class ConstantsValues {
     public static final double intakePower = 0;
     public static final double ejectPower = 0;
 
+    /**
+     * INDEX
+     */
+    public static final double horizontalPositionConversionFactor = 1;
+    public static final double verticalPositionConversionFactor = 1;
+    public static final double horizontalVelocityConversionFactor = 1;
+    public static final double verticalVelocityConversionFactor = 1;
+
 
 }
