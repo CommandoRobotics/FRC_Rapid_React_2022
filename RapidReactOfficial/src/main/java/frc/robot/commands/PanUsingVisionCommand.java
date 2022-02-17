@@ -7,11 +7,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.AutoAimSubsystem;
 
-public class AimUsingVisionCommand extends CommandBase {
+public class PanUsingVisionCommand extends CommandBase {
 
   AutoAimSubsystem autoAimSubsystem;
 
-  public AimUsingVisionCommand(AutoAimSubsystem autoAimSubsystem) {
+  public PanUsingVisionCommand(AutoAimSubsystem autoAimSubsystem) {
     this.autoAimSubsystem = autoAimSubsystem;
     addRequirements(autoAimSubsystem);
   }
