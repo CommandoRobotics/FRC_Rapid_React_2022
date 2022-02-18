@@ -16,8 +16,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DriveFieldCentric;
 import frc.robot.commands.DriveNotFieldCentric;
+import frc.robot.commands.EjectCommand;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.SetIntake;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 
@@ -37,6 +40,7 @@ public class RobotContainer {
   IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   ClimberSubsystem climberSubsystem = new ClimberSubsystem(); 
   ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+  IndexSubsystem indexSubsystem = new IndexSubsystem();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -57,6 +61,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    new Trigger(() -> driverController.getRightTriggerAxis() > 0.5)
+      .whileActiveContinuous(new IntakeCommand(intakeSubsystem, indexSubsystem));
+
+    new Trigger(() -> driverController.getLeftTriggerAxis() > 0.5)
+      .whileActiveContinuous(new EjectCommand(intakeSubsystem));
   }
 
   /**
