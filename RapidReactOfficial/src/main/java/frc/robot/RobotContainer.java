@@ -4,8 +4,12 @@
 
 package frc.robot;
 
+import java.time.Instant;
+
 import com.revrobotics.REVPhysicsSim;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.ShootAtRPMCommand;
@@ -14,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Triggers.DashTrigger;
 import frc.robot.commands.DriveFieldCentric;
 import frc.robot.commands.DriveNotFieldCentric;
 import frc.robot.commands.SetIntake;
@@ -38,8 +43,15 @@ public class RobotContainer {
   ClimberSubsystem climberSubsystem = new ClimberSubsystem(); 
   ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
+  // Network Tables
+  NetworkTableInstance ntInst = NetworkTableInstance.getDefault();
+  NetworkTable commandoDashNT;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    
+    // Network Tables Instantiation
+    commandoDashNT = ntInst.getTable("CommandoDash");
     
     // Set any default commands
     driveSubsystem.setDefaultCommand(new DriveFieldCentric(driveSubsystem, 
@@ -49,7 +61,7 @@ public class RobotContainer {
 
     configureButtonBindings();
   }
-
+  
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
