@@ -38,10 +38,13 @@ public class ConstantsPorts {
     /**
      * Index
      */
-    public static final int horizontalId = 6;
+    public static final int rampId = 6;
     public static final int verticalId = 7;
     public static final int transferLeaderId = 8;
     public static final int transferFollowerId = 9;
+    public static final int verticalIndexSensorPort = 0;
+    public static final int rampIndexSensorPort = 1;
+    public static final int indexEntranceSensorPort = 1;
 
     /**
      * AUTO AIM

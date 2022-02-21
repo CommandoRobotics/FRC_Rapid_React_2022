@@ -148,10 +148,12 @@ public class ConstantsValues {
     /**
      * INDEX
      */
-    public static final double horizontalPositionConversionFactor = 1;
+    public static final double rampPositionConversionFactor = 1;
     public static final double verticalPositionConversionFactor = 1;
-    public static final double horizontalVelocityConversionFactor = 1;
+    public static final double rampVelocityConversionFactor = 1;
     public static final double verticalVelocityConversionFactor = 1;
+    public static final double shooterBlockTime = 500;
+    public static final double indexSensorThreshold = 1000;
 
 
 }
