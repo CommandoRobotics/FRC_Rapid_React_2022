@@ -7,6 +7,9 @@
     "mode": "Client",
     "serverTeam": "10.58.89.12"
   },
+  "SmartDashboard": {
+    "open": true
+  },
   "photonvision": {
     "CargoHound": {
       "open": true

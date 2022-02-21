@@ -15,6 +15,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -126,13 +127,42 @@ public class IntakeSubsystem extends SubsystemBase {
      */
     public double getDistanceToCargo(PhotonPipelineResult result) {
         if (result.hasTargets()) {
-            return PhotonUtils.calculateDistanceToTargetMeters(
+            double distance = PhotonUtils.calculateDistanceToTargetMeters(
                 ConstantsField.CAMERA_HEIGHT_METERS,
                 ConstantsField.TARGET_HEIGHT_METERS,
                 ConstantsField.CAMERA_PITCH_RADIANS,
                 Units.degreesToRadians(result.getBestTarget().getPitch()));
+            SmartDashboard.putNumber("HoundDis", distance);
+            return distance;
         } else {
+            SmartDashboard.putNumber("HoundDis", -1);
             return -1;
+        }
+    }
+
+    /**
+     * Takes an input and determines if that inputs is less than the minimum output. 
+     * This is applied to both + and - numbers. For example, a min of 0.1 will scale everything
+     * below 0.1 and above -0.1 to 0.1 and -0.1 respectively
+     * @param input
+     * @param minOutput
+     * @return
+     */
+    public static double scaleAroundZero(double input, double minOutput) {
+        if (input < 0) {
+            if (input >= -minOutput) {
+                return -minOutput;
+            } else {
+                return input;
+            }
+        } else if (input > 0) {
+            if (input <= minOutput) {
+               return minOutput;
+            } else {
+                return input;
+            }
+        } else {
+            return 0;
         }
     }
 

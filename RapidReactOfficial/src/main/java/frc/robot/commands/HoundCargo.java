@@ -4,17 +4,16 @@
 
 package frc.robot.commands;
 
-import java.nio.channels.NotYetBoundException;
 import java.util.function.DoubleSupplier;
-
-import com.fasterxml.jackson.databind.util.RootNameLookup;
 
 import org.photonvision.targeting.PhotonPipelineResult;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
@@ -27,6 +26,8 @@ public class HoundCargo extends CommandBase {
   DoubleSupplier x,y,rotation;
   ProfiledPIDController rotationPID;
   PIDController xPID, yPID;
+  Timer noCargoTimer;
+  PhotonPipelineResult previousResult;
   DriveSubsystem driveSubsystem;
   IntakeSubsystem intakeSubsystem;
   NetworkTableInstance ntInst;
@@ -40,6 +41,7 @@ public class HoundCargo extends CommandBase {
     this.x = x;
     this.y = y;
     this.rotation = rotation;
+    noCargoTimer = new Timer();
     xPID = new PIDController(
       ConstantsValues.houndXP, 
       ConstantsValues.houndXI,
@@ -60,15 +62,16 @@ public class HoundCargo extends CommandBase {
     SmartDashboard.putData(yPID);
     SmartDashboard.putData(rotationPID);
 
-    if (Robot.isSimulation()) {
+    //Photon NT networking to use with an at-home simulation
     ntInst = NetworkTableInstance.getDefault();
+    if (Robot.isSimulation()) {
     ntInst.stopServer();
     ntInst.stopClient();
     ntInst.stopDSClient();
     ntInst.setServer("10.58.89.12");
     ntInst.startClient();
-    houndTable = ntInst.getTable("photonvision").getSubTable("CargoHound");
     }
+    houndTable = ntInst.getTable("photonvision").getSubTable("CargoHound");
 
     addRequirements(intakeSubsystem, driveSubsystem);
   }
@@ -80,20 +83,48 @@ public class HoundCargo extends CommandBase {
     yPID.calculate(0);
     rotationPID.calculate(0);
     driveSubsystem.stop();
+    previousResult = intakeSubsystem.getHoundData();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     PhotonPipelineResult houndResult = intakeSubsystem.getHoundData();
+    
+    //Check if there are targets
     if (houndResult.hasTargets()) {
+      //Drive based PID from the different values measured
       driveSubsystem.driveMecanum(
-        yPID.calculate(-intakeSubsystem.getDistanceToCargo(houndResult)), 
-        xPID.calculate(houndResult.getBestTarget().getYaw()),
-        rotationPID.calculate(-houndResult.getBestTarget().getYaw()),
+          IntakeSubsystem.scaleAroundZero(
+            yPID.calculate(-intakeSubsystem.getDistanceToCargo(houndResult)), 
+            ConstantsValues.minHoundPIDOut), 
+          IntakeSubsystem.scaleAroundZero(
+            xPID.calculate(-houndResult.getBestTarget().getYaw()),
+            ConstantsValues.minHoundPIDOut),
+          IntakeSubsystem.scaleAroundZero(
+            rotationPID.calculate(-houndResult.getBestTarget().getYaw()),
+            ConstantsValues.minHoundPIDOut),
         false);
-        SmartDashboard.putNumber("HoundDis", intakeSubsystem.getDistanceToCargo(houndResult));
+      //Start the timer from the time we last saw the ball
+      previousResult = houndResult;
+      noCargoTimer.stop();
+      noCargoTimer.reset();
+      noCargoTimer.start();
+    } else if ((noCargoTimer.get() <= ConstantsValues.noCargoTime) && (previousResult != null) && previousResult.hasTargets()) {
+      //If we've seen a ball before within the alloted time, use a previous input to continue following the ball
+      driveSubsystem.driveMecanum(
+        IntakeSubsystem.scaleAroundZero(
+          yPID.calculate(-intakeSubsystem.getDistanceToCargo(previousResult)), 
+          ConstantsValues.minHoundPIDOut), 
+        IntakeSubsystem.scaleAroundZero(
+          xPID.calculate(-previousResult.getBestTarget().getYaw()),
+          ConstantsValues.minHoundPIDOut),
+        IntakeSubsystem.scaleAroundZero(
+          rotationPID.calculate(-previousResult.getBestTarget().getYaw()),
+          ConstantsValues.minHoundPIDOut),
+        false);
     } else {
+      //If no ball is found in the time alloted, default to driver control
       driveSubsystem.driveMecanum(y.getAsDouble(), x.getAsDouble(), rotation.getAsDouble(), true);
     }
   }

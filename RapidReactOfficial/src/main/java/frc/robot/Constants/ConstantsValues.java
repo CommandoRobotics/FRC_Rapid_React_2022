@@ -162,4 +162,7 @@ public class ConstantsValues {
     public static final double houndRD = 0;
     public static final TrapezoidProfile.Constraints houndRConstraints =
         new TrapezoidProfile.Constraints(houndMaxRVel, houndMaxRAcc);
+
+    public static final double noCargoTime = 0.5;
+    public static final double minHoundPIDOut = 0.1;
 }
