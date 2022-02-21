@@ -163,5 +163,15 @@ public class ConstantsValues {
 
     public static final double panPidDeadzone = 0.05;
     public static final double panPidMaxOutput = 0.5;
+    /**
+     * INDEX
+     */
+    public static final double rampPositionConversionFactor = 1;
+    public static final double verticalPositionConversionFactor = 1;
+    public static final double rampVelocityConversionFactor = 1;
+    public static final double verticalVelocityConversionFactor = 1;
+    public static final double shooterBlockTime = 500;
+    public static final double indexSensorThreshold = 1000;
+
 
 }
