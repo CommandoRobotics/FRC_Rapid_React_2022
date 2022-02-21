@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Triggers.DashTrigger;
 import frc.robot.commands.DriveFieldCentric;
 import frc.robot.commands.DriveNotFieldCentric;
+import frc.robot.commands.HoundCargo;
 import frc.robot.commands.SetIntake;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -69,6 +70,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    new DashTrigger(commandoDashNT.getEntry("testData"), true)
+      .whileActiveOnce(new HoundCargo(intakeSubsystem, driveSubsystem,
+      () -> driverController.getLeftY(),
+      () -> -driverController.getLeftX(), 
+      () -> -driverController.getRightX()));
   }
 
   /**

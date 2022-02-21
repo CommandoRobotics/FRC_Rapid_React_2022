@@ -5,6 +5,7 @@ import java.util.TreeMap;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Projectile.Range;
 import frc.robot.Projectile.Vector;
@@ -145,5 +146,20 @@ public class ConstantsValues {
     public static final double intakePower = 0;
     public static final double ejectPower = 0;
 
+    //CargoHound PID values
+    public static final double houndXP = 0.5;
+    public static final double houndXI = 0;
+    public static final double houndXD = 0;
 
+    public static final double houndYP = 0.5;
+    public static final double houndYI = 0;
+    public static final double houndYD = 0;
+
+    public static final double houndMaxRVel = 10;
+    public static final double houndMaxRAcc = 5;
+    public static final double houndRP = 0.5;
+    public static final double houndRI = 0;
+    public static final double houndRD = 0;
+    public static final TrapezoidProfile.Constraints houndRConstraints =
+        new TrapezoidProfile.Constraints(houndMaxRVel, houndMaxRAcc);
 }

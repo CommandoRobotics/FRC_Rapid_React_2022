@@ -23,12 +23,32 @@
       "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[1]": "Digital Input",
       "/LiveWindow/Ungrouped/MecanumDrive[1]": "MecanumDrive",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
-      "/SmartDashboard/Field": "Field2d"
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/PIDController[1]": "PIDController",
+      "/SmartDashboard/PIDController[2]": "PIDController"
     },
     "windows": {
+      "/LiveWindow/Ungrouped/MecanumDrive[1]": {
+        "window": {
+          "visible": true
+        }
+      },
       "/LiveWindow/Ungrouped/Scheduler": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/PIDController[1]": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/PIDController[2]": {
         "window": {
           "visible": true
         }
@@ -36,7 +56,10 @@
     }
   },
   "NetworkTables": {
-    "CommandoDash": {
+    "photonvision": {
+      "CargoHound": {
+        "open": true
+      },
       "open": true
     }
   },
@@ -49,7 +72,7 @@
               "autoFit": true
             }
           ],
-          "height": 338,
+          "height": 400,
           "series": [
             {
               "color": [
