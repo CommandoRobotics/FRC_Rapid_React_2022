@@ -72,9 +72,9 @@ public class RobotContainer {
   private void configureButtonBindings() {
     new DashTrigger(commandoDashNT.getEntry("testData"), true)
       .whileActiveOnce(new HoundCargo(intakeSubsystem, driveSubsystem,
-      () -> driverController.getLeftY(),
-      () -> -driverController.getLeftX(), 
-      () -> -driverController.getRightX()));
+                                      () -> driverController.getLeftY(),
+                                      () -> -driverController.getLeftX(), 
+                                      () -> -driverController.getRightX()));
   }
 
   /**

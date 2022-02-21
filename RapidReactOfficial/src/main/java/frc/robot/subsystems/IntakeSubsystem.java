@@ -1,9 +1,14 @@
 package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.Constants.ConstantsField;
 import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
+import frc.robot.commands.HoundCargo;
 
+import javax.lang.model.element.ModuleElement.DirectiveKind;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -13,8 +18,10 @@ import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -32,6 +39,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     //Constants
     boolean on = true;
+    Alliance previousAlliance = Alliance.Blue;
 
     public IntakeSubsystem() {
         intake = new CANSparkMax(ConstantsPorts.intakeID, MotorType.kBrushless);
@@ -166,8 +174,19 @@ public class IntakeSubsystem extends SubsystemBase {
         }
     }
 
+
     @Override
     public void periodic() {
         //Display pose2d of the ball to the dash
+        
+        //Update the pipeline of the CargoHound
+        if (previousAlliance != DriverStation.getAlliance()) {
+            if (DriverStation.getAlliance() == Alliance.Red) {
+                setHoundPipeline(1);
+            } else {
+                setHoundPipeline(0);
+            }
+            previousAlliance = DriverStation.getAlliance();
+        }
     }
 }
