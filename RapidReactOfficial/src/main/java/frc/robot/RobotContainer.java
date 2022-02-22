@@ -75,6 +75,12 @@ public class RobotContainer {
                                       () -> driverController.getLeftY(),
                                       () -> -driverController.getLeftX(), 
                                       () -> -driverController.getRightX()));
+
+    new JoystickButton(driverController, XboxController.Button.kB.value)
+      .whileActiveOnce(new HoundCargo(intakeSubsystem, driveSubsystem,
+                                        () -> driverController.getLeftY(),
+                                        () -> -driverController.getLeftX(), 
+                                        () -> -driverController.getRightX()));
   }
 
   /**
