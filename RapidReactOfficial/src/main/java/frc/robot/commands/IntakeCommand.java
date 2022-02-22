@@ -8,41 +8,30 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ConstantsValues;
 import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
 
-public class ExpelAll extends CommandBase {
+public class IntakeCommand extends CommandBase {
 
   IntakeSubsystem intakeSubsystem;
   IndexSubsystem indexSubsystem;
-  ShooterSubsystem shooterSubsystem;
 
-  /** Creates a new ExpelAll. */
-  public ExpelAll(IntakeSubsystem intakeSubsystem, IndexSubsystem indexSubsystem, ShooterSubsystem shooterSubsystem) {
+  /** Creates a new IntakeCommand. */
+  public IntakeCommand(IntakeSubsystem intakeSubsystem, IndexSubsystem indexSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
     this.indexSubsystem = indexSubsystem;
-    this.shooterSubsystem = shooterSubsystem;
     addRequirements(intakeSubsystem);
     addRequirements(indexSubsystem);
-    addRequirements(shooterSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intakeSubsystem.intakeOut();
-    indexSubsystem.setVertical(ConstantsValues.verticalExpelSpeed);
-    indexSubsystem.setRamp(ConstantsValues.rampExpelSpeed);
-    indexSubsystem.setTransfer(ConstantsValues.transferExpelSpeed);
-    shooterSubsystem.setTopVoltage(ConstantsValues.topFlywheelExpelVolts);
-    shooterSubsystem.setBottomVoltage(ConstantsValues.bottomFlywheelExpelVolts);
-    shooterSubsystem.setKickwheelVoltage(ConstantsValues.kickwheelExpelVolts);
-
+    intakeSubsystem.setPower(ConstantsValues.intakePower);
+    indexSubsystem.setRamp(ConstantsValues.rampIntakeSpeed);
+    indexSubsystem.setTransfer(ConstantsValues.transferIntakeSpeed);
   }
 
   // Called once the command ends or is interrupted.
@@ -50,7 +39,6 @@ public class ExpelAll extends CommandBase {
   public void end(boolean interrupted) {
     intakeSubsystem.stop();
     indexSubsystem.stopAll();
-    shooterSubsystem.stopAll();
   }
 
   // Returns true when the command should end.

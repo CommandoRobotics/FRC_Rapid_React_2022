@@ -177,9 +177,12 @@ public class ConstantsValues {
     public static final double verticalVelocityConversionFactor = 1;
     public static final double shooterBlockTime = 500;
     public static final double indexSensorThreshold = 1000;
-    public static final double verticalExpelPower = 0;
-    public static final double rampExpelPower = 0;
-    public static final double transferExpelPower = 0;
+
+    public static final double transferIntakeSpeed = 0.5;
+    public static final double rampIntakeSpeed = 0.3;
+    public static final double verticalExpelSpeed = 0;
+    public static final double rampExpelSpeed = 0;
+    public static final double transferExpelSpeed = 0;
 
 
 }

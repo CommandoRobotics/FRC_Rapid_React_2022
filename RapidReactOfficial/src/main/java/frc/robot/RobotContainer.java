@@ -22,7 +22,9 @@ import frc.robot.commands.AimDrivetrainUsingVisionCommand;
 import frc.robot.Triggers.DashTrigger;
 import frc.robot.commands.DriveFieldCentric;
 import frc.robot.commands.DriveNotFieldCentric;
+import frc.robot.commands.DriveWithFieldCentricToggle;
 import frc.robot.commands.ExpelAll;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -64,7 +66,7 @@ public class RobotContainer {
     
     // Set any default commands
     // Driver sticks: drive
-    driveSubsystem.setDefaultCommand(new DriveFieldCentric(driveSubsystem, 
+    driveSubsystem.setDefaultCommand(new DriveWithFieldCentricToggle(driveSubsystem, 
     () -> driverController.getLeftY(),
     () -> -driverController.getLeftX(), 
     () -> -driverController.getRightX()));
@@ -86,7 +88,7 @@ public class RobotContainer {
 
     // Right trigger - Intake
     new Trigger(() -> driverController.getRightTriggerAxis() > 0.5)
-    .whileActiveContinuous(intakeSubsystem::intakeIn);
+    .whileActiveOnce(new IntakeCommand(intakeSubsystem, indexSubsystem));
 
     // Left trigger - Eject
     new Trigger(() -> driverController.getLeftTriggerAxis() > 0.5)
@@ -111,6 +113,14 @@ public class RobotContainer {
     // Back button - Expell all
     new JoystickButton(driverController, XboxController.Button.kBack.value)
     .whileActiveOnce(new ExpelAll(intakeSubsystem, indexSubsystem, shooterSubsystem));
+
+    // Start - Reset field centric driving
+    new JoystickButton(driverController, XboxController.Button.kStart.value)
+    .whenActive(driveSubsystem::resetGyro);
+
+    // D-pad up - Toggle between field-centric and non field-centric drive
+    new Trigger(() -> driverController.getPOV() == 0)
+      .whenActive(driveSubsystem::toggleFieldCentric);
 
     /*
       OPERATOR CONTROLLER

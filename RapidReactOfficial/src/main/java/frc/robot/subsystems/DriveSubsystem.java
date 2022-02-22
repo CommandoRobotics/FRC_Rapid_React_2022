@@ -44,6 +44,7 @@ public class DriveSubsystem extends SubsystemBase {
   MecanumDrive drive;
   MecanumDriveOdometry odometry;
   Field2d field;
+  boolean isFieldCentricEnabled = true;
 
   public DriveSubsystem() {
 
@@ -116,6 +117,29 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Add our field to the smart dash
     SmartDashboard.putData("Field", field);
+  }
+
+  /**
+   * Toggle the field centric variable
+   */
+  public void toggleFieldCentric() {
+    isFieldCentricEnabled = !isFieldCentricEnabled;
+  }
+
+  /**
+   * Get whether the toggle for field centric driving during teleop is enabled
+   * @return
+   */
+  public boolean isFieldCentricToggleEnabled() {
+    return isFieldCentricEnabled;
+  }
+
+  /**
+   * Set the value of the field centric toggle variable
+   * @param value
+   */
+  public void setFieldCentricToggle(boolean value) {
+    isFieldCentricEnabled = value;
   }
 
   /**
