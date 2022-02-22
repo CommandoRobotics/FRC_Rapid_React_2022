@@ -18,8 +18,8 @@ public class ClimberSubsystem extends SubsystemBase {
   Solenoid midClimb, traversalClimb;
   CANSparkMax leftWinch, rightWinch;
   
-  DigitalInput toplimitSwitch = new DigitalInput(0);
-  DigitalInput bottomlimitSwitch = new DigitalInput(1);
+  DigitalInput toplimitSwitch = new DigitalInput(ConstantsPorts.topLimitSwitchPort);
+  DigitalInput bottomlimitSwitch = new DigitalInput(ConstantsPorts.bottomLimitSwitchPort);
   
   //TODO add Limit Switches
 
