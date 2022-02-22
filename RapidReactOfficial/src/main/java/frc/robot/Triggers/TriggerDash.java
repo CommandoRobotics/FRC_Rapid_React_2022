@@ -5,7 +5,7 @@ import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-public class DashTrigger extends Trigger {
+public class TriggerDash extends Trigger {
 
     NetworkTableEntry ntEntry;
     NetworkTableType ntType;
@@ -21,7 +21,7 @@ public class DashTrigger extends Trigger {
      * is changed in any form. This only activates once, and will not "stay" on.
      * @param entryToWatch
      */
-    public DashTrigger(NetworkTableEntry entryToWatch) {
+    public TriggerDash(NetworkTableEntry entryToWatch) {
         super();
         ntEntry = entryToWatch;
         previousValue = ntEntry.getValue();
@@ -35,7 +35,7 @@ public class DashTrigger extends Trigger {
      * @param entryToWatch
      * @param activateCondition
      */
-    public DashTrigger(NetworkTableEntry entryToWatch, boolean activateCondition) {
+    public TriggerDash(NetworkTableEntry entryToWatch, boolean activateCondition) {
         super();
         ntEntry = entryToWatch;
         this.activateCondition = activateCondition;
@@ -50,7 +50,7 @@ public class DashTrigger extends Trigger {
      * @param entryToWatch
      * @param activateNumber
      */
-    public DashTrigger(NetworkTableEntry entryToWatch, double activateNumber) {
+    public TriggerDash(NetworkTableEntry entryToWatch, double activateNumber) {
         super();
         ntEntry = entryToWatch;
         this.activateNumber = activateNumber;
@@ -65,7 +65,7 @@ public class DashTrigger extends Trigger {
      * @param entryToWatch
      * @param activateString
      */
-    public DashTrigger(NetworkTableEntry entryToWatch, String activateString) {
+    public TriggerDash(NetworkTableEntry entryToWatch, String activateString) {
         super();
         ntEntry = entryToWatch;
         this.activateString = activateString;

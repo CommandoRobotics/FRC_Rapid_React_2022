@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import java.time.Instant;
-
-import com.revrobotics.REVPhysicsSim;
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -18,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Triggers.DashTrigger;
+import frc.robot.Triggers.TriggerDash;
 import frc.robot.commands.DriveFieldCentric;
 import frc.robot.commands.DriveNotFieldCentric;
 import frc.robot.commands.SetIntake;
