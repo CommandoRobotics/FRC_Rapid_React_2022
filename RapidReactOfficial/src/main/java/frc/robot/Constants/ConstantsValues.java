@@ -115,6 +115,9 @@ public class ConstantsValues {
     // Limelight values
     public static final double limelightMountingAngle = 17; // The angle at which the Limelight is mounted above the horizon in degrees.
 
+    public static final double topFlywheelExpelVolts = 0;
+    public static final double bottomFlywheelExpelVolts = 0;
+    public static final double kickwheelExpelVolts = 0;
 
     /*
     Methods for adding values to vector treemap
@@ -163,6 +166,8 @@ public class ConstantsValues {
 
     public static final double panPidDeadzone = 0.05;
     public static final double panPidMaxOutput = 0.5;
+
+    public static final double manualPanDeadband = 0.05;
     /**
      * INDEX
      */
@@ -172,6 +177,9 @@ public class ConstantsValues {
     public static final double verticalVelocityConversionFactor = 1;
     public static final double shooterBlockTime = 500;
     public static final double indexSensorThreshold = 1000;
+    public static final double verticalExpelPower = 0;
+    public static final double rampExpelPower = 0;
+    public static final double transferExpelPower = 0;
 
 
 }

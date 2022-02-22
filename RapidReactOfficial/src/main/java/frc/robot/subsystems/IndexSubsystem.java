@@ -62,9 +62,19 @@ public class IndexSubsystem extends SubsystemBase {
     rampSensor = new AnalogInput(ConstantsPorts.rampIndexSensorPort);
     entranceSensor = new AnalogInput(ConstantsPorts.indexEntranceSensorPort);
 
+    // Set the index sensors initial state based on whether a ball is present
     verticalSensorTriggeredPrevious = isVerticalSensorTriggered();
     rampSensorTriggeredPrevious = isRampSensorTriggered();
     entranceSensorTriggeredPrevious = isEntranceSensorTriggered();
+    if(verticalSensorTriggeredPrevious) {
+      blocks[verticalSensorBlock] = 1;
+    }
+    if(rampSensorTriggeredPrevious) {
+      blocks[rampSensorBlock] = 1;
+    }
+    if(entranceSensorTriggeredPrevious) {
+      blocks[entranceSensorBlock] = 1;
+    }
 
     previousBlockUpdateTimeMillis = System.currentTimeMillis();
 
