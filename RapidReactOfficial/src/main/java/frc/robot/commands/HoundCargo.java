@@ -33,7 +33,7 @@ public class HoundCargo extends CommandBase {
   NetworkTableInstance ntInst;
   NetworkTable houndTable;
 
-  /** Creates a new HoundCargo. */
+  /** Creates a new HoundCargo. THIS COMMAND MUST BE INTERUPTED TO STOP */
   public HoundCargo(IntakeSubsystem intakeSubsystem, DriveSubsystem driveSubsystem, 
     DoubleSupplier y, DoubleSupplier x, DoubleSupplier rotation) {
     this.intakeSubsystem = intakeSubsystem;
@@ -62,15 +62,16 @@ public class HoundCargo extends CommandBase {
     SmartDashboard.putData(yPID);
     SmartDashboard.putData(rotationPID);
 
-    //Photon NT networking to use with an at-home simulation
-    ntInst = NetworkTableInstance.getDefault();
-    if (Robot.isSimulation()) {
-    ntInst.stopServer();
-    ntInst.stopClient();
-    ntInst.stopDSClient();
-    ntInst.setServer("10.58.89.12");
-    ntInst.startClient();
-    }
+    // //Photon NT networking to use with an at-home simulation
+    // ntInst = NetworkTableInstance.getDefault();
+    // if (Robot.isSimulation()) {
+    // ntInst.stopServer();
+    // ntInst.stopClient();
+    // ntInst.stopDSClient();
+    // ntInst.setServer("10.58.89.12");
+    // ntInst.startClient();
+    // }
+
     houndTable = ntInst.getTable("photonvision").getSubTable("CargoHound");
 
     addRequirements(intakeSubsystem, driveSubsystem);
@@ -89,6 +90,7 @@ public class HoundCargo extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    //Get the current data from the CargoHound
     PhotonPipelineResult houndResult = intakeSubsystem.getHoundData();
     
     //Check if there are targets
@@ -112,7 +114,7 @@ public class HoundCargo extends CommandBase {
       noCargoTimer.reset();
       noCargoTimer.start();
     } else if ((noCargoTimer.get() <= ConstantsValues.noCargoTime) && (previousResult != null) && previousResult.hasTargets()) {
-      //If we've seen a ball before within the alloted time, use a previous input to continue following the ball
+      //If we've seen a ball within the alloted time, but don't see one now, use a previous input to continue following the ball
       driveSubsystem.driveMecanum(
         IntakeSubsystem.scaleAroundZero(
           //TODO Not sure if this needs to be negative or not

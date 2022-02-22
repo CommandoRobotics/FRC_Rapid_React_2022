@@ -116,22 +116,37 @@ public class IntakeSubsystem extends SubsystemBase {
 
     //CargoHound
 
+    /**
+     * Retrieves the latest data from the CargoHound PhotonVisionCamera
+     * @return the lastest result as a PhotonPipelineResult
+     */
     public PhotonPipelineResult getHoundData() {
         return CargoHound.getLatestResult();
     }
 
+    /**
+     * Toggles "DriverMode" of the CargoHound. Driver Mode disables vision
+     * processing and changes the camera settings and stream resolution for 
+     * using CargoHound as a driver camera.
+     */
     public void toggleDriverModeCargoHound() {
         CargoHound.setDriverMode(!CargoHound.getDriverMode());
     }
 
+    /**
+     * Sets the pipeline of the CargoHound. Currently, 0 is Blue and 1 is Red
+     * @param pipeline index of the desired pipeline
+     */
     public void setHoundPipeline(int pipeline) {
         CargoHound.setPipelineIndex(pipeline);
     }
 
     /**
-     * Returns -1 if no targets found
+     * Uses PhotonUtil and known constants to find the distance to a given target. 
+     * Gets data about the target through a PhotonPipelineResult.<p>
+     * </p>Returns -1 if no targets found.
      * @param result
-     * @return
+     * @return the distance to the target or -1 if there are no targets
      */
     public double getDistanceToCargo(PhotonPipelineResult result) {
         if (result.hasTargets()) {
@@ -149,12 +164,11 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     /**
-     * Takes an input and determines if that inputs is less than the minimum output. 
+     * Takes an input and determines if the input is less than the minimum output. 
      * This is applied to both + and - numbers. For example, a min of 0.1 will scale everything
      * below 0.1 and above -0.1 to 0.1 and -0.1 respectively
      * @param input
      * @param minOutput
-     * @return
      */
     public static double scaleAroundZero(double input, double minOutput) {
         if (input < 0) {
@@ -179,7 +193,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public void periodic() {
         //Display pose2d of the ball to the dash
         
-        //Update the pipeline of the CargoHound
+        //Update the pipeline of the CargoHound. Default is Blue
         if (previousAlliance != DriverStation.getAlliance()) {
             if (DriverStation.getAlliance() == Alliance.Red) {
                 setHoundPipeline(1);
