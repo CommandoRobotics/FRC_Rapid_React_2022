@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ConstantsValues;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class FollowTrajectory extends CommandBase {
+public class FollowTrajectoryCommand extends CommandBase {
 
   private final Timer m_timer = new Timer();
   private final PathPlannerTrajectory m_trajectory;
@@ -62,7 +62,7 @@ public class FollowTrajectory extends CommandBase {
    * @param trajectory the PathPlanner trajectory to follow
    * @param driveSubsystem the driveSubsystem to use/require
    */
-  public FollowTrajectory(PathPlannerTrajectory trajectory, DriveSubsystem driveSubsystem) {
+  public FollowTrajectoryCommand(PathPlannerTrajectory trajectory, DriveSubsystem driveSubsystem) {
     PIDController xController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
     PIDController yController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
     ProfiledPIDController rProfiledPIDController =
@@ -113,7 +113,7 @@ public class FollowTrajectory extends CommandBase {
    * @param desiredRotation a supplier that will supply the desired rotation while trajectory following
    * @param driveSubsystem the driveSubsystem to use/require
    */
-  public FollowTrajectory(PathPlannerTrajectory trajectory, Supplier<Rotation2d> desiredRotation,
+  public FollowTrajectoryCommand(PathPlannerTrajectory trajectory, Supplier<Rotation2d> desiredRotation,
   DriveSubsystem driveSubsystem) {
       PIDController xController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
       PIDController yController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
@@ -169,7 +169,7 @@ public class FollowTrajectory extends CommandBase {
    * @param outputWheelSpeeds whether or not to output WheelSpeeds in m/s instead of PIDF calculated voltages
    * @param driveSubsystem the driveSubsystem to use/require
    */
-  public FollowTrajectory(PathPlannerTrajectory trajectory, Supplier<Rotation2d> desiredRotation,
+  public FollowTrajectoryCommand(PathPlannerTrajectory trajectory, Supplier<Rotation2d> desiredRotation,
     boolean outputWheelSpeeds, DriveSubsystem driveSubsystem) {
     PIDController xController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
     PIDController yController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
@@ -235,7 +235,7 @@ public class FollowTrajectory extends CommandBase {
    * @param outputWheelSpeeds whether or not to output WheelSpeeds in m/s instead of PIDF calculated voltages
    * @param driveSubsystem the driveSubsystem to use/require
    */
-  public FollowTrajectory(PathPlannerTrajectory trajectory, boolean outputWheelSpeeds,
+  public FollowTrajectoryCommand(PathPlannerTrajectory trajectory, boolean outputWheelSpeeds,
   DriveSubsystem driveSubsystem) {
       PIDController xController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
       PIDController yController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);

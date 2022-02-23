@@ -9,13 +9,13 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class DriveNotFieldCentric extends CommandBase {
+public class DriveNotFieldCentricCommand extends CommandBase {
 
   DriveSubsystem driveSubsystem;
   DoubleSupplier y, x, rotation;
 
   /** Creates a new DriveNotFieldCentric. */
-  public DriveNotFieldCentric(DriveSubsystem driveSubsystem, DoubleSupplier y, DoubleSupplier x, DoubleSupplier rotation) {
+  public DriveNotFieldCentricCommand(DriveSubsystem driveSubsystem, DoubleSupplier y, DoubleSupplier x, DoubleSupplier rotation) {
     this.driveSubsystem = driveSubsystem;
     this.y = y;
     this.x = x;

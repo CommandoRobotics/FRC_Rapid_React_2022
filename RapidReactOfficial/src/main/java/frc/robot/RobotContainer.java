@@ -15,10 +15,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Triggers.TriggerDash;
 import frc.robot.commands.AimDrivetrainUsingVisionCommand;
-import frc.robot.commands.DriveFieldCentric;
-import frc.robot.commands.DriveNotFieldCentric;
-import frc.robot.commands.DriveWithFieldCentricToggle;
-import frc.robot.commands.ExpelAll;
+import frc.robot.commands.DriveFieldCentricCommand;
+import frc.robot.commands.DriveNotFieldCentricCommand;
+import frc.robot.commands.DriveWithFieldCentricToggleCommand;
+import frc.robot.commands.ExpelAllCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.RevShooterAtAutoVelocityCommand;
 import frc.robot.commands.RevShooterAtManualVelocityCommand;
@@ -63,7 +63,7 @@ public class RobotContainer {
     
     // Set any default commands
     // Driver sticks: drive
-    driveSubsystem.setDefaultCommand(new DriveWithFieldCentricToggle(driveSubsystem, 
+    driveSubsystem.setDefaultCommand(new DriveWithFieldCentricToggleCommand(driveSubsystem, 
     () -> driverController.getLeftY(),
     () -> -driverController.getLeftX(), 
     () -> -driverController.getRightX()));
@@ -109,7 +109,7 @@ public class RobotContainer {
 
     // Back button - Expell all
     new JoystickButton(driverController, XboxController.Button.kBack.value)
-    .whileActiveOnce(new ExpelAll(intakeSubsystem, indexSubsystem, shooterSubsystem));
+    .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
 
     // Start - Reset field centric driving
     new JoystickButton(driverController, XboxController.Button.kStart.value)

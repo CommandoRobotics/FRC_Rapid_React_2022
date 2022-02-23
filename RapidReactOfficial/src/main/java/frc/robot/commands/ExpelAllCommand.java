@@ -10,14 +10,14 @@ import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class ExpelAll extends CommandBase {
+public class ExpelAllCommand extends CommandBase {
 
   IntakeSubsystem intakeSubsystem;
   IndexSubsystem indexSubsystem;
   ShooterSubsystem shooterSubsystem;
 
   /** Creates a new ExpelAll. */
-  public ExpelAll(IntakeSubsystem intakeSubsystem, IndexSubsystem indexSubsystem, ShooterSubsystem shooterSubsystem) {
+  public ExpelAllCommand(IntakeSubsystem intakeSubsystem, IndexSubsystem indexSubsystem, ShooterSubsystem shooterSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
     this.indexSubsystem = indexSubsystem;
     this.shooterSubsystem = shooterSubsystem;
