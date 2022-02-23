@@ -67,42 +67,18 @@ public class ConstantsValues {
      * SHOOTER
      */
     //TODO tune shooter PID values
-    public static final double topFlywheelP = 0;
-    public static final double topFlywheelI = 0;
-    public static final double topFlywheelD = 0;
-    public static final double topFlywheelIZone = 0;
-    public static final double topFlywheelFF = 0;
-    public static final double topFlywheelMinOutput = -1;
-    public static final double topFlywheelMaxOutput = 1;
-
-    public static final double bottomFlywheelP = 0;
-    public static final double bottomFlywheelI = 0;
-    public static final double bottomFlywheelD = 0;
-    public static final double bottomFlywheelIZone = 0;
-    public static final double bottomFlywheelFF = 0;
-    public static final double bottomFlywheelMinOutput = -1;
-    public static final double bottomFlywheelMaxOutput = 1;
-
-    public static final double kickwheelP = 0;
-    public static final double kickwheelI = 0;
-    public static final double kickwheelD = 0;
-    public static final double kickwheelIZone = 0;
-    public static final double kickwheelFF = 0;
-    public static final double kickwheelMinOutput = -1;
-    public static final double kickwheelMaxOutput = 1;
+    public static final double flywheelP = 0;
+    public static final double flywheelI = 0;
+    public static final double flywheelD = 0;
+    public static final double flywheelIZone = 0;
+    public static final double flywheelFF = 0;
+    public static final double flywheelMinOutput = -1;
+    public static final double flywheelMaxOutput = 1;
 
     // Shooter feedforward values
-    public static final double topFlywheelKs = 0;
-    public static final double topFlywheelKv = 0;
-    public static final double topFlywheelKa = 0;
-
-    public static final double bottomFlywheelKs = 0;
-    public static final double bottomFlywheelKv = 0;
-    public static final double bottomFlywheelKa = 0;
-    
-    public static final double kickwheelKs = 0;
-    public static final double kickwheelKv = 0;
-    public static final double kickwheelKa = 0;
+    public static final double flywheelKs = 0;
+    public static final double flywheelKv = 0;
+    public static final double flywheelKa = 0;
 
     // Vector tree map
     public static final TreeMap<Range, Vector> vectorMap = new TreeMap<Range, Vector>();
@@ -115,9 +91,7 @@ public class ConstantsValues {
     // Limelight values
     public static final double limelightMountingAngle = 17; // The angle at which the Limelight is mounted above the horizon in degrees.
 
-    public static final double topFlywheelExpelVolts = 0;
-    public static final double bottomFlywheelExpelVolts = 0;
-    public static final double kickwheelExpelVolts = 0;
+    public static final double flywheelExpelVolts = 0.2;
 
     /*
     Methods for adding values to vector treemap

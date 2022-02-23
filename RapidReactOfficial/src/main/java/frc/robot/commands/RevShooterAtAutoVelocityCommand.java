@@ -30,7 +30,7 @@ public class RevShooterAtAutoVelocityCommand extends CommandBase {
   @Override
   public void execute() {
     shooterSubsystem.enableLimelightLed();
-    shooterSubsystem.setBottomTargetRpm(
+    shooterSubsystem.setFlywheelTargetRpm(
       shooterSubsystem.calculateIdealLaunchVector().velocity
     );
   }
@@ -39,7 +39,7 @@ public class RevShooterAtAutoVelocityCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     shooterSubsystem.disableLimelightLed();
-    shooterSubsystem.stopAll();
+    shooterSubsystem.stop();
   }
 
   // Returns true when the command should end.

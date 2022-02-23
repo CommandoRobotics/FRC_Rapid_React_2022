@@ -39,97 +39,60 @@ public class ShooterSubsystem extends SubsystemBase {
   private final int SNAPSHOT_MODE_ENABLED = 1;
 
   // Motor controllers
-  CANSparkMax bottomLeader, bottomFollowerOne, bottomFollowerTwo, top, kickwheel;
+  CANSparkMax flywheelLeader, flywheelFollower;
 
   // Encoders
-  RelativeEncoder bottomEncoder, topEncoder, kickwheelEncoder;
+  RelativeEncoder flywheelEncoder;
 
   // Limelight
   NetworkTable limelight;
 
   // PID Controllers
-  SparkMaxPIDController bottomPid, topPid, kickwheelPid;
+  SparkMaxPIDController flywheelPid;
 
   // Feedforward
-  SimpleMotorFeedforward topFF, bottomFF, kickwheelFF;
+  SimpleMotorFeedforward flywheelFF;
 
-  double previousBottomP = ConstantsValues.bottomFlywheelP;
-  double previousTopP = ConstantsValues.topFlywheelP;
-  double previousKickwheelP = ConstantsValues.kickwheelP;
+  double previousFlywheelP = ConstantsValues.flywheelP;
 
   double currentManualVelocity = 0;
 
   public ShooterSubsystem() {
     // Instantiate the shooter motor controllers
-    bottomLeader = new CANSparkMax(ConstantsPorts.bottomLeaderPort, MotorType.kBrushless);
-    bottomFollowerOne = new CANSparkMax(ConstantsPorts.bottomFollowerOnePort, MotorType.kBrushless);
-    bottomFollowerTwo = new CANSparkMax(ConstantsPorts.bottomFollowerTwoPort, MotorType.kBrushless);
-    top = new CANSparkMax(ConstantsPorts.topPort, MotorType.kBrushless);
-    kickwheel = new CANSparkMax(ConstantsPorts.kickwheelPort, MotorType.kBrushless);
-
+    flywheelLeader = new CANSparkMax(ConstantsPorts.flywheelLeaderPort, MotorType.kBrushless);
+    flywheelFollower = new CANSparkMax(ConstantsPorts.flywheelFollowerPort, MotorType.kBrushless);
 
     // Reset the sparks
-    bottomLeader.restoreFactoryDefaults();
-    bottomFollowerOne.restoreFactoryDefaults();
-    bottomFollowerTwo.restoreFactoryDefaults();
-    top.restoreFactoryDefaults();
-    kickwheel.restoreFactoryDefaults();
+    flywheelLeader.restoreFactoryDefaults();
+    flywheelFollower.restoreFactoryDefaults();
 
     // Set the motor controllers to coast mode
-    bottomLeader.setIdleMode(IdleMode.kCoast);
-    bottomFollowerOne.setIdleMode(IdleMode.kCoast);
-    bottomFollowerTwo.setIdleMode(IdleMode.kCoast);
-    top.setIdleMode(IdleMode.kCoast);
-    kickwheel.setIdleMode(IdleMode.kCoast);
+    flywheelLeader.setIdleMode(IdleMode.kCoast);
+    flywheelFollower.setIdleMode(IdleMode.kCoast);
 
     // Set motor controller inversions
     //TODO set the proper motor inversions
-    bottomLeader.setInverted(false);
-    // Other bottom flywheel inversions are set in the section below
-    top.setInverted(false);
-    kickwheel.setInverted(false);
-
-    // Set all bottom flywheel motor controllers to follow the main.
-    // The boolean value represents whether the motor controller that is following
-    // should be inverted relative to the main motor controller.
-    bottomFollowerOne.follow(bottomLeader, false);
-    bottomFollowerTwo.follow(bottomLeader, false);
+    flywheelLeader.setInverted(false);
+    // Other flywheel inversions are set in the section below
+    flywheelFollower.follow(flywheelLeader, false);
 
     // Instantiate the encoders
-    bottomEncoder = bottomLeader.getEncoder();
-    topEncoder = top.getEncoder();
-    kickwheelEncoder = kickwheel.getEncoder();
+    flywheelEncoder = flywheelLeader.getEncoder();
 
     // Instantiate the PID controllers
-    bottomPid = bottomLeader.getPIDController();
-    topPid = top.getPIDController();
-    kickwheelPid = kickwheel.getPIDController();
+    flywheelPid = flywheelLeader.getPIDController();
 
     // Set PID controller values
-    bottomPid.setP(ConstantsValues.bottomFlywheelP);
-    bottomPid.setI(ConstantsValues.bottomFlywheelI);
-    bottomPid.setD(ConstantsValues.bottomFlywheelD);
-    bottomPid.setIZone(ConstantsValues.bottomFlywheelIZone);
-    bottomPid.setFF(ConstantsValues.bottomFlywheelFF);
-    bottomPid.setOutputRange(ConstantsValues.bottomFlywheelMinOutput, ConstantsValues.bottomFlywheelMaxOutput);
-    topPid.setP(ConstantsValues.topFlywheelP);
-    topPid.setI(ConstantsValues.topFlywheelI);
-    topPid.setD(ConstantsValues.topFlywheelD);
-    topPid.setIZone(ConstantsValues.topFlywheelIZone);
-    topPid.setFF(ConstantsValues.topFlywheelFF);
-    topPid.setOutputRange(ConstantsValues.topFlywheelMinOutput, ConstantsValues.topFlywheelMaxOutput);
-    kickwheelPid.setP(ConstantsValues.kickwheelP);
-    kickwheelPid.setI(ConstantsValues.kickwheelI);
-    kickwheelPid.setD(ConstantsValues.kickwheelD);
-    kickwheelPid.setIZone(ConstantsValues.kickwheelIZone);
-    kickwheelPid.setFF(ConstantsValues.kickwheelFF);
-    kickwheelPid.setOutputRange(ConstantsValues.kickwheelMinOutput, ConstantsValues.kickwheelMaxOutput);
+    flywheelPid.setP(ConstantsValues.flywheelP);
+    flywheelPid.setI(ConstantsValues.flywheelI);
+    flywheelPid.setD(ConstantsValues.flywheelD);
+    flywheelPid.setIZone(ConstantsValues.flywheelIZone);
+    flywheelPid.setFF(ConstantsValues.flywheelFF);
+    flywheelPid.setOutputRange(ConstantsValues.flywheelMinOutput, ConstantsValues.flywheelMaxOutput);
 
     // Instantiate motor feedforwards
-    bottomFF = new SimpleMotorFeedforward(ConstantsValues.bottomFlywheelKs, ConstantsValues.bottomFlywheelKv, ConstantsValues.bottomFlywheelKa);
-    topFF = new SimpleMotorFeedforward(ConstantsValues.topFlywheelKs, ConstantsValues.topFlywheelKv, ConstantsValues.topFlywheelKa);
-    kickwheelFF = new SimpleMotorFeedforward(ConstantsValues.kickwheelKs, ConstantsValues.kickwheelKv, ConstantsValues.kickwheelKa);
-
+    flywheelFF = new SimpleMotorFeedforward(ConstantsValues.flywheelKs, ConstantsValues.flywheelKv, ConstantsValues.flywheelKa);
+    
     // Instantiate the limelight
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
 
@@ -144,11 +107,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Add motors to the simulation
     if(Robot.isSimulation()) {
-      REVPhysicsSim.getInstance().addSparkMax(bottomLeader, DCMotor.getNEO(1));
-      REVPhysicsSim.getInstance().addSparkMax(bottomFollowerOne, DCMotor.getNEO(1));
-      REVPhysicsSim.getInstance().addSparkMax(kickwheel, DCMotor.getNEO(1));
-      REVPhysicsSim.getInstance().addSparkMax(top, DCMotor.getNEO(1));
-      REVPhysicsSim.getInstance().addSparkMax(kickwheel, DCMotor.getNEO(1));
+      REVPhysicsSim.getInstance().addSparkMax(flywheelLeader, DCMotor.getNEO(1));
+      REVPhysicsSim.getInstance().addSparkMax(flywheelFollower, DCMotor.getNEO(1));
     }
   }
 
@@ -280,197 +240,57 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   /**
-   * Set the voltage of the bottom flywheel
+   * Set the voltage of the flywheel
    * @param volts 
    */
-  public void setBottomVoltage(double volts) {
-    bottomLeader.setVoltage(volts);
+  public void setFlywheelVoltage(double volts) {
+    flywheelLeader.setVoltage(volts);
   }
 
   /**
-   * Set the voltage of the top flywheel
-   * @param volts
-   */
-  public void setTopVoltage(double volts) {
-    top.setVoltage(volts);
-  }
-
-  /**
-   * Set the voltage of the kickwheel
-   * @param volts
-   */
-  public void setKickwheelVoltage(double volts) {
-    kickwheel.setVoltage(volts);
-  }
-
-  /**
-   * Set the RPM of the bottom flywheel
+   * Set the RPM of the  flywheel
    * @param target The target RPM of the flywheel.
    */
-  public void setBottomTargetRpm(double targetRPM) {
-    bottomPid.setReference(
+  public void setFlywheelTargetRpm(double targetRPM) {
+    flywheelPid.setReference(
       targetRPM, 
       ControlType.kVelocity, 
       0, 
-      bottomFF.calculate(targetRPM), 
+      flywheelFF.calculate(targetRPM), 
       ArbFFUnits.kVoltage);
-    SmartDashboard.putNumber("bottomFlywheelFF", bottomFF.calculate(targetRPM));
-  }
-
-  /**
-   * Set the RPM of the top flywheel
-   * @param target The target RPM of the top flywheel
-   */
-  public void setTopTargetRPM(double targetRPM) {
-    topPid.setReference(
-      targetRPM, 
-      ControlType.kVelocity, 
-      0, 
-      topFF.calculate(targetRPM), 
-      ArbFFUnits.kVoltage);
-    SmartDashboard.putNumber("topFlywheelFF", topFF.calculate(targetRPM));
-  }
-
-  /**
-   * Set the RPM of the kickwheel
-   * @param target The target RPM of the kickwheel
-   */
-  public void setKickwheelTargetRpm(double targetRPM) {
-    kickwheelPid.setReference(
-      targetRPM, 
-      ControlType.kVelocity, 
-      0, 
-      kickwheelFF.calculate(targetRPM), 
-      ArbFFUnits.kVoltage);
-    SmartDashboard.putNumber("kickwheelFF", kickwheelFF.calculate(targetRPM));
+    SmartDashboard.putNumber("bottomFlywheelFF", flywheelFF.calculate(targetRPM));
   }
 
   /**
    * Stop the bottom flywheel
    */
-  public void stopBottom() {
-    bottomLeader.set(0);
-  }
-
-  /**
-   * Stop the top flywheel
-   */
-  public void stopTop() {
-    top.set(0);
-  }
-
-  /**
-   * Stop the kickwheel
-   */
-  public void stopKickwheel() {
-    kickwheel.set(0);
-  }
-
-  /**
-   * Stop both the top and bottom flywheels
-   */
-  public void stopBothFlywheels() {
-    bottomLeader.set(0);
-    top.set(0);
-  }
-
-  /**
-   * Stop all wheels, including the bottom flywheel, the top flywheel, and the kickwheel
-   */
-  public void stopAll() {
-    bottomLeader.set(0);
-    top.set(0);
-    kickwheel.set(0);
+  public void stop() {
+    flywheelLeader.set(0);
   }
   
   //TODO add correct units to the below method descriptions
   /**
-   * Get the position of the bottom flywheel
-   * @return The position of the bottom flywheel
+   * Get the position of the flywheel
+   * @return The position of the flywheel
    */
-  public double getBottomPosition() {
-    return bottomEncoder.getPosition();
+  public double getFlywheelPosition() {
+    return flywheelEncoder.getPosition();
   }
 
   /**
-   * Get the position of the top flywheel
-   * @return The position of the top flywheel
+   * Get the velocity of the flywheel in RPM
+   * @return The velocity of the flywheel in RPM
    */
-  public double getTopPosition() {
-    return topEncoder.getPosition();
+  public double getFlywheelVelocity() {
+    return flywheelEncoder.getVelocity();
   }
 
   /**
-   * Get the position of the kickwheel
-   * @return The position of the kickwheen
+   * Reset the encoder of the flywheel
    */
-  public double getKickwheelPosition() {
-    return kickwheelEncoder.getPosition();
+  public void resetFlywheelEncoder() {
+    flywheelEncoder.setPosition(0);
   }
-
-  /**
-   * Get the velocity of the bottom flywheel in RPM
-   * @return The velocity of the bottom flywheel in RPM
-   */
-  public double getBottomVelocity() {
-    return bottomEncoder.getVelocity();
-  }
-
-  /**
-   * Get the velocity of the top flywheel in RPM
-   * @return The velocity of the top flywheel in RPM
-   */
-  public double getTopVelocity() {
-    return topEncoder.getVelocity();
-  }
-
-  /**
-   * Get the velocity of the kickwheel in RPM
-   * @return
-   */
-  public double getKickwheelVelocity() {
-    return kickwheelEncoder.getVelocity();
-  }
-
-  /**
-   * Reset the encoder of the bottom flywheel
-   */
-  public void resetBottomEncoder() {
-    bottomEncoder.setPosition(0);
-  }
-
-  /**
-   * Reset the encoder of the top flywheel
-   */
-  public void resetTopEncoder() {
-    topEncoder.setPosition(0);
-  }
-
-  /**
-   * Reset the encoder of the kickwheel
-   */
-  public void resetKickwheelEncoder() {
-    kickwheelEncoder.setPosition(0);
-  }
-
-  /**
-   * Reset the encoders of the bottom and top flywheels
-   */
-  public void resetFlywheelEncoders() {
-    bottomEncoder.setPosition(0);
-    topEncoder.setPosition(0);
-  }
-
-  /**
-   * Reset all shooter encoders
-   */
-  public void resetAllEncoders() {
-    bottomEncoder.setPosition(0);
-    topEncoder.setPosition(0);
-    kickwheelEncoder.setPosition(0);
-  }
-
-  // Update P values for top and bottom flywheel in periodc
 
   /**
    * Find the range object in the treemap that contains the specified distance.
@@ -552,24 +372,12 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     // Get the current flywheel values from the Smart dashboard
     // This will allow us to adjust these values on the fly from the Smart Dashboard
-    double currentTopP = SmartDashboard.getNumber("topP", 0);
-    double currentBottomP = SmartDashboard.getNumber("bottomP", 0);
-    double currentKickwheelP = SmartDashboard.getNumber("kickwheelP", 0);
+    double currentFlywheelP = SmartDashboard.getNumber("flywheelP", 0);
 
     // Check if the numbers on the Smart Dashboard have changed, and change our values if they have.
-    if (currentTopP != previousTopP) {
-      topPid.setP(currentTopP);
-      previousTopP = currentTopP;
-    }
-
-    if(currentBottomP != previousBottomP) {
-      bottomPid.setP(currentBottomP);
-      previousBottomP = currentBottomP;
-    }
-
-    if(currentKickwheelP != previousKickwheelP) {
-      kickwheelPid.setP(currentKickwheelP);
-      previousKickwheelP = currentKickwheelP;
+    if (currentFlywheelP != previousFlywheelP) {
+      flywheelPid.setP(currentFlywheelP);
+      previousFlywheelP = currentFlywheelP;
     }
   }
 

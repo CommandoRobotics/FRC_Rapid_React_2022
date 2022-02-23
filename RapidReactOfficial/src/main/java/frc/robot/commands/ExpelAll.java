@@ -39,9 +39,7 @@ public class ExpelAll extends CommandBase {
     indexSubsystem.setVertical(ConstantsValues.verticalExpelSpeed);
     indexSubsystem.setRamp(ConstantsValues.rampExpelSpeed);
     indexSubsystem.setTransfer(ConstantsValues.transferExpelSpeed);
-    shooterSubsystem.setTopVoltage(ConstantsValues.topFlywheelExpelVolts);
-    shooterSubsystem.setBottomVoltage(ConstantsValues.bottomFlywheelExpelVolts);
-    shooterSubsystem.setKickwheelVoltage(ConstantsValues.kickwheelExpelVolts);
+    shooterSubsystem.setFlywheelVoltage(ConstantsValues.flywheelExpelVolts);
 
   }
 
@@ -50,7 +48,7 @@ public class ExpelAll extends CommandBase {
   public void end(boolean interrupted) {
     intakeSubsystem.stop();
     indexSubsystem.stopAll();
-    shooterSubsystem.stopAll();
+    shooterSubsystem.stop();
   }
 
   // Returns true when the command should end.

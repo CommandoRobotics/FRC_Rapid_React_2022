@@ -13,11 +13,8 @@ public class ConstantsPorts {
     /**
      * SHOOTER
      */
-    public static final int bottomLeaderPort = 18;
-    public static final int bottomFollowerOnePort = 19;
-    public static final int bottomFollowerTwoPort = 20;
-    public static final int topPort = 21;
-    public static final int kickwheelPort = 22;
+    public static final int flywheelLeaderPort = 18;
+    public static final int flywheelFollowerPort = 19;
 
     /**
      * Climber
