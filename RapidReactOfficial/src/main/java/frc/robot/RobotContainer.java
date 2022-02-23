@@ -12,6 +12,7 @@ import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.utils.PathFetcher;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -65,10 +66,13 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer(NetworkTableInstance networkTableInst) {
-    
+
     // Network Tables Instantiation
     ntInst = networkTableInst;
     commandoDashNT = ntInst.getTable("CommandoDash");
+
+    // Load all paths
+    PathFetcher.loadAllPaths();
     
     // Set any default commands
     // Driver sticks: drive

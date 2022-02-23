@@ -10,6 +10,12 @@ import frc.robot.Projectile.Range;
 import frc.robot.Projectile.Vector;
 
 public class ConstantsValues {
+
+    /**
+     * AUTONOMOUS
+     */
+    public static final double defaultAutonomousMaxVelocity = 8;
+    public static final double defaultAutonomousMaxAcceleration = 5;
     
     /**
      * DRIVE
