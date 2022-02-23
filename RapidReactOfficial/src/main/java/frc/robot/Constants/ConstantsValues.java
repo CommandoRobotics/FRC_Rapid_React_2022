@@ -142,6 +142,7 @@ public class ConstantsValues {
     public static final double panPidMaxOutput = 0.5;
 
     public static final double manualPanDeadband = 0.05;
+
     /**
      * INDEX
      */
@@ -154,9 +155,21 @@ public class ConstantsValues {
 
     public static final double transferIntakeSpeed = 0.5;
     public static final double rampIntakeSpeed = 0.3;
-    public static final double verticalExpelSpeed = 0;
-    public static final double rampExpelSpeed = 0;
-    public static final double transferExpelSpeed = 0;
+    public static final double verticalExpelSpeed = 0.3;
+    public static final double rampExpelSpeed = -0.3;
+    public static final double transferExpelSpeed = -0.5;
+
+    public static final double verticalP = 0;
+    public static final double verticalI = 0;
+    public static final double verticalD = 0;
+    public static final double verticalIZone = 0;
+    public static final double verticalFF = 0;
+    public static final double verticalMinOutput = -1;
+    public static final double verticalMaxOutput = -1;
+
+    public static final double defaultVerticalVelocity = 0;
+
+
 
 
 }

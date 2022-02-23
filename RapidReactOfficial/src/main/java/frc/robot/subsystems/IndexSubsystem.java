@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -22,6 +24,7 @@ public class IndexSubsystem extends SubsystemBase {
 
   CANSparkMax ramp, vertical, transferLeader, transferFollower;
   RelativeEncoder rampEncoder, verticalEncoder;
+  SparkMaxPIDController verticalPid;
 
   AnalogInput verticalSensor, rampSensor, entranceSensor;
 
@@ -43,6 +46,7 @@ public class IndexSubsystem extends SubsystemBase {
     transferLeader = new CANSparkMax(ConstantsPorts.transferLeaderId, MotorType.kBrushless);
     transferFollower = new CANSparkMax(ConstantsPorts.transferFollowerId, MotorType.kBrushless);
 
+    // Set inversions
     ramp.setInverted(false);
     vertical.setInverted(false);
     transferLeader.setInverted(false);
@@ -50,14 +54,27 @@ public class IndexSubsystem extends SubsystemBase {
     // Follow and set inversion
     transferFollower.follow(transferLeader, true);
 
+    // Instantiate encoders
     rampEncoder = ramp.getEncoder();
     verticalEncoder = vertical.getEncoder();
 
+    // Set encoder conversion factors
     rampEncoder.setPositionConversionFactor(ConstantsValues.rampPositionConversionFactor);
     verticalEncoder.setPositionConversionFactor(ConstantsValues.verticalPositionConversionFactor);
     rampEncoder.setVelocityConversionFactor(ConstantsValues.rampVelocityConversionFactor);
     verticalEncoder.setVelocityConversionFactor(ConstantsValues.verticalVelocityConversionFactor);
 
+    // Instantiate PID
+    verticalPid = vertical.getPIDController();
+    verticalPid.setP(ConstantsValues.verticalP);
+    verticalPid.setI(ConstantsValues.verticalI);
+    verticalPid.setD(ConstantsValues.verticalD);
+    verticalPid.setIZone(ConstantsValues.verticalIZone);
+    verticalPid.setFF(ConstantsValues.verticalFF);
+    verticalPid.setOutputRange(ConstantsValues.verticalMinOutput, ConstantsValues.verticalMaxOutput);
+
+
+    // Intantiate sensors
     verticalSensor = new AnalogInput(ConstantsPorts.verticalIndexSensorPort);
     rampSensor = new AnalogInput(ConstantsPorts.rampIndexSensorPort);
     entranceSensor = new AnalogInput(ConstantsPorts.indexEntranceSensorPort);
@@ -81,7 +98,7 @@ public class IndexSubsystem extends SubsystemBase {
     // Add motors to the simulation
     if(Robot.isSimulation()) {
       REVPhysicsSim.getInstance().addSparkMax(ramp, DCMotor.getNeo550(1));
-      REVPhysicsSim.getInstance().addSparkMax(vertical, DCMotor.getNeo550(1));
+      REVPhysicsSim.getInstance().addSparkMax(vertical, DCMotor.getNEO(1));
       REVPhysicsSim.getInstance().addSparkMax(transferLeader, DCMotor.getNeo550(1));
       REVPhysicsSim.getInstance().addSparkMax(transferFollower, DCMotor.getNeo550(1));
     }
@@ -134,6 +151,13 @@ public class IndexSubsystem extends SubsystemBase {
   public void setTransferVoltage(double volts) {
     transferLeader.setVoltage(volts);
   }
+
+  /**
+   * Set the velocity of the vertical motor in meters per second
+   * @param velocityMetersPerSecond
+   */
+  public void setVerticalVelocity(double velocityMetersPerSecond) {
+    verticalPid.setReference(velocityMetersPerSecond, ControlType.kVelocity);  }
 
   /**
    * Stop the ramp index motor
