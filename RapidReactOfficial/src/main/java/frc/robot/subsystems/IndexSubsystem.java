@@ -24,7 +24,6 @@ public class IndexSubsystem extends SubsystemBase {
 
   CANSparkMax ramp, vertical, transferLeader, transferFollower;
   RelativeEncoder rampEncoder, verticalEncoder;
-  SparkMaxPIDController verticalPid;
 
   AnalogInput verticalSensor, rampSensor, entranceSensor;
 
@@ -63,16 +62,6 @@ public class IndexSubsystem extends SubsystemBase {
     verticalEncoder.setPositionConversionFactor(ConstantsValues.verticalPositionConversionFactor);
     rampEncoder.setVelocityConversionFactor(ConstantsValues.rampVelocityConversionFactor);
     verticalEncoder.setVelocityConversionFactor(ConstantsValues.verticalVelocityConversionFactor);
-
-    // Instantiate PID
-    verticalPid = vertical.getPIDController();
-    verticalPid.setP(ConstantsValues.verticalP);
-    verticalPid.setI(ConstantsValues.verticalI);
-    verticalPid.setD(ConstantsValues.verticalD);
-    verticalPid.setIZone(ConstantsValues.verticalIZone);
-    verticalPid.setFF(ConstantsValues.verticalFF);
-    verticalPid.setOutputRange(ConstantsValues.verticalMinOutput, ConstantsValues.verticalMaxOutput);
-
 
     // Intantiate sensors
     verticalSensor = new AnalogInput(ConstantsPorts.verticalIndexSensorPort);
@@ -151,13 +140,6 @@ public class IndexSubsystem extends SubsystemBase {
   public void setTransferVoltage(double volts) {
     transferLeader.setVoltage(volts);
   }
-
-  /**
-   * Set the velocity of the vertical motor in meters per second
-   * @param velocityMetersPerSecond
-   */
-  public void setVerticalVelocity(double velocityMetersPerSecond) {
-    verticalPid.setReference(velocityMetersPerSecond, ControlType.kVelocity);  }
 
   /**
    * Stop the ramp index motor

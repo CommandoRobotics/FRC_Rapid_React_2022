@@ -11,12 +11,12 @@ import frc.robot.subsystems.IndexSubsystem;
 /**
  * Command that runs the vertical part of the index to effectively shoot the ball
  */
-public class RunVerticalToShootCommand extends CommandBase {
+public class RunIndexToShootCommand extends CommandBase {
 
   IndexSubsystem indexSubsystem;
 
   /** Creates a new RunVerticalToShootCommand. */
-  public RunVerticalToShootCommand(IndexSubsystem indexSubsystem) {
+  public RunIndexToShootCommand(IndexSubsystem indexSubsystem) {
     this.indexSubsystem = indexSubsystem;
     addRequirements(indexSubsystem);
   }
@@ -28,7 +28,9 @@ public class RunVerticalToShootCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    indexSubsystem.setVerticalVelocity(ConstantsValues.defaultVerticalVelocity);
+    indexSubsystem.setVertical(ConstantsValues.verticalShootSpeed);
+    indexSubsystem.setRamp(ConstantsValues.rampJogSpeed);
+    indexSubsystem.setTransfer(ConstantsValues.transferJogSpeed);
   }
 
   // Called once the command ends or is interrupted.

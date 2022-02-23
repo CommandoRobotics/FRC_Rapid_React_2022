@@ -29,7 +29,7 @@ import frc.robot.commands.JogIndexVerticalCommand;
 import frc.robot.commands.JogIndexVerticalReverseCommand;
 import frc.robot.commands.RevShooterAtAutoVelocityCommand;
 import frc.robot.commands.RevShooterAtManualVelocityCommand;
-import frc.robot.commands.RunVerticalToShootCommand;
+import frc.robot.commands.RunIndexToShootCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -148,11 +148,11 @@ public class RobotContainer {
 
     // Right trigger - Run vertical index to effectively shoot
     new Trigger(() -> (operatorController.getRightTriggerAxis() > 0.1))
-    .whileActiveOnce(new RunVerticalToShootCommand(indexSubsystem));
+    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem));
 
     // Y and not alt - Jog index vertical
     operatorAlt.negate()
-    .and(new JoystickButton(operatorController, XboxController.Button.kB.value))
+    .and(new JoystickButton(operatorController, XboxController.Button.kY.value))
     .whileActiveOnce(new JogIndexVerticalCommand(indexSubsystem));
 
     // Y and alt - Joy index vertical in reverse
@@ -160,9 +160,14 @@ public class RobotContainer {
     .and(new JoystickButton(operatorController, XboxController.Button.kY.value))
     .whileActiveOnce(new JogIndexVerticalReverseCommand(indexSubsystem));
 
+    // B and not alt - Jog index ramp
+    operatorAlt.negate()
+    .and(new JoystickButton(operatorController, XboxController.Button.kB.value))
+    .whileActiveContinuous(new JogIndexRampCommand(indexSubsystem));
+
     // B and alt - Jog index ramp in reverse
     operatorAlt
-    .and(new JoystickButton(operatorController, XboxController.Button.kY.value))
+    .and(new JoystickButton(operatorController, XboxController.Button.kB.value))
     .whileActiveOnce(new JogIndexRampReverseCommand(indexSubsystem));
 
     // Start button - Expell all
