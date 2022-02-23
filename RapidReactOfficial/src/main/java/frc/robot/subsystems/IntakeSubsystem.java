@@ -17,11 +17,16 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -40,8 +45,12 @@ public class IntakeSubsystem extends SubsystemBase {
     //Constants
     boolean on = true;
     Alliance previousAlliance = Alliance.Blue;
+    DriveSubsystem driveSubsystem;
 
-    public IntakeSubsystem() {
+    //Odometry
+    Field2d field;
+
+    public IntakeSubsystem(DriveSubsystem driveSubsystem) {
         intake = new CANSparkMax(ConstantsPorts.intakeID, MotorType.kBrushless);
         intake.restoreFactoryDefaults();
         intake.setInverted(false);
@@ -49,8 +58,13 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeEncoder = intake.getEncoder();
         // intakeEncoder.setVelocityConversionFactor(0);
         CargoHound = new PhotonCamera("CargoHound");
+        field = (Field2d) SmartDashboard.getData("Field");
+        // SmartDashboard.putNumber("Cargo Dis", 1);
+        // SmartDashboard.putNumber("Cargo Yaw", 0);
 
         lifter = new Solenoid(PneumaticsModuleType.REVPH, ConstantsPorts.lifterID);
+
+        this.driveSubsystem = driveSubsystem;
     }
     
 
@@ -188,11 +202,50 @@ public class IntakeSubsystem extends SubsystemBase {
         }
     }
 
+    /**
+     * Returns the position of the cargo as a Translation2d relative to the robot. It used a PhotonPipelineResult
+     * to determine the offsets of the robot by getting distance and yaw from the PipelineResult
+     * @param result PhotonPipelineResult with the tracked cargo
+     * @return
+     */
+    public Translation2d estimateRobotToCargoTransformation(PhotonPipelineResult result) {
+        if (result.hasTargets()) {
+            //TODO Verify Yaw needs to be reversed
+            return PhotonUtils.estimateCameraToTargetTranslation(getDistanceToCargo(result), Rotation2d.fromDegrees(-result.getBestTarget().getYaw()))
+                .plus(ConstantsValues.houndToRobotTranslation2d);
+        } else {
+            System.out.println("estimateRobotToCargoTransformation() was not able to find a target and therefore returned (0,0)");
+            return new Translation2d(0,0);
+        }
+    }
+
+    public Pose2d estimateCargoFieldPose2d(PhotonPipelineResult result, Pose2d robotPose) {
+        return robotPose.transformBy(
+            new Transform2d(
+                estimateRobotToCargoTransformation(result),
+                Rotation2d.fromDegrees(0)));
+    }
+
 
     @Override
     public void periodic() {
         //Display pose2d of the ball to the dash
-        
+        if (getHoundData().hasTargets()) {
+            field.getObject("SeenCargo").setPose(
+                estimateCargoFieldPose2d(
+                    getHoundData(), 
+                    driveSubsystem.getPose()));
+        } 
+        //Testing for Manually setting CargoPose
+        // else { 
+        //     field.getObject("SeenCargo").setPose(
+        //         field.getRobotPose().transformBy(
+        //             new Transform2d(
+        //                 PhotonUtils.estimateCameraToTargetTranslation(SmartDashboard.getNumber("Cargo Dis", 1), Rotation2d.fromDegrees(-SmartDashboard.getNumber("Cargo Yaw", 10)))
+        //                     .plus(ConstantsValues.houndToRobotTranslation2d),
+        //                 Rotation2d.fromDegrees(0))));
+        // }
+
         //Update the pipeline of the CargoHound. Default is Blue
         if (previousAlliance != DriverStation.getAlliance()) {
             if (DriverStation.getAlliance() == Alliance.Red) {

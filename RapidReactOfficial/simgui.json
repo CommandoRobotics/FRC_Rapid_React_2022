@@ -26,11 +26,16 @@
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[6]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/PIDController[1]": "PIDController",
-      "/SmartDashboard/PIDController[2]": "PIDController"
+      "/SmartDashboard/PIDController[2]": "PIDController",
+      "/SmartDashboard/PIDController[4]": "PIDController",
+      "/SmartDashboard/PIDController[5]": "PIDController"
     },
     "windows": {
       "/LiveWindow/Ungrouped/MecanumDrive[1]": {
@@ -39,6 +44,19 @@
         }
       },
       "/LiveWindow/Ungrouped/Scheduler": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Field": {
+        "SeenCargo": {
+          "arrows": false,
+          "image": "C:\\Users\\isaac\\Downloads\\Red_Cargo_Pic-removebg-preview.png",
+          "length": 0.5,
+          "style": "Box/Image",
+          "weight": 1.0,
+          "width": 0.5
+        },
         "window": {
           "visible": true
         }
@@ -56,11 +74,16 @@
     }
   },
   "NetworkTables": {
-    "photonvision": {
-      "CargoHound": {
+    "SmartDashboard": {
+      "Field": {
         "open": true
       },
       "open": true
+    },
+    "photonvision": {
+      "CargoHound": {
+        "open": true
+      }
     }
   },
   "Plot": {

@@ -40,7 +40,7 @@ public class RobotContainer {
 
   // Define subsystems
   DriveSubsystem driveSubsystem = new DriveSubsystem();
-  IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  IntakeSubsystem intakeSubsystem = new IntakeSubsystem(driveSubsystem);
   ClimberSubsystem climberSubsystem = new ClimberSubsystem(); 
   ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
@@ -59,6 +59,8 @@ public class RobotContainer {
     () -> driverController.getLeftY(),
     () -> -driverController.getLeftX(), 
     () -> -driverController.getRightX()));
+
+    
 
     configureButtonBindings();
   }

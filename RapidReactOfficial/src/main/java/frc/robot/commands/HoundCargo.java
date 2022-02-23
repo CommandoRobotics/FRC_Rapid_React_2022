@@ -31,7 +31,6 @@ public class HoundCargo extends CommandBase {
   DriveSubsystem driveSubsystem;
   IntakeSubsystem intakeSubsystem;
   NetworkTableInstance ntInst;
-  NetworkTable houndTable;
 
   /** Creates a new HoundCargo. THIS COMMAND MUST BE INTERUPTED TO STOP */
   public HoundCargo(IntakeSubsystem intakeSubsystem, DriveSubsystem driveSubsystem, 
@@ -62,8 +61,8 @@ public class HoundCargo extends CommandBase {
     SmartDashboard.putData(yPID);
     SmartDashboard.putData(rotationPID);
 
-    // //Photon NT networking to use with an at-home simulation
-    // ntInst = NetworkTableInstance.getDefault();
+    //Photon NT networking to use with an at-home simulation
+    //ntInst = NetworkTableInstance.getDefault();
     // if (Robot.isSimulation()) {
     // ntInst.stopServer();
     // ntInst.stopClient();
@@ -71,8 +70,6 @@ public class HoundCargo extends CommandBase {
     // ntInst.setServer("10.58.89.12");
     // ntInst.startClient();
     // }
-
-    houndTable = ntInst.getTable("photonvision").getSubTable("CargoHound");
 
     addRequirements(intakeSubsystem, driveSubsystem);
   }

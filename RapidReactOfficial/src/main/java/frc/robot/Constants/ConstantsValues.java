@@ -146,6 +146,13 @@ public class ConstantsValues {
     public static final double intakePower = 0;
     public static final double ejectPower = 0;
 
+    //Camera translation relative to robot
+    //TODO figure out CargoHound translation relative to robot
+    private static final double houndXOffsetMeters = Units.inchesToMeters(0);
+    private static final double houndYOffsetMeters = Units.inchesToMeters(0);
+    public static final Translation2d houndToRobotTranslation2d = 
+        new Translation2d(houndXOffsetMeters, houndYOffsetMeters);
+
     //CargoHound PID values
     public static final double houndXP = 0.3;
     public static final double houndXI = 0;
