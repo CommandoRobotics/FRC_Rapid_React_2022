@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import javax.swing.text.html.HTMLDocument.RunElement;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTablesJNI;
@@ -58,13 +60,14 @@ public class RobotContainer {
   AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem();
 
   // Network Tables
-  NetworkTableInstance ntInst = NetworkTableInstance.getDefault();
+  NetworkTableInstance ntInst;
   NetworkTable commandoDashNT;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
+  public RobotContainer(NetworkTableInstance networkTableInst) {
     
     // Network Tables Instantiation
+    ntInst = networkTableInst;
     commandoDashNT = ntInst.getTable("CommandoDash");
     
     // Set any default commands
@@ -173,8 +176,23 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    return null;
+  public Command getAutonomousCommand(String autoSelected) {
+    switch (autoSelected) {
+      case "IdealAuto":
+        return null; //TODO Add "IdealAuto" command
+      case "SecondAuto":
+        return null; //TODO Add "SecondAuto" command
+      case "Spare":
+        return null; //TODO Add "Spare" command
+      case "FullSend":
+        return null; //TODO Add "FullSend" command
+      case "Taxi":
+        return null; //TODO Add "Taxi" command
+      case "Taxi - Default":
+        return null; //TODO Add "Taxi - Default" command
+      default:
+        return null; //TODO Determine default command (or have null? recomend not tho)
+    }
   }
 
 }
