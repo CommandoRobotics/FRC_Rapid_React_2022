@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -20,8 +21,13 @@ import frc.robot.commands.DriveNotFieldCentricCommand;
 import frc.robot.commands.DriveWithFieldCentricToggleCommand;
 import frc.robot.commands.ExpelAllCommand;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.JogIndexRampCommand;
+import frc.robot.commands.JogIndexRampReverseCommand;
+import frc.robot.commands.JogIndexVerticalCommand;
+import frc.robot.commands.JogIndexVerticalReverseCommand;
 import frc.robot.commands.RevShooterAtAutoVelocityCommand;
 import frc.robot.commands.RevShooterAtManualVelocityCommand;
+import frc.robot.commands.RunVerticalToShootCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -136,6 +142,29 @@ public class RobotContainer {
     // Right bumper - Cycle manual shooter velocity
     new JoystickButton(operatorController, XboxController.Button.kRightBumper.value)
     .whenActive(shooterSubsystem::cycleManualVelocity);
+
+    // Right trigger - Run vertical index to effectively shoot
+    new Trigger(() -> (operatorController.getRightTriggerAxis() > 0.1))
+    .whileActiveOnce(new RunVerticalToShootCommand(indexSubsystem));
+
+    // Y and not alt - Jog index vertical
+    operatorAlt.negate()
+    .and(new JoystickButton(operatorController, XboxController.Button.kB.value))
+    .whileActiveOnce(new JogIndexVerticalCommand(indexSubsystem));
+
+    // Y and alt - Joy index vertical in reverse
+    operatorAlt
+    .and(new JoystickButton(operatorController, XboxController.Button.kY.value))
+    .whileActiveOnce(new JogIndexVerticalReverseCommand(indexSubsystem));
+
+    // B and alt - Jog index ramp in reverse
+    operatorAlt
+    .and(new JoystickButton(operatorController, XboxController.Button.kY.value))
+    .whileActiveOnce(new JogIndexRampReverseCommand(indexSubsystem));
+
+    // Start button - Expell all
+    new JoystickButton(operatorController, XboxController.Button.kStart.value)
+    .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
   
   }
 

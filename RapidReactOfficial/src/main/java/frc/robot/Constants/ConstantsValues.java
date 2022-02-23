@@ -169,6 +169,10 @@ public class ConstantsValues {
 
     public static final double defaultVerticalVelocity = 0;
 
+    public static final double rampJogSpeed = 0.3;
+    public static final double verticalJogSpeed = 0.3;
+    public static final double transferJogSpeed = 0.5;
+
 
 
 
