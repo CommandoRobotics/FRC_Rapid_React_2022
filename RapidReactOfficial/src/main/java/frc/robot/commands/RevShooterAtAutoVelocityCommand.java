@@ -5,16 +5,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.ConstantsValues;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class ShootAtRPMCommand extends CommandBase {
+/**
+ * Revs the shooter at the velocity automatically calculated by the Limelight
+ */
+public class RevShooterAtAutoVelocityCommand extends CommandBase {
 
-  double rpm;
   ShooterSubsystem shooterSubsystem;
 
-  public ShootAtRPMCommand(double rpm, ShooterSubsystem shooterSubsystem) {
-    this.rpm = rpm;
+  /** Creates a new RevShooterAtAutoVelocityCommand. */
+  public RevShooterAtAutoVelocityCommand(ShooterSubsystem shooterSubsystem) {
     this.shooterSubsystem = shooterSubsystem;
     addRequirements(shooterSubsystem);
   }
@@ -22,20 +23,22 @@ public class ShootAtRPMCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    shooterSubsystem.enableLimelightLed();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooterSubsystem.setTopTargetRPM(rpm);
-    shooterSubsystem.setBottomTargetRpm(rpm);
-    shooterSubsystem.setKickwheelRpm(ConstantsValues.defaultKickwheelRpm);
+    shooterSubsystem.enableLimelightLed();
+    shooterSubsystem.setBottomTargetRpm(
+      shooterSubsystem.calculateIdealLaunchVector().velocity
+    );
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    shooterSubsystem.disableLimelightLed();
     shooterSubsystem.stopAll();
   }
 

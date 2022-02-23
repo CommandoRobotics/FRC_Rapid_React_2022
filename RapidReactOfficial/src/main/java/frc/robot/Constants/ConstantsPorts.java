@@ -43,8 +43,8 @@ public class ConstantsPorts {
     public static final int transferLeaderId = 8;
     public static final int transferFollowerId = 9;
     public static final int verticalIndexSensorPort = 0;
-    public static final int rampIndexSensorPort = 1;
-    public static final int indexEntranceSensorPort = 1;
+    public static final int rampIndexSensorPort = 5;
+    public static final int indexEntranceSensorPort = 6;
 
     /**
      * AUTO AIM

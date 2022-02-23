@@ -57,6 +57,8 @@ public class ShooterSubsystem extends SubsystemBase {
   double previousTopP = ConstantsValues.topFlywheelP;
   double previousKickwheelP = ConstantsValues.kickwheelP;
 
+  double currentManualVelocity = 0;
+
   public ShooterSubsystem() {
     // Instantiate the shooter motor controllers
     bottomLeader = new CANSparkMax(ConstantsPorts.bottomLeaderPort, MotorType.kBrushless);
@@ -333,7 +335,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Set the RPM of the kickwheel
    * @param target The target RPM of the kickwheel
    */
-  public void setKickwheelRpm(double targetRPM) {
+  public void setKickwheelTargetRpm(double targetRPM) {
     kickwheelPid.setReference(
       targetRPM, 
       ControlType.kVelocity, 
@@ -515,6 +517,35 @@ public class ShooterSubsystem extends SubsystemBase {
     Vector idealVector = ConstantsValues.vectorMap.get(shotRange);
 
     return idealVector;
+  }
+
+  /**
+   * Cycle the current manual velocity
+   */
+  public void cycleManualVelocity() {
+    if(currentManualVelocity == 0) {
+      currentManualVelocity = 1000;
+    } else if(currentManualVelocity == 1000) {
+      currentManualVelocity = 2000;
+    } else if(currentManualVelocity == 2000) {
+      currentManualVelocity = 3000;
+    } else if(currentManualVelocity == 3000) {
+      currentManualVelocity = 4000;
+    } else if(currentManualVelocity == 4000) {
+      currentManualVelocity = 5000;
+    } else if(currentManualVelocity == 5000) {
+      currentManualVelocity = 6000;
+    } else {
+      currentManualVelocity = 0;
+    }
+  }
+
+  /**
+   * Get the current manual velocity
+   * @return
+   */
+  public double getCurrentManualVelocity() {
+    return currentManualVelocity;
   }
 
   @Override

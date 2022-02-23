@@ -8,7 +8,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.ShootAtRPMCommand;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -21,6 +20,8 @@ import frc.robot.commands.DriveNotFieldCentric;
 import frc.robot.commands.DriveWithFieldCentricToggle;
 import frc.robot.commands.ExpelAll;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.RevShooterAtAutoVelocityCommand;
+import frc.robot.commands.RevShooterAtManualVelocityCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -83,11 +84,11 @@ public class RobotContainer {
     */
 
     // Right trigger - Intake
-    new Trigger(() -> driverController.getRightTriggerAxis() > 0.5)
+    new Trigger(() -> driverController.getRightTriggerAxis() > 0.1)
     .whileActiveOnce(new IntakeCommand(intakeSubsystem, indexSubsystem));
 
     // Left trigger - Eject
-    new Trigger(() -> driverController.getLeftTriggerAxis() > 0.5)
+    new Trigger(() -> driverController.getLeftTriggerAxis() > 0.1)
     .whileActiveContinuous(intakeSubsystem::intakeOut);
 
     // Right bumper - Enable auto aim (drive based auto aim)
@@ -121,9 +122,21 @@ public class RobotContainer {
     /*
       OPERATOR CONTROLLER
     */
-    
+    // Left trigger and NOT a - Set shootervelocity to manually selected velocity
+    new Trigger(() -> operatorController.getAButton())
+    .negate()
+    .and(new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.1))
+    .whileActiveOnce(new RevShooterAtManualVelocityCommand(shooterSubsystem));
 
+    // Left trigger and a - Set shooter velocity automatically based on Limelight
+    new Trigger(() -> operatorController.getAButton())
+    .and(new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.1))
+    .whileActiveOnce(new RevShooterAtAutoVelocityCommand(shooterSubsystem));
 
+    // Right bumper - Cycle manual shooter velocity
+    new JoystickButton(operatorController, XboxController.Button.kRightBumper.value)
+    .whenActive(shooterSubsystem::cycleManualVelocity);
+  
   }
 
   /**
