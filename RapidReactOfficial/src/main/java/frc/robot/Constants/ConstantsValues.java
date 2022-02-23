@@ -60,6 +60,8 @@ public class ConstantsValues {
     public static double maxWheelVelocityMetersPerSecond;
     public static final double rotationMaxVelocityMetersPerSec = 0;
     public static final double rotationMaxAccelerationMetersPerSecPerSec = 0;
+    public static final double driveMaxVel = 10;
+    public static final double driveMaxAcc = 5;
     public static final double mecanumFeedForwardKS = 0;
     public static final double mecanumFeedForwardKV = 0;
     public static final SimpleMotorFeedforward mecanumFeedForward = new SimpleMotorFeedforward(mecanumFeedForwardKS, mecanumFeedForwardKV);

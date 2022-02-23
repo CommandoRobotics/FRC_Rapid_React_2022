@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlannerTrajectory;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -21,9 +22,12 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
+import frc.robot.commands.FollowTrajectory;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -331,6 +335,48 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public Pose2d getPose() {
     return odometry.getPoseMeters();
+  }
+
+  public void setPose(Pose2d startingPose) {
+    resetEncoders();
+    odometry.resetPosition(startingPose, Rotation2d.fromDegrees(-getHeading()));
+  }
+
+  /**
+   * Takes a given trajectory and creates a CustomRamseteCommand from the trajectory automatically. If
+   * initPose is set to true, it will also add a Command that will set the pose of the robot (set the 
+   * driveOdometry's pose2D) to the starting pose of the given trajectory. Note: it only sets the pose
+   * when this command is executed, not when it is created.  
+   * 
+   * @param trajectory Trajectory to be used to create the CustomRamseteCommand
+   * @param initPose Whether the starting pose of the Trajectory should be used to reset the pose 
+   *                 of the drivetrain
+   * @return The CustomRamseteCommand/Command created
+   */
+  public Command createCommandFromPlannerTrajectory(PathPlannerTrajectory trajectory, boolean isInitPose, boolean stopAtEnd) {
+    if (isInitPose && stopAtEnd) {
+      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose()))
+        .andThen(new FollowTrajectory(trajectory, this))
+        .andThen(new InstantCommand(this::stop));
+    } else if (isInitPose) {
+      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose()))
+      .andThen(new FollowTrajectory(trajectory, this));
+    } else if (stopAtEnd) {
+      return new FollowTrajectory(trajectory, this)
+        .andThen(new InstantCommand(this::stop));
+    } else {
+    return new FollowTrajectory(trajectory, this);
+    }
+  }
+
+  /**
+   * Take  a given trajectory and creates a CustomRamseteCommand from the trajectory automatically. 
+   * 
+   * @param trajectory Trajectory to be used to create the CustomRamseteCommand
+   * @return The CustomRamseteCommand/Command created
+   */
+  public Command createCommandFromPlannerTrajectory(PathPlannerTrajectory trajectory) {
+      return new FollowTrajectory(trajectory, this);
   }
 
   @Override
