@@ -159,21 +159,11 @@ public class ConstantsValues {
     public static final double rampExpelSpeed = -0.3;
     public static final double transferExpelSpeed = -0.5;
 
-    public static final double verticalP = 0;
-    public static final double verticalI = 0;
-    public static final double verticalD = 0;
-    public static final double verticalIZone = 0;
-    public static final double verticalFF = 0;
-    public static final double verticalMinOutput = -1;
-    public static final double verticalMaxOutput = -1;
-
-    public static final double defaultVerticalVelocity = 0;
-
     public static final double rampJogSpeed = 0.3;
     public static final double verticalJogSpeed = 0.3;
     public static final double transferJogSpeed = 0.5;
 
-
+    public static final double verticalShootSpeed = 0.3;
 
 
 }
