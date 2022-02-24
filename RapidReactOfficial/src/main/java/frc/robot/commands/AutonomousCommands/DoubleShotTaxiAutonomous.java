@@ -78,7 +78,7 @@ public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
         new InstantCommand(()-> shooterSubsystem.setFlywheelTargetRpm(2000), shooterSubsystem)
       )
     ),
-    
+
     // Auto aim
     new AutoAimAutonomousCommand(driveSubsystem, autoAimSubsystem),
     // Actually shoot
@@ -86,8 +86,8 @@ public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
     // Wait 3 seconds (for shooting)
     new WaitCommand(3),
     // Stop shooter and index
-    new InstantCommand(() -> shooterSubsystem.stop()),
-    new InstantCommand(() -> indexSubsystem.stopAll())
+    new InstantCommand(() -> shooterSubsystem.stop(), shooterSubsystem),
+    new InstantCommand(() -> indexSubsystem.stopAll(), indexSubsystem)
 
     );
   }
