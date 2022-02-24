@@ -9,6 +9,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ConstantsValues;
@@ -38,44 +39,55 @@ public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
   IntakeSubsystem intakeSubsystem) 
   {
     addCommands(
-      // Extend the intake
-      new InstantCommand(intakeSubsystem::lowerLifter, intakeSubsystem),
 
-      // Start the intake
-      new IntakeCommand(intakeSubsystem, indexSubsystem),
+    // Extend the intake, start the intake, and drive at the same time
+    new ParallelCommandGroup(
+      // Extend the intake and THEN start it
+      new SequentialCommandGroup(
+        // Extend the intake
+        new InstantCommand(intakeSubsystem::lowerLifter, intakeSubsystem),
+        // Start the intake
+        new IntakeCommand(intakeSubsystem, indexSubsystem)
+      ),
 
-      // Drive to ball outside tarmac
-      new FollowTrajectoryCommand(
-      PathFetcher.fetchDoubleShot(0), driveSubsystem),
+      // Drive to the ball outside tarmac
+      driveSubsystem.newCommandFromTrajectory(
+      PathFetcher.fetchDoubleShot(0), 
+      true, // This is the intial pose
+      false // The robot should not stop after this trajectory is finished
+      )
+    ),
 
-      // Wait half a second
-      new WaitCommand(0.5),
-
-      // Stop intake
-      new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
-
-      // Bring the intake back in
-      new InstantCommand(intakeSubsystem::raiseLifter, intakeSubsystem),
-
-      // Drive to shooting zone
-      new FollowTrajectoryCommand(
-      PathFetcher.fetchDoubleShot(1), driveSubsystem),
-
-      // Start reving shooter
-      new InstantCommand(() -> shooterSubsystem.setFlywheelTargetRpm(2000), shooterSubsystem),
-
-      // Auto aim
-      new AutoAimAutonomousCommand(driveSubsystem, autoAimSubsystem),
-
-      // Actually shoot
-      new RunIndexToShootCommand(indexSubsystem),
-
-      // Wait 3 seconds (for shooting)
-      new WaitCommand(3),
-
-      // Stop shooter and index
-      new InstantCommand(() -> shooterSubsystem.stop()),
-      new InstantCommand(() -> indexSubsystem.stopAll())
+    // Drive while waiting for a bit, stopping the intake, and bringing the intake in
+    new ParallelCommandGroup(
+      // Drive to the shooter position
+      driveSubsystem.newCommandFromTrajectory(
+        PathFetcher.fetchDoubleShot(1),
+        false, // This is not the intial pose 
+        true // The robot will stop after this trajectory is finished
+      ),
+      // Wait for a bit, stop the intake, bring the intake in, and rev the shooter
+      new SequentialCommandGroup(
+        // Wait
+        new WaitCommand(1),
+        // Stop the intake
+        new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
+        // Bring the intake back in
+        new InstantCommand(intakeSubsystem::raiseLifter, intakeSubsystem),
+        // Start reving the shooter
+        new InstantCommand(()-> shooterSubsystem.setFlywheelTargetRpm(2000), shooterSubsystem)
+      )
+    ),
+    
+    // Auto aim
+    new AutoAimAutonomousCommand(driveSubsystem, autoAimSubsystem),
+    // Actually shoot
+    new RunIndexToShootCommand(indexSubsystem),
+    // Wait 3 seconds (for shooting)
+    new WaitCommand(3),
+    // Stop shooter and index
+    new InstantCommand(() -> shooterSubsystem.stop()),
+    new InstantCommand(() -> indexSubsystem.stopAll())
 
     );
   }

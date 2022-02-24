@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlannerTrajectory;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -23,9 +24,12 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
+import frc.robot.commands.FollowTrajectoryCommand;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -357,6 +361,42 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public Pose2d getPose() {
     return odometry.getPoseMeters();
+  }
+
+  /**
+   * Set the pose of the robot
+   * @param pose
+   */
+  public void setPose(Pose2d pose) {
+    resetEncoders();
+    odometry.resetPosition(pose, Rotation2d.fromDegrees(-getHeading()));
+  }
+
+  /**
+   * Get a command for following a given trajectory
+   * @param trajectory The trajectory to follow
+   * @param isInitPose Whether the starting pose of this trajectory should be used to reset the pose of the drivetrain
+   * @param stopAtEnd Whether the drivetrain should stop after this trajectory ends
+   * @return The created FollowTrajectoryCommand 
+   */
+  public Command newCommandFromTrajectory(PathPlannerTrajectory trajectory, boolean isInitPose, boolean stopAtEnd) {
+    if (isInitPose && stopAtEnd) {
+      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose()))
+        .andThen(new FollowTrajectoryCommand(trajectory, this))
+        .andThen(new InstantCommand(this::stop));
+    } else if (isInitPose) {
+      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose()))
+      .andThen(new FollowTrajectoryCommand(trajectory, this));
+    } else if (stopAtEnd) {
+      return new FollowTrajectoryCommand(trajectory, this)
+        .andThen(new InstantCommand(this::stop));
+    } else {
+    return new FollowTrajectoryCommand(trajectory, this);
+    }
+  }
+
+  public Command newCommandFromTrajectory(PathPlannerTrajectory trajectory) {
+    return new FollowTrajectoryCommand(trajectory, this);
   }
 
   @Override
