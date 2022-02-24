@@ -43,9 +43,9 @@
   },
   "NetworkTables": {
     "CommandoDash": {
-      "open": true
-    },
-    "FMSInfo": {
+      "SensorData": {
+        "open": true
+      },
       "open": true
     }
   },

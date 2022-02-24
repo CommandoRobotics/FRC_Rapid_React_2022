@@ -43,13 +43,17 @@ import frc.robot.subsystems.ClimberSubsystem;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
+  // Network Tables
+  NetworkTableInstance ntInst;
+  NetworkTable commandoDashNT;
   
   // Define controllers
   XboxController driverController = new XboxController(0);
   XboxController operatorController = new XboxController(1);
 
   // Define alt triggers
-  Trigger operatorAlt = new Trigger(() -> driverController.getLeftBumper());
+  Trigger operatorAlt = new Trigger(() -> operatorController.getLeftBumper());
 
   // Define subsystems
   DriveSubsystem driveSubsystem = new DriveSubsystem();
@@ -58,10 +62,6 @@ public class RobotContainer {
   ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   IndexSubsystem indexSubsystem = new IndexSubsystem();
   AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem();
-
-  // Network Tables
-  NetworkTableInstance ntInst;
-  NetworkTable commandoDashNT;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer(NetworkTableInstance networkTableInst) {
@@ -112,7 +112,7 @@ public class RobotContainer {
 
     // Left bumper - Toggle intake lifter
     new JoystickButton(driverController, XboxController.Button.kLeftBumper.value)
-    .whenActive(intakeSubsystem::toggleLifter);
+    .whenActive(intakeSubsystem::toggleExtened);
 
     //TODO A - Hound Cargo
 
