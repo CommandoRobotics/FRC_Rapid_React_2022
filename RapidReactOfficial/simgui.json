@@ -44,6 +44,9 @@
   "NetworkTables": {
     "CommandoDash": {
       "open": true
+    },
+    "FMSInfo": {
+      "open": true
     }
   },
   "Plot": {
