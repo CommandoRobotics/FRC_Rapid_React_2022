@@ -83,7 +83,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     //toggle
-    public void toggleExtened() {    
+    public void toggleExtend() {    
         on = !on;
         lifter.toggle();
     }

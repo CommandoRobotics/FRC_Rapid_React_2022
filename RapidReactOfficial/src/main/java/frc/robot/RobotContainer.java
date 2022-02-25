@@ -112,7 +112,7 @@ public class RobotContainer {
 
     // Left bumper - Toggle intake lifter
     new JoystickButton(driverController, XboxController.Button.kLeftBumper.value)
-    .whenActive(intakeSubsystem::toggleExtened);
+    .whenActive(intakeSubsystem::toggleExtend);
 
     //TODO A - Hound Cargo
 
