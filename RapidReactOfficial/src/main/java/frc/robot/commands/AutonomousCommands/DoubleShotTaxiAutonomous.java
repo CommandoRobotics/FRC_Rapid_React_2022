@@ -45,7 +45,7 @@ public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
       // Extend the intake and THEN start it
       new SequentialCommandGroup(
         // Extend the intake
-        new InstantCommand(intakeSubsystem::lowerLifter, intakeSubsystem),
+        new InstantCommand(intakeSubsystem::extend, intakeSubsystem),
         // Start the intake
         new IntakeCommand(intakeSubsystem, indexSubsystem)
       ),
@@ -73,7 +73,7 @@ public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
         // Stop the intake
         new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
         // Bring the intake back in
-        new InstantCommand(intakeSubsystem::raiseLifter, intakeSubsystem),
+        new InstantCommand(intakeSubsystem::retract, intakeSubsystem),
         // Start reving the shooter
         new InstantCommand(()-> shooterSubsystem.setFlywheelTargetRpm(2000), shooterSubsystem)
       )
