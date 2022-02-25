@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -20,9 +21,10 @@ public class ClimberSubsystem extends SubsystemBase {
   
   DigitalInput toplimitSwitch = new DigitalInput(ConstantsPorts.topLimitSwitchPort);
   DigitalInput bottomlimitSwitch = new DigitalInput(ConstantsPorts.bottomLimitSwitchPort);
-  
-  //TODO add Limit Switches
 
+  NetworkTableInstance ntInst;
+  boolean previousMidState = false;
+  boolean previousTraversalState = false;
 
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
@@ -33,14 +35,16 @@ public class ClimberSubsystem extends SubsystemBase {
     leftWinch = new CANSparkMax(ConstantsPorts.leftWinchId, MotorType.kBrushless);
     rightWinch = new CANSparkMax(ConstantsPorts.rightWinchId, MotorType.kBrushless);
 
+    ntInst = NetworkTableInstance.getDefault();
+    ntInst.getTable("CommandoDash").getSubTable("SensorData")
+      .getEntry("midSolenoidState").setBoolean(midClimb.get());
+    ntInst.getTable("CommandoDash").getSubTable("SensorData")
+      .getEntry("traversalSolenoidState").setBoolean(traversalClimb.get());
+
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per schedule run 
-  }
-   //Extend Middle Solenoid
-   public void midUp() {
+  //Extend Middle Solenoid
+  public void midUp() {
     midClimb.set(true);
   }
 
@@ -52,7 +56,6 @@ public class ClimberSubsystem extends SubsystemBase {
   //Toggle Middle Solenoid 
   public void toggleMid() {
     midClimb.toggle();
-
   }
 
   //Extend Traversal Solenoid
@@ -70,7 +73,7 @@ public class ClimberSubsystem extends SubsystemBase {
     traversalClimb.toggle();
   }
   //Set the Power of the Right Winch
-   public void setPowerRightWinch(double power) {
+  public void setPowerRightWinch(double power) {
     if(power < 0) {
       if (bottomlimitSwitch.get()) {
         rightWinch.set(0);
@@ -78,7 +81,7 @@ public class ClimberSubsystem extends SubsystemBase {
         rightWinch.set(power);
       }
     }
-   }
+  }
   
   //Set the Power of the Left Winch
   public void setPowerLeftWinch(double power) {
@@ -91,6 +94,22 @@ public class ClimberSubsystem extends SubsystemBase {
     }
   }
 
-  
+  @Override
+  public void periodic() {
+    //Update CDD with the mid solenoid state
+    boolean currMidState = midClimb.get();
+    if (previousMidState != currMidState) {
+        ntInst.getTable("CommandoDash").getSubTable("SensorData")
+            .getEntry("midSolenoidState").setBoolean(currMidState);
+    }
+    previousMidState = currMidState;
 
+    //Update CDD with the traversal solenoid state
+    boolean currTraversalState = traversalClimb.get();
+    if (previousTraversalState != currTraversalState) {
+        ntInst.getTable("CommandoDash").getSubTable("SensorData")
+            .getEntry("traversalSolenoidState").setBoolean(currTraversalState);
+    }
+    previousTraversalState = currTraversalState;
+  }
 }

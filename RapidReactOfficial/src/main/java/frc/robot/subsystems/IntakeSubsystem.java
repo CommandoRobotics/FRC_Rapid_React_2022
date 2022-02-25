@@ -1,11 +1,14 @@
 package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -16,8 +19,10 @@ public class IntakeSubsystem extends SubsystemBase {
     CANSparkMax intake;
     RelativeEncoder intakeEncoder;
     Solenoid lifter;
+    NetworkTableInstance ntInst;
+    boolean previousLifterState;
 
-    boolean on = true;
+    boolean on = false;
 
     public IntakeSubsystem() {
         intake = new CANSparkMax(ConstantsPorts.intakeID, MotorType.kBrushless);
@@ -25,6 +30,13 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeEncoder = intake.getEncoder();
 
         lifter = new Solenoid(PneumaticsModuleType.REVPH, ConstantsPorts.lifterID);
+
+        if (Robot.isSimulation()) {
+        }
+
+        ntInst = NetworkTableInstance.getDefault();
+        ntInst.getTable("CommandoDash").getSubTable("SensorData")
+            .getEntry("intakeSolenoidState").setBoolean(lifter.get());
     }
     
 
@@ -59,19 +71,19 @@ public class IntakeSubsystem extends SubsystemBase {
     //lifting/solenoid stuff
 
     //raise lifter
-    public void raiseLifter() {
+    public void extend() {
         boolean on = true;
         lifter.set(on);
     }
 
     //lower lifter
-    public void lowerLifter() {
+    public void retract() {
         boolean on = false;
         lifter.set(on);
     }
 
     //toggle
-    public void toggleLifter() {       
+    public void toggleExtend() {    
         on = !on;
         lifter.toggle();
     }
@@ -86,5 +98,16 @@ public class IntakeSubsystem extends SubsystemBase {
     //reset encoder
     public void resetEncoder() {
         intakeEncoder.setPosition(0);
+    }
+
+    @Override
+    public void periodic() {
+        //Update CDD with the solenoid state
+        boolean currLifterState = on;
+        if (previousLifterState != currLifterState) {
+            ntInst.getTable("CommandoDash").getSubTable("SensorData")
+                .getEntry("intakeSolenoidState").setBoolean(currLifterState);
+        }
+        previousLifterState = currLifterState;
     }
 }

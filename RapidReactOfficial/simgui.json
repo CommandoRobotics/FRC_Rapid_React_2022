@@ -43,6 +43,9 @@
   },
   "NetworkTables": {
     "CommandoDash": {
+      "SensorData": {
+        "open": true
+      },
       "open": true
     }
   },
