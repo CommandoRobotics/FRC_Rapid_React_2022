@@ -94,6 +94,9 @@ public class ConstantsValues {
     public static final double defaultKickwheelRpm = 0;
     public static final double defaultKickwheelVoltage = 0;
 
+    public static final double flywheelAtVelocityDeadband = 50;
+    public static final double flywheelAtVelocityIterations = 10;
+
     // Limelight values
     public static final double limelightMountingAngle = 17; // The angle at which the Limelight is mounted above the horizon in degrees.
 
