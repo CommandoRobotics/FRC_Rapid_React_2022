@@ -62,7 +62,7 @@ public class HoundCargo extends CommandBase {
     SmartDashboard.putData(rotationPID);
 
     //Photon NT networking to use with an at-home simulation
-    //ntInst = NetworkTableInstance.getDefault();
+    ntInst = NetworkTableInstance.getDefault();
     // if (Robot.isSimulation()) {
     // ntInst.stopServer();
     // ntInst.stopClient();
@@ -82,7 +82,8 @@ public class HoundCargo extends CommandBase {
     rotationPID.calculate(0);
     driveSubsystem.stop();
     previousResult = intakeSubsystem.getHoundData();
-  }
+    ntInst.getTable("CommandoDash").getSubTable("SensorData").getEntry("isHounding").setBoolean(true);
+    }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -133,6 +134,7 @@ public class HoundCargo extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    ntInst.getTable("CommandoDash").getSubTable("SensorData").getEntry("isHounding").setBoolean(false);
     xPID.calculate(0);
     yPID.calculate(0);
     rotationPID.calculate(0);
