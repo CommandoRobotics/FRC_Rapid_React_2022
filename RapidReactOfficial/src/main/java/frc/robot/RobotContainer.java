@@ -57,10 +57,10 @@ public class RobotContainer {
   Trigger operatorAlt = new Trigger(() -> operatorController.getLeftBumper());
 
   // Define subsystems
+  ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   DriveSubsystem driveSubsystem = new DriveSubsystem();
   IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
   ClimberSubsystem climberSubsystem = new ClimberSubsystem(); 
-  ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   IndexSubsystem indexSubsystem = new IndexSubsystem();
   AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem();
 
