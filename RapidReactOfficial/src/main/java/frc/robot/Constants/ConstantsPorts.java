@@ -39,9 +39,10 @@ public class ConstantsPorts {
     public static final int verticalId = 7;
     public static final int transferLeaderId = 8;
     public static final int transferFollowerId = 9;
-    public static final int verticalIndexSensorPort = 0;
-    public static final int rampIndexSensorPort = 5;
-    public static final int indexEntranceSensorPort = 6;
+    public static final int verticalSensorPort = 0;
+    public static final int rampSensorPort = 5;
+    public static final int entranceSensorPort = 6;
+    public static final int shooterSensorPort = 0;
 
     /**
      * AUTO AIM

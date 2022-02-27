@@ -7,12 +7,11 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.Constants.ConstantsPorts;
@@ -25,7 +24,7 @@ public class IndexSubsystem extends SubsystemBase {
   CANSparkMax ramp, vertical, transferLeader, transferFollower;
   RelativeEncoder rampEncoder, verticalEncoder;
 
-  AnalogInput verticalSensor, rampSensor, entranceSensor;
+  DigitalInput verticalSensor, rampSensor, entranceSensor, shooterSensor;
 
   // What index of the block array refers to what block section
   private final int entranceSensorBlock = 0;
@@ -35,7 +34,7 @@ public class IndexSubsystem extends SubsystemBase {
   private final int verticalSensorBlock = 4;
   private final int verticalToShooterBlock = 5;
 
-  boolean verticalSensorTriggeredPrevious, rampSensorTriggeredPrevious, entranceSensorTriggeredPrevious;
+  boolean verticalSensorTriggeredPrevious, rampSensorTriggeredPrevious, entranceSensorTriggeredPrevious, shooterSensorTriggeredPrevious;
   long previousBlockUpdateTimeMillis;
 
   public IndexSubsystem() {
@@ -64,14 +63,18 @@ public class IndexSubsystem extends SubsystemBase {
     verticalEncoder.setVelocityConversionFactor(ConstantsValues.verticalVelocityConversionFactor);
 
     // Intantiate sensors
-    verticalSensor = new AnalogInput(ConstantsPorts.verticalIndexSensorPort);
-    rampSensor = new AnalogInput(ConstantsPorts.rampIndexSensorPort);
-    entranceSensor = new AnalogInput(ConstantsPorts.indexEntranceSensorPort);
+    verticalSensor = new DigitalInput(ConstantsPorts.verticalSensorPort);
+    rampSensor = new DigitalInput(ConstantsPorts.rampSensorPort);
+    entranceSensor = new DigitalInput(ConstantsPorts.entranceSensorPort);
+    shooterSensor = new DigitalInput(ConstantsPorts.shooterSensorPort);
 
     // Set the index sensors initial state based on whether a ball is present
     verticalSensorTriggeredPrevious = isVerticalSensorTriggered();
     rampSensorTriggeredPrevious = isRampSensorTriggered();
     entranceSensorTriggeredPrevious = isEntranceSensorTriggered();
+    // A ball can't physically block this sensor on robot start.
+    // However, a human can. And we want to avoid that.
+    shooterSensorTriggeredPrevious = false;  
     if(verticalSensorTriggeredPrevious) {
       blocks[verticalSensorBlock] = 1;
     }
@@ -218,28 +221,35 @@ public class IndexSubsystem extends SubsystemBase {
   }
 
   /**
-   * Check if the entrance sensor is currently triggered
+   * Check if the entrance sensor is currently broken
    * @return
    */
   public boolean isEntranceSensorTriggered() {
-    return entranceSensor.getVoltage() > ConstantsValues.indexSensorThreshold;
+    return entranceSensor.get();
   }
 
   /**
-   * Check if the ramp sensor is currently triggered
+   * Check if the ramp sensor is currently broken
    * @return
    */
   public boolean isRampSensorTriggered() {
-    return rampSensor.getVoltage() > ConstantsValues.indexSensorThreshold;
-
+    return rampSensor.get();
   }
 
   /**
-   * Check if the vertical sensor is currently triggered
+   * Check if the vertical sensor is currently broken
    * @return
    */
   public boolean isVerticalSensorTriggered() {
-    return verticalSensor.getVoltage() > ConstantsValues.indexSensorThreshold;
+    return verticalSensor.get();
+  }
+
+  /**
+   * Check if the shooter sneosr is current broken
+   * @return
+   */
+  public boolean isShooterSensorTriggered() {
+    return shooterSensor.get();
   }
 
   /**
@@ -250,12 +260,7 @@ public class IndexSubsystem extends SubsystemBase {
     boolean entranceTriggered = isEntranceSensorTriggered();
     boolean rampTriggered = isRampSensorTriggered();
     boolean verticalTriggered = isVerticalSensorTriggered();
-
-    // Update shooter block
-    long timeElapsedMillis = System.currentTimeMillis()-previousBlockUpdateTimeMillis;
-    if(timeElapsedMillis >= ConstantsValues.shooterBlockTime && blocks[verticalToShooterBlock] == 1) {
-      newBlocks[verticalToShooterBlock] = 0;
-    }
+    boolean shooterTriggered = isShooterSensorTriggered();
 
     // Update blocks based on entrance sensor
     if(entranceTriggered) {
@@ -267,6 +272,10 @@ public class IndexSubsystem extends SubsystemBase {
         //TODO add motor direction based logic
         // If running forwards, add 1 to the entrance to index block.
         // If running backwards, remove the ball from the index.
+        newBlocks[entranceSensorBlock] = 0;
+        if(rampEncoder.getVelocity() > 0) {
+          newBlocks[entranceToRampBlock] = 1;
+        }
       }
     }    
 
@@ -310,11 +319,21 @@ public class IndexSubsystem extends SubsystemBase {
       }
     }
 
+    // Update blocks based on shooter sensor
+    if(shooterTriggered) {
+      if(!shooterSensorTriggeredPrevious) {
+        if(blocks[verticalToShooterBlock] > 1 && verticalEncoder.getVelocity() > 0) {
+          newBlocks[verticalToShooterBlock] = 0;
+        }
+      }
+    }
+
     // Update variables for next iteration
     blocks = newBlocks;
     entranceSensorTriggeredPrevious = entranceTriggered;
     rampSensorTriggeredPrevious = rampTriggered;
     verticalSensorTriggeredPrevious = verticalTriggered;
+    shooterSensorTriggeredPrevious = shooterTriggered;
     previousBlockUpdateTimeMillis = System.currentTimeMillis();
 
   }

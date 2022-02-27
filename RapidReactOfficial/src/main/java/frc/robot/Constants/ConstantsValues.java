@@ -159,8 +159,6 @@ public class ConstantsValues {
     public static final double verticalPositionConversionFactor = 1;
     public static final double rampVelocityConversionFactor = 1;
     public static final double verticalVelocityConversionFactor = 1;
-    public static final double shooterBlockTime = 500;
-    public static final double indexSensorThreshold = 1000;
 
     public static final double transferIntakeSpeed = 0.5;
     public static final double rampIntakeSpeed = 0.3;
