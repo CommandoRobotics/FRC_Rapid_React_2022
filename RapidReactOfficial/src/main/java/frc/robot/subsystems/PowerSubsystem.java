@@ -16,18 +16,19 @@ public class PowerSubsystem extends SubsystemBase {
   NetworkTable powerUsage;
   PowerDistribution hub;
 
-  final int vrmChannel = 0;
-  final int driveFLChannel = 0;
-  final int driveFRChannel = 0;
-  final int driveRLChannel = 0;
-  final int driveRRChannel = 0;
-  final int intakeChannel = 0;
-  final int rampChannel = 0;
-  final int shooterLChannel = 0;
+  final int vrmChannel = 19;
+  final int driveFLChannel = 10;
+  final int driveFRChannel = 18;
+  final int driveRLChannel = 11;
+  final int driveRRChannel = 17;
+  final int intakeChannel = 15;
+  final int rampChannel = 16;
+  final int shooterLChannel = 9;
   final int shooterRChannel = 0;
-  final int transferLChannel = 0;
-  final int transferRChannel = 0;
-  final int verticalChannel = 0;
+  final int transferLChannel = 12;
+  final int transferRChannel = 14;
+  final int verticalChannel = 1;
+  final int visionChannel = 13;
 
   /** Creates a new PowerSubsystem. */
   public PowerSubsystem() {
