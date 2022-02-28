@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AimDrivetrainUsingVisionCommand;
 import frc.robot.commands.DriveWithFieldCentricToggleCommand;
 import frc.robot.commands.ExpelAllCommand;
+import frc.robot.commands.HoundCargo;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.JogIndexRampCommand;
 import frc.robot.commands.JogIndexRampReverseCommand;
@@ -112,6 +113,11 @@ public class RobotContainer {
     .whenActive(intakeSubsystem::toggleExtend);
 
     //TODO A - Hound Cargo
+    new JoystickButton(driverController, XboxController.Button.kA.value)
+      .whileActiveOnce(new HoundCargo(intakeSubsystem, driveSubsystem,       
+                      () -> driverController.getLeftY(), 
+                      () -> -driverController.getLeftX(), 
+                      () -> -driverController.getRightX()));
 
     // Back button - Expell all
     new JoystickButton(driverController, XboxController.Button.kBack.value)
