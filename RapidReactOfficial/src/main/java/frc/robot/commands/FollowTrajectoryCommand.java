@@ -21,7 +21,9 @@ import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveMotorVoltages;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ConstantsValues;
@@ -295,6 +297,10 @@ public class FollowTrajectoryCommand extends CommandBase {
 
     m_prevSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(initialXVelocity, initialYVelocity, 0.0));
 
+    //Post the current trajectory to the Field2d object
+    Field2d field = (Field2d) SmartDashboard.getData("Field");
+    field.getObject("Current Robot Trajectory").setTrajectory(m_trajectory);
+
     m_timer.reset();
     m_timer.start();
   }
@@ -387,6 +393,10 @@ public class FollowTrajectoryCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    //Get rid of the Trajectory
+    NetworkTableInstance.getDefault().getTable("SmartDashboard").getSubTable("Field").getEntry("Current Robot Trajectory")
+      .forceSetNumberArray(new Number[]{0,0,0});
+    //Stop the timer
     m_timer.stop();
   }
 

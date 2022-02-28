@@ -1,0 +1,19 @@
+{
+  "CameraPublisher": {
+    "open": true
+  },
+  "NetworkTables Settings": {
+    "listenAddress": "10.58.89.12",
+    "mode": "Client",
+    "serverTeam": "10.58.89.12"
+  },
+  "SmartDashboard": {
+    "open": true
+  },
+  "photonvision": {
+    "CargoHound": {
+      "open": true
+    },
+    "open": true
+  }
+}

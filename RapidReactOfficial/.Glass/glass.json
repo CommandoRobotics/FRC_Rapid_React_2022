@@ -22,7 +22,11 @@
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
-      "/SmartDashboard/Field": "Field2d"
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/PIDController[1]": "PIDController",
+      "/SmartDashboard/PIDController[2]": "PIDController",
+      "/SmartDashboard/PIDController[4]": "PIDController",
+      "/SmartDashboard/PIDController[5]": "PIDController"
     },
     "windows": {
       "/LiveWindow/Ungrouped/MecanumDrive[1]": {
