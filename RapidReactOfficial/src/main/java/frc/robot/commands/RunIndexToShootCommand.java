@@ -36,7 +36,7 @@ public class RunIndexToShootCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    indexSubsystem.stopVertical();
+    indexSubsystem.stopAll();
   }
 
   // Returns true when the command should end.
