@@ -1,17 +1,7 @@
 package frc.robot.subsystems;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
-import frc.robot.Constants.ConstantsField;
-import frc.robot.Constants.ConstantsPorts;
-import frc.robot.Constants.ConstantsValues;
-import frc.robot.commands.HoundCargo;
-
-import javax.lang.model.element.ModuleElement.DirectiveKind;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
@@ -23,11 +13,15 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ConstantsField;
+import frc.robot.Constants.ConstantsPorts;
+import frc.robot.Constants.ConstantsValues;
 
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -52,15 +46,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public IntakeSubsystem(DriveSubsystem driveSubsystem) {
         intake = new CANSparkMax(ConstantsPorts.intakeID, MotorType.kBrushless);
-        intake.restoreFactoryDefaults();
         intake.setInverted(false);
 
         intakeEncoder = intake.getEncoder();
         // intakeEncoder.setVelocityConversionFactor(0);
         CargoHound = new PhotonCamera("CargoHound");
         field = (Field2d) SmartDashboard.getData("Field");
-        // SmartDashboard.putNumber("Cargo Dis", 1);
-        // SmartDashboard.putNumber("Cargo Yaw", 0);
 
         lifter = new Solenoid(PneumaticsModuleType.REVPH, ConstantsPorts.lifterID);
 
@@ -229,22 +220,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        //Display pose2d of the ball to the dash
+        //Display Pose2d of the ball to the dash
         if (getHoundData().hasTargets()) {
             field.getObject("SeenCargo").setPose(
                 estimateCargoFieldPose2d(
                     getHoundData(), 
                     driveSubsystem.getPose()));
         } 
-        //Testing for Manually setting CargoPose
-        // else { 
-        //     field.getObject("SeenCargo").setPose(
-        //         field.getRobotPose().transformBy(
-        //             new Transform2d(
-        //                 PhotonUtils.estimateCameraToTargetTranslation(SmartDashboard.getNumber("Cargo Dis", 1), Rotation2d.fromDegrees(-SmartDashboard.getNumber("Cargo Yaw", 10)))
-        //                     .plus(ConstantsValues.houndToRobotTranslation2d),
-        //                 Rotation2d.fromDegrees(0))));
-        // }
 
         //Update the pipeline of the CargoHound. Default is Blue
         if (previousAlliance != DriverStation.getAlliance()) {
