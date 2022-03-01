@@ -5,6 +5,7 @@ import java.util.TreeMap;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Projectile.Range;
 import frc.robot.Projectile.Vector;
@@ -65,6 +66,8 @@ public class ConstantsValues {
     public static double maxWheelVelocityMetersPerSecond;
     public static final double rotationMaxVelocityMetersPerSec = 0;
     public static final double rotationMaxAccelerationMetersPerSecPerSec = 0;
+    public static final double driveMaxVel = 10;
+    public static final double driveMaxAcc = 5;
     public static final double mecanumFeedForwardKS = 0;
     public static final double mecanumFeedForwardKV = 0;
     public static final SimpleMotorFeedforward mecanumFeedForward = new SimpleMotorFeedforward(mecanumFeedForwardKS, mecanumFeedForwardKV);
@@ -173,4 +176,30 @@ public class ConstantsValues {
     public static final double verticalShootSpeed = 0.3;
 
 
+    //Camera translation relative to robot
+    //TODO figure out CargoHound translation relative to robot
+    private static final double houndXOffsetMeters = Units.inchesToMeters(0);
+    private static final double houndYOffsetMeters = Units.inchesToMeters(0);
+    public static final Translation2d houndToRobotTranslation2d = 
+        new Translation2d(houndXOffsetMeters, houndYOffsetMeters);
+
+    //CargoHound PID values
+    public static final double houndXP = 0.3;
+    public static final double houndXI = 0;
+    public static final double houndXD = 0;
+
+    public static final double houndYP = 0.3;
+    public static final double houndYI = 0;
+    public static final double houndYD = 0;
+
+    public static final double houndMaxRVel = 10;
+    public static final double houndMaxRAcc = 5;
+    public static final double houndRP = 0.3;
+    public static final double houndRI = 0;
+    public static final double houndRD = 0;
+    public static final TrapezoidProfile.Constraints houndRConstraints =
+        new TrapezoidProfile.Constraints(houndMaxRVel, houndMaxRAcc);
+
+    public static final double noCargoTime = 0.5;
+    public static final double minHoundPIDOut = 0.1;
 }

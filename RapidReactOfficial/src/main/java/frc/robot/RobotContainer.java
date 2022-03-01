@@ -4,25 +4,17 @@
 
 package frc.robot;
 
-import javax.swing.text.html.HTMLDocument.RunElement;
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.utils.PathFetcher;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Triggers.TriggerDash;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AimDrivetrainUsingVisionCommand;
-import frc.robot.commands.DriveFieldCentricCommand;
-import frc.robot.commands.DriveNotFieldCentricCommand;
 import frc.robot.commands.DriveWithFieldCentricToggleCommand;
 import frc.robot.commands.ExpelAllCommand;
+import frc.robot.commands.HoundCargo;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.JogIndexRampCommand;
 import frc.robot.commands.JogIndexRampReverseCommand;
@@ -31,11 +23,13 @@ import frc.robot.commands.JogIndexVerticalReverseCommand;
 import frc.robot.commands.RevShooterAtAutoVelocityCommand;
 import frc.robot.commands.RevShooterAtManualVelocityCommand;
 import frc.robot.commands.RunIndexToShootCommand;
+import frc.robot.subsystems.AutoAimSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.AutoAimSubsystem;
-import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.utils.PathFetcher;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -59,7 +53,7 @@ public class RobotContainer {
   // Define subsystems
   ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   DriveSubsystem driveSubsystem = new DriveSubsystem();
-  IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+  IntakeSubsystem intakeSubsystem = new IntakeSubsystem(driveSubsystem);
   ClimberSubsystem climberSubsystem = new ClimberSubsystem(); 
   IndexSubsystem indexSubsystem = new IndexSubsystem();
   AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem();
@@ -119,6 +113,11 @@ public class RobotContainer {
     .whenActive(intakeSubsystem::toggleExtend);
 
     //TODO A - Hound Cargo
+    new JoystickButton(driverController, XboxController.Button.kA.value)
+      .whileActiveOnce(new HoundCargo(intakeSubsystem, driveSubsystem,       
+                      () -> driverController.getLeftY(), 
+                      () -> -driverController.getLeftX(), 
+                      () -> -driverController.getRightX()));
 
     // Back button - Expell all
     new JoystickButton(driverController, XboxController.Button.kBack.value)
@@ -203,5 +202,4 @@ public class RobotContainer {
         return null; //TODO Determine default command (or have null? recomend not tho)
     }
   }
-
 }
