@@ -95,6 +95,8 @@ public class ConstantsValues {
     // Other shooter values
     public static final double shooterHeightMeters = Units.inchesToMeters(10);
 
+    public static final double flywheelVelocityConversionFactor = 1;
+
     public static final double flywheelAtVelocityDeadband = 50;
     public static final double flywheelAtVelocityIterations = 10;
 

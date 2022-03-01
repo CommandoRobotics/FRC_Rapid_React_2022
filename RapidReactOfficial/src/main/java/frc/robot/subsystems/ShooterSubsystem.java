@@ -78,6 +78,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Instantiate the encoders
     flywheelEncoder = flywheelLeader.getEncoder();
+    
+    // Set conversion factors
+    flywheelEncoder.setVelocityConversionFactor(ConstantsValues.flywheelVelocityConversionFactor);
 
     // Instantiate the PID controllers
     flywheelPid = flywheelLeader.getPIDController();
