@@ -72,7 +72,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Set motor controller inversions
     //TODO set the proper motor inversions
-    flywheelLeader.setInverted(false);
+    flywheelLeader.setInverted(true);
     // Other flywheel inversions are set in the section below
     flywheelFollower.follow(flywheelLeader, true);
 

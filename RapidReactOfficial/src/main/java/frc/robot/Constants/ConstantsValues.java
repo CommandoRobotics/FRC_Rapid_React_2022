@@ -128,7 +128,7 @@ public class ConstantsValues {
     /**
      * INTAKE
      */
-    public static final double intakePower = 0;
+    public static final double intakePower = 0.4;
     public static final double ejectPower = 0;
 
     /**

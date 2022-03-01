@@ -26,6 +26,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public IntakeSubsystem() {
         intake = new CANSparkMax(ConstantsPorts.intakeID, MotorType.kBrushless);
+        intake.setInverted(true);
 
         intakeEncoder = intake.getEncoder();
 

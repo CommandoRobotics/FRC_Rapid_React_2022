@@ -45,7 +45,7 @@ public class IndexSubsystem extends SubsystemBase {
     transferFollower = new CANSparkMax(ConstantsPorts.transferFollowerId, MotorType.kBrushless);
 
     // Set inversions
-    ramp.setInverted(false);
+    ramp.setInverted(true);
     vertical.setInverted(false);
     transferLeader.setInverted(false);
 
