@@ -26,8 +26,7 @@ public class RevShooterAtManualVelocityCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //shooterSubsystem.setFlywheelTargetRpm(shooterSubsystem.getCurrentManualVelocity());
-    shooterSubsystem.setFlywheelVoltage(5);
+    shooterSubsystem.setFlywheelTargetRpm(shooterSubsystem.getCurrentManualVelocity());
   }
 
   // Called once the command ends or is interrupted.
