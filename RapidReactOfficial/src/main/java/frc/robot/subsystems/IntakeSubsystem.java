@@ -13,10 +13,12 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -31,7 +33,7 @@ public class IntakeSubsystem extends SubsystemBase {
     CANSparkMax intake;
 
     //Solenoids
-    Solenoid lifter;
+    DoubleSolenoid lifter;
     NetworkTableInstance ntInst;
     boolean previousLifterState;
 
@@ -40,7 +42,7 @@ public class IntakeSubsystem extends SubsystemBase {
     PhotonCamera CargoHound;
 
     //Constants
-    boolean on = true;
+    boolean on = false;
     Alliance previousAlliance = Alliance.Blue;
     DriveSubsystem driveSubsystem;
 
@@ -56,11 +58,11 @@ public class IntakeSubsystem extends SubsystemBase {
         CargoHound = new PhotonCamera("CargoHound");
         field = (Field2d) SmartDashboard.getData("Field");
 
-        lifter = new Solenoid(PneumaticsModuleType.REVPH, ConstantsPorts.lifterID);
+        lifter = new DoubleSolenoid(PneumaticsModuleType.REVPH, ConstantsPorts.lifterForwardId, ConstantsPorts.lifterReverseId);
 
         ntInst = NetworkTableInstance.getDefault();
         ntInst.getTable("CommandoDash").getSubTable("SensorData")
-            .getEntry("intakeSolenoidState").setBoolean(lifter.get());
+            .getEntry("intakeSolenoidState").setBoolean(lifter.isFwdSolenoidDisabled());
         
         this.driveSubsystem = driveSubsystem;
     }
@@ -98,20 +100,23 @@ public class IntakeSubsystem extends SubsystemBase {
 
     //raise lifter
     public void extend() {
-        boolean on = true;
-        lifter.set(on);
+        on = true;
+        lifter.set(Value.kForward);
     }
 
     //lower lifter
     public void retract() {
-        boolean on = false;
-        lifter.set(on);
+        on = false;
+        lifter.set(Value.kReverse);
     }
 
     //toggle
     public void toggleExtend() {    
-        on = !on;
-        lifter.toggle();
+        if(on) {
+            retract();
+        } else {
+            extend();
+        }
     }
 
     //Sensors

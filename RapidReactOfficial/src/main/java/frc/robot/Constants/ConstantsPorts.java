@@ -30,7 +30,8 @@ public class ConstantsPorts {
      * Intake
      */
     public static final int intakeID = 6;
-    public static final int lifterID = 1;
+    public static final int lifterForwardId = 0;
+    public static final int lifterReverseId = 1;
 
     /**
      * Index
