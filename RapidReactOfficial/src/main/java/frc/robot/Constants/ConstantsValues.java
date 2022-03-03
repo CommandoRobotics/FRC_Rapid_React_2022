@@ -94,8 +94,6 @@ public class ConstantsValues {
 
     // Other shooter values
     public static final double shooterHeightMeters = Units.inchesToMeters(10);
-    public static final double defaultKickwheelRpm = 0;
-    public static final double defaultKickwheelVoltage = 0;
 
     public static final double flywheelAtVelocityDeadband = 50;
     public static final double flywheelAtVelocityIterations = 10;
@@ -103,7 +101,7 @@ public class ConstantsValues {
     // Limelight values
     public static final double limelightMountingAngle = 17; // The angle at which the Limelight is mounted above the horizon in degrees.
 
-    public static final double flywheelExpelVolts = 0.2;
+    public static final double flywheelExpelVolts = 2;
 
     /*
     Methods for adding values to vector treemap
@@ -131,8 +129,8 @@ public class ConstantsValues {
     /**
      * INTAKE
      */
-    public static final double intakePower = 0.4;
-    public static final double ejectPower = 0;
+    public static final double intakePower = 0.7;
+    public static final double ejectPower = 0.5;
 
     /**
      * AUTO AIM
@@ -163,15 +161,15 @@ public class ConstantsValues {
     public static final double rampVelocityConversionFactor = 1;
     public static final double verticalVelocityConversionFactor = 1;
 
-    public static final double transferIntakeSpeed = 0.5;
+    public static final double transferIntakeSpeed = 0.3;
     public static final double rampIntakeSpeed = 0.3;
     public static final double verticalExpelSpeed = 0.3;
     public static final double rampExpelSpeed = -0.3;
-    public static final double transferExpelSpeed = -0.5;
+    public static final double transferExpelSpeed = -0.3;
 
     public static final double rampJogSpeed = 0.3;
     public static final double verticalJogSpeed = 0.3;
-    public static final double transferJogSpeed = 0.5;
+    public static final double transferJogSpeed = 0.3;
 
     public static final double verticalShootSpeed = 0.3;
 
@@ -184,17 +182,17 @@ public class ConstantsValues {
         new Translation2d(houndXOffsetMeters, houndYOffsetMeters);
 
     //CargoHound PID values
-    public static final double houndXP = 0.3;
+    public static final double houndXP = 0;
     public static final double houndXI = 0;
     public static final double houndXD = 0;
 
-    public static final double houndYP = 0.3;
+    public static final double houndYP = 0;
     public static final double houndYI = 0;
     public static final double houndYD = 0;
 
     public static final double houndMaxRVel = 10;
     public static final double houndMaxRAcc = 5;
-    public static final double houndRP = 0.3;
+    public static final double houndRP = 0;
     public static final double houndRI = 0;
     public static final double houndRD = 0;
     public static final TrapezoidProfile.Constraints houndRConstraints =
