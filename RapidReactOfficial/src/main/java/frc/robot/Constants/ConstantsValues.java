@@ -76,23 +76,23 @@ public class ConstantsValues {
      * SHOOTER
      */
     //TODO tune shooter PID values
-    public static final double flywheelP = 0.000300;
+    public static final double flywheelP = 0.00020;
     public static final double flywheelI = 0;
-    public static final double flywheelD = 0;
+    public static final double flywheelD = 0.0005;
     public static final double flywheelIZone = 0;
     public static final double flywheelFF = 0;
     public static final double flywheelMinOutput = -1;
     public static final double flywheelMaxOutput = 1;
 
     // Shooter feedforward values
-    public static final double flywheelKs = 0.00141601;
-    public static final double flywheelKv = 0.0020;
+    public static final double flywheelKs = 0.0015;
+    public static final double flywheelKv = 0.0023;
     public static final double flywheelKa = 0.0081225;
 
     // Rate limit
     public static final double shooterRateLimit = 500;
 
-    public static final double shooterVelocityConversionFactor = 0.6666667;
+    public static final double shooterVelocityConversionFactor = 1;
 
     // Vector tree map
     public static final TreeMap<Range, Vector> vectorMap = new TreeMap<Range, Vector>();
@@ -144,7 +144,7 @@ public class ConstantsValues {
      * AUTO AIM
      */
     // PID
-    public static final double panP = 0;
+    public static final double panP = 0.02;
     public static final double panI = 0;
     public static final double panD = 0;
     public static final double panSetPoint = 0;
@@ -158,6 +158,7 @@ public class ConstantsValues {
 
     public static final double panPidDeadzone = 0.05;
     public static final double panPidMaxOutput = 0.5;
+    public static final double panPidMinOutput = 0.15;
 
     public static final double manualPanDeadband = 0.05;
 

@@ -7,8 +7,11 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ConstantsValues;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IndexSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 
 public class AimDrivetrainUsingVisionCommand extends CommandBase {
 
@@ -43,6 +46,7 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    boolean fieldCentric = driveSubsystem.isFieldCentricToggleEnabled();
     if(autoAimSubsystem.isTargetSeen()) {
       // Automatically rotate the robot to the target
       driveSubsystem.driveMecanum(
@@ -51,10 +55,10 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
         // Strafe value
         x.getAsDouble(),
         // Calculate rotation value using PID and Limelight offset 
-        autoAimSubsystem.calculatePanOutput(
+        IntakeSubsystem.scaleAroundZero(autoAimSubsystem.calculatePanOutput(
           autoAimSubsystem.getLimelightXOffset()
-        ),
-        true
+        ), ConstantsValues.panPidMinOutput),
+        fieldCentric
         );
     } else {
       // Drive based on driver commands since we can't see the target
@@ -62,7 +66,7 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
         y.getAsDouble(), 
         x.getAsDouble(), 
         rotation.getAsDouble(), 
-        true
+        fieldCentric
         );
     }
   }

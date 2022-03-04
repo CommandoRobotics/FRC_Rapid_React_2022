@@ -28,6 +28,7 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.PowerSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.utils.PathFetcher;
 
@@ -57,6 +58,7 @@ public class RobotContainer {
   ClimberSubsystem climberSubsystem = new ClimberSubsystem(); 
   IndexSubsystem indexSubsystem = new IndexSubsystem();
   AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem();
+  PowerSubsystem powerSubsystem = new PowerSubsystem();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer(NetworkTableInstance networkTableInst) {

@@ -5,8 +5,10 @@
     },
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/ClimberSubsystem": "Subsystem",
       "/LiveWindow/DriveSubsystem": "Subsystem",
       "/LiveWindow/IndexSubsystem": "Subsystem",
+      "/LiveWindow/IntakeSubsystem": "Subsystem",
       "/LiveWindow/ShooterSubsystem": "Subsystem",
       "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[1]": "Digital Input",
