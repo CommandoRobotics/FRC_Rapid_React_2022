@@ -262,6 +262,8 @@ public class IndexSubsystem extends SubsystemBase {
     boolean verticalTriggered = isVerticalSensorTriggered();
     boolean shooterTriggered = isShooterSensorTriggered();
 
+    //TODO modify this to work with auto vertical storage
+
     // Update blocks based on entrance sensor
     if(entranceTriggered) {
       if(!entranceSensorTriggeredPrevious) {

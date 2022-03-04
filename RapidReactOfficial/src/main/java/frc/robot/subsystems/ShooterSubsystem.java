@@ -74,7 +74,6 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheelFollower.setIdleMode(IdleMode.kCoast);
 
     // Set motor controller inversions
-    //TODO set the proper motor inversions
     flywheelLeader.setInverted(true);
     // Other flywheel inversions are set in the section below
     flywheelFollower.follow(flywheelLeader, true);
@@ -281,10 +280,9 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheelLeader.set(0);
   }
   
-  //TODO add correct units to the below method descriptions
   /**
-   * Get the position of the flywheel
-   * @return The position of the flywheel
+   * Get the position of the flywheel in rotations
+   * @return The position of the flywheel in rotations
    */
   public double getFlywheelPosition() {
     return flywheelEncoder.getPosition();

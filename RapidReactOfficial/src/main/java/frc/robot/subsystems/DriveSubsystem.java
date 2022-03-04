@@ -213,11 +213,11 @@ public class DriveSubsystem extends SubsystemBase {
    * @param speed
    */
   public void driveForward(double speed) {
-    //TODO Add drive feed
     setFrontLeftSpeed(speed);
     setFrontRightSpeed(speed);
     setRearLeftSpeed(speed);
     setRearRightSpeed(speed);
+    drive.feed();
   }
 
   /**
@@ -225,19 +225,18 @@ public class DriveSubsystem extends SubsystemBase {
    * @param volts
    */
   public void driveForwardVolts(double volts) {
-    //TODO Add drive feed
     setFrontLeftVolts(volts);
     setFrontRightVolts(volts);
     setRearLeftVolts(volts);
     setRearRightVolts(volts);
+    drive.feed();
   }
 
   /**
    * Stop the drivetrain
    */
   public void stop() {
-    //TODO replace with drive.stop()
-    driveForward(0);
+    drive.stopMotor();
   }
 
   /**
@@ -289,11 +288,11 @@ public class DriveSubsystem extends SubsystemBase {
    * @param wheelVoltages A MecanumDriveMotorVoltages object containing the voltages to set each wheel to
    */
   public void setVoltages(MecanumDriveMotorVoltages wheelVoltages) {
-    //TODO Add drive feed
     frontLeftSpark.setVoltage(wheelVoltages.frontLeftVoltage);
     frontRightSpark.setVoltage(wheelVoltages.frontRightVoltage);
     rearLeftSpark.setVoltage(wheelVoltages.rearLeftVoltage);
     rearRightSpark.setVoltage(wheelVoltages.rearRightVoltage);
+    drive.feed();
   }
 
   /**
@@ -301,11 +300,11 @@ public class DriveSubsystem extends SubsystemBase {
    * @param wheelSpeeds A MecanumDriveWheelSpeeds object containing the speeds to set each wheel to
    */
   public void setWheelSpeeds(MecanumDriveWheelSpeeds wheelSpeeds) {
-    //TODO Add drive feed
     frontLeftPidController.setReference(wheelSpeeds.frontLeftMetersPerSecond, ControlType.kVelocity);
     frontRightPidController.setReference(wheelSpeeds.frontRightMetersPerSecond, ControlType.kVelocity);
     rearLeftPidController.setReference(wheelSpeeds.rearLeftMetersPerSecond, ControlType.kVelocity);
     rearRightPidController.setReference(wheelSpeeds.rearRightMetersPerSecond, ControlType.kVelocity);
+    drive.feed();
   }
 
   /**
