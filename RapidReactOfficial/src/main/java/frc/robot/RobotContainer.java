@@ -66,7 +66,7 @@ public class RobotContainer {
     commandoDashNT = ntInst.getTable("CommandoDash");
 
     // Load all paths
-    PathFetcher.loadAllPaths();
+    //PathFetcher.loadAllPaths();
     
     // Set any default commands
     // Driver sticks: drive
@@ -96,7 +96,8 @@ public class RobotContainer {
 
     // Left trigger - Eject
     new Trigger(() -> driverController.getLeftTriggerAxis() > 0.1)
-    .whileActiveContinuous(intakeSubsystem::intakeOut);
+    .whileActiveContinuous(intakeSubsystem::intakeOut)
+    .whenInactive(intakeSubsystem::stop);
 
     // Right bumper - Enable auto aim (drive based auto aim)
     new JoystickButton(driverController, XboxController.Button.kRightBumper.value)
