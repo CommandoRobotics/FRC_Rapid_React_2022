@@ -9,18 +9,19 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class DriveFieldCentric extends CommandBase {
+public class DriveNotFieldCentricCommand extends CommandBase {
 
   DriveSubsystem driveSubsystem;
   DoubleSupplier y, x, rotation;
 
-  /** Creates a new DriveFieldCentric. */
-  public DriveFieldCentric(DriveSubsystem driveSubsystem, DoubleSupplier y, DoubleSupplier x, DoubleSupplier rotation) {
+  /** Creates a new DriveNotFieldCentric. */
+  public DriveNotFieldCentricCommand(DriveSubsystem driveSubsystem, DoubleSupplier y, DoubleSupplier x, DoubleSupplier rotation) {
     this.driveSubsystem = driveSubsystem;
     this.y = y;
     this.x = x;
     this.rotation = rotation;
     addRequirements(driveSubsystem);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
@@ -30,7 +31,7 @@ public class DriveFieldCentric extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveSubsystem.driveMecanum(y.getAsDouble(), x.getAsDouble(), rotation.getAsDouble(), true);
+    driveSubsystem.driveMecanum(y.getAsDouble(), x.getAsDouble(), rotation.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.

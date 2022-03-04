@@ -1,14 +1,30 @@
 {
-  "NetworkTables": {
-    "SmartDashboard": {
-      "open": true
-    },
+  "HALProvider": {
+    "Other Devices": {
+      "SPARK MAX [0]": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK MAX [1]": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
+  "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/AutoAimSubsystem": "Subsystem",
+      "/LiveWindow/ClimberSubsystem": "Subsystem",
       "/LiveWindow/DriveSubsystem": "Subsystem",
       "/LiveWindow/IndexSubsystem": "Subsystem",
+      "/LiveWindow/IntakeSubsystem": "Subsystem",
       "/LiveWindow/ShooterSubsystem": "Subsystem",
       "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[17]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[18]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[1]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[2]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[3]": "Digital Input",
@@ -26,11 +42,19 @@
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Front Left Trajectory PID": "PIDController",
+      "/SmartDashboard/Front Right Trajectory PID": "PIDController",
       "/SmartDashboard/PIDController[1]": "PIDController",
       "/SmartDashboard/PIDController[2]": "PIDController",
       "/SmartDashboard/PIDController[3]": "PIDController",
       "/SmartDashboard/PIDController[4]": "PIDController",
-      "/SmartDashboard/PIDController[5]": "PIDController"
+      "/SmartDashboard/PIDController[5]": "PIDController",
+      "/SmartDashboard/PIDController[8]": "PIDController",
+      "/SmartDashboard/PIDController[9]": "PIDController",
+      "/SmartDashboard/Rear Left Trajectory PID": "PIDController",
+      "/SmartDashboard/Rear Right Trajectory PID": "PIDController",
+      "/SmartDashboard/X PID Controller": "PIDController",
+      "/SmartDashboard/Y PID Controller": "PIDController"
     },
     "windows": {
       "/LiveWindow/Ungrouped/MecanumDrive[1]": {
@@ -42,14 +66,51 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/Field": {
+        "Current Robot Trajectory": {
+          "arrows": false,
+          "style": "Line",
+          "weight": 1.0
+        },
+        "SeenCargo": {
+          "arrows": false,
+          "image": "C:\\Users\\isaac\\Downloads\\Red_Cargo_Pic-removebg-preview.png",
+          "length": 0.5,
+          "style": "Box/Image",
+          "weight": 1.0,
+          "width": 0.5
+        },
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/PIDController[1]": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/PIDController[2]": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
-  "NetworkTables Settings": {
-    "mode": "Client",
-    "serverTeam": "5889"
+  "NetworkTables": {
+    "CommandoDash": {
+      "SensorData": {
+        "open": true
+      },
+      "open": true
+    },
+    "photonvision": {
+      "CargoHound": {
+        "open": true
+      }
+    }
   },
-  "Plots": {
+  "Plot": {
     "Plot <0>": {
       "plots": [
         {
@@ -58,7 +119,7 @@
               "autoFit": true
             }
           ],
-          "height": 338,
+          "height": 400,
           "series": [
             {
               "color": [
@@ -67,11 +128,14 @@
                 0.6901960968971252,
                 1.0
               ],
-              "id": "NT:/SmartDashboard/RPM"
+              "id": "SPARK MAX [2]-Applied Output"
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     }
   }
 }

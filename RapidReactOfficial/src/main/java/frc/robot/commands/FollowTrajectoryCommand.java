@@ -21,13 +21,15 @@ import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveMotorVoltages;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ConstantsValues;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class FollowTrajectory extends CommandBase {
+public class FollowTrajectoryCommand extends CommandBase {
 
   private final Timer m_timer = new Timer();
   private final PathPlannerTrajectory m_trajectory;
@@ -62,7 +64,7 @@ public class FollowTrajectory extends CommandBase {
    * @param trajectory the PathPlanner trajectory to follow
    * @param driveSubsystem the driveSubsystem to use/require
    */
-  public FollowTrajectory(PathPlannerTrajectory trajectory, DriveSubsystem driveSubsystem) {
+  public FollowTrajectoryCommand(PathPlannerTrajectory trajectory, DriveSubsystem driveSubsystem) {
     PIDController xController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
     PIDController yController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
     ProfiledPIDController rProfiledPIDController =
@@ -113,7 +115,7 @@ public class FollowTrajectory extends CommandBase {
    * @param desiredRotation a supplier that will supply the desired rotation while trajectory following
    * @param driveSubsystem the driveSubsystem to use/require
    */
-  public FollowTrajectory(PathPlannerTrajectory trajectory, Supplier<Rotation2d> desiredRotation,
+  public FollowTrajectoryCommand(PathPlannerTrajectory trajectory, Supplier<Rotation2d> desiredRotation,
   DriveSubsystem driveSubsystem) {
       PIDController xController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
       PIDController yController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
@@ -169,7 +171,7 @@ public class FollowTrajectory extends CommandBase {
    * @param outputWheelSpeeds whether or not to output WheelSpeeds in m/s instead of PIDF calculated voltages
    * @param driveSubsystem the driveSubsystem to use/require
    */
-  public FollowTrajectory(PathPlannerTrajectory trajectory, Supplier<Rotation2d> desiredRotation,
+  public FollowTrajectoryCommand(PathPlannerTrajectory trajectory, Supplier<Rotation2d> desiredRotation,
     boolean outputWheelSpeeds, DriveSubsystem driveSubsystem) {
     PIDController xController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
     PIDController yController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
@@ -235,7 +237,7 @@ public class FollowTrajectory extends CommandBase {
    * @param outputWheelSpeeds whether or not to output WheelSpeeds in m/s instead of PIDF calculated voltages
    * @param driveSubsystem the driveSubsystem to use/require
    */
-  public FollowTrajectory(PathPlannerTrajectory trajectory, boolean outputWheelSpeeds,
+  public FollowTrajectoryCommand(PathPlannerTrajectory trajectory, boolean outputWheelSpeeds,
   DriveSubsystem driveSubsystem) {
       PIDController xController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
       PIDController yController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
@@ -294,6 +296,10 @@ public class FollowTrajectory extends CommandBase {
     var initialYVelocity = initialState.velocityMetersPerSecond * initialState.poseMeters.getRotation().getSin();
 
     m_prevSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(initialXVelocity, initialYVelocity, 0.0));
+
+    //Post the current trajectory to the Field2d object
+    Field2d field = (Field2d) SmartDashboard.getData("Field");
+    field.getObject("Current Robot Trajectory").setTrajectory(m_trajectory);
 
     m_timer.reset();
     m_timer.start();
@@ -387,6 +393,10 @@ public class FollowTrajectory extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    //Get rid of the Trajectory
+    NetworkTableInstance.getDefault().getTable("SmartDashboard").getSubTable("Field").getEntry("Current Robot Trajectory")
+      .forceSetNumberArray(new Number[]{0,0,0});
+    //Stop the timer
     m_timer.stop();
   }
 

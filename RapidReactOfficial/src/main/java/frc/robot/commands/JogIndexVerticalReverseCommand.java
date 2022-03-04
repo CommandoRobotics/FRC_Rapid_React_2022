@@ -4,24 +4,18 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.Constants.ConstantsValues;
+import frc.robot.subsystems.IndexSubsystem;
 
-public class DriveNotFieldCentric extends CommandBase {
+public class JogIndexVerticalReverseCommand extends CommandBase {
 
-  DriveSubsystem driveSubsystem;
-  DoubleSupplier y, x, rotation;
+  IndexSubsystem indexSubsystem;
 
-  /** Creates a new DriveNotFieldCentric. */
-  public DriveNotFieldCentric(DriveSubsystem driveSubsystem, DoubleSupplier y, DoubleSupplier x, DoubleSupplier rotation) {
-    this.driveSubsystem = driveSubsystem;
-    this.y = y;
-    this.x = x;
-    this.rotation = rotation;
-    addRequirements(driveSubsystem);
-    // Use addRequirements() here to declare subsystem dependencies.
+  /** Creates a new JogIndexVerticalReverseCommand. */
+  public JogIndexVerticalReverseCommand(IndexSubsystem indexSubsystem) {
+    this.indexSubsystem = indexSubsystem;
+    addRequirements(indexSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -31,13 +25,13 @@ public class DriveNotFieldCentric extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveSubsystem.driveMecanum(y.getAsDouble(), x.getAsDouble(), rotation.getAsDouble());
+    indexSubsystem.setVertical(-ConstantsValues.verticalJogSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    driveSubsystem.stop();
+    indexSubsystem.stopVertical();
   }
 
   // Returns true when the command should end.

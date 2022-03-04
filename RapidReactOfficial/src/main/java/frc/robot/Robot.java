@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -19,6 +23,11 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  private NetworkTableInstance ntInst;
+  private NetworkTable commandoDashNT;
+  private String selectedAuto = "Taxi - Default"; //TODO add default clause
+  private Alliance previousAlliance = Alliance.Blue;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -27,7 +36,13 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
+    ntInst = NetworkTableInstance.getDefault();
+    commandoDashNT = ntInst.getTable("CommandoDash");
+
+    m_robotContainer = new RobotContainer(ntInst);
+
+    //Tell CommandoDash we're currently disabled
+    commandoDashNT.getSubTable("AllianceAndModeData").getEntry("robotMode").setNumber(32);
   }
 
   /**
@@ -44,19 +59,43 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    //Update auto chooser
+    selectedAuto = commandoDashNT.getEntry("autoSelection").getString("Taxi - Default"); //TODO add default clause
+    commandoDashNT.getEntry("rioAutoSelection").setString(selectedAuto);
+
+    //Update Robot Color
+    Alliance currAlliance = DriverStation.getAlliance();
+    if (currAlliance == Alliance.Red && previousAlliance != currAlliance) {
+      commandoDashNT.getSubTable("AllianceAndModeData").getEntry("alliance").setNumber(1);
+    } else if (currAlliance == Alliance.Blue && previousAlliance != currAlliance) {
+      commandoDashNT.getSubTable("AllianceAndModeData").getEntry("alliance").setNumber(0);
+    }
+    previousAlliance = currAlliance;
+
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    //Tell CommandoDash we're currently disabled
+    commandoDashNT.getSubTable("AllianceAndModeData").getEntry("robotMode").setNumber(32);
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    //Tell CommandoDash we're in auto
+    commandoDashNT.getSubTable("AllianceAndModeData").getEntry("robotMode").setNumber(35);
+
+    selectedAuto = commandoDashNT.getEntry("autoSelection").getString("Taxi - Default"); //TODO add default clause
+    commandoDashNT.getEntry("rioAutoSelection").setString(selectedAuto);
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuto);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -70,6 +109,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    //Tell CommandoDash we're in teleop
+    commandoDashNT.getSubTable("AllianceAndModeData").getEntry("robotMode").setNumber(33);
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -85,6 +127,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
+    //Tell CommandoDash we're in test
+    commandoDashNT.getSubTable("AllianceAndModeData").getEntry("robotMode").setNumber(37);
+    
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }

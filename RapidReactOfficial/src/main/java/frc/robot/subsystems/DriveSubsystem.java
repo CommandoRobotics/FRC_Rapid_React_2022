@@ -4,9 +4,8 @@
 
 package frc.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
-
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlannerTrajectory;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -23,9 +22,12 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
+import frc.robot.commands.FollowTrajectoryCommand;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -44,6 +46,7 @@ public class DriveSubsystem extends SubsystemBase {
   MecanumDrive drive;
   MecanumDriveOdometry odometry;
   Field2d field;
+  boolean isFieldCentricEnabled = true;
 
   public DriveSubsystem() {
 
@@ -119,6 +122,29 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /**
+   * Toggle the field centric variable
+   */
+  public void toggleFieldCentric() {
+    isFieldCentricEnabled = !isFieldCentricEnabled;
+  }
+
+  /**
+   * Get whether the toggle for field centric driving during teleop is enabled
+   * @return
+   */
+  public boolean isFieldCentricToggleEnabled() {
+    return isFieldCentricEnabled;
+  }
+
+  /**
+   * Set the value of the field centric toggle variable
+   * @param value
+   */
+  public void setFieldCentricToggle(boolean value) {
+    isFieldCentricEnabled = value;
+  }
+
+  /**
    * Set the speed of the front left spark
    * @param speed
    */
@@ -191,6 +217,7 @@ public class DriveSubsystem extends SubsystemBase {
     setFrontRightSpeed(speed);
     setRearLeftSpeed(speed);
     setRearRightSpeed(speed);
+    drive.feed();
   }
 
   /**
@@ -202,13 +229,14 @@ public class DriveSubsystem extends SubsystemBase {
     setFrontRightVolts(volts);
     setRearLeftVolts(volts);
     setRearRightVolts(volts);
+    drive.feed();
   }
 
   /**
    * Stop the drivetrain
    */
   public void stop() {
-    driveForward(0);
+    drive.stopMotor();
   }
 
   /**
@@ -264,6 +292,7 @@ public class DriveSubsystem extends SubsystemBase {
     frontRightSpark.setVoltage(wheelVoltages.frontRightVoltage);
     rearLeftSpark.setVoltage(wheelVoltages.rearLeftVoltage);
     rearRightSpark.setVoltage(wheelVoltages.rearRightVoltage);
+    drive.feed();
   }
 
   /**
@@ -275,6 +304,7 @@ public class DriveSubsystem extends SubsystemBase {
     frontRightPidController.setReference(wheelSpeeds.frontRightMetersPerSecond, ControlType.kVelocity);
     rearLeftPidController.setReference(wheelSpeeds.rearLeftMetersPerSecond, ControlType.kVelocity);
     rearRightPidController.setReference(wheelSpeeds.rearRightMetersPerSecond, ControlType.kVelocity);
+    drive.feed();
   }
 
   /**
@@ -333,6 +363,42 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public Pose2d getPose() {
     return odometry.getPoseMeters();
+  }
+
+  /**
+   * Set the pose of the robot
+   * @param pose
+   */
+  public void setPose(Pose2d pose) {
+    resetEncoders();
+    odometry.resetPosition(pose, Rotation2d.fromDegrees(-getHeading()));
+  }
+
+  /**
+   * Get a command for following a given trajectory
+   * @param trajectory The trajectory to follow
+   * @param isInitPose Whether the starting pose of this trajectory should be used to reset the pose of the drivetrain
+   * @param stopAtEnd Whether the drivetrain should stop after this trajectory ends
+   * @return The created FollowTrajectoryCommand 
+   */
+  public Command newCommandFromTrajectory(PathPlannerTrajectory trajectory, boolean isInitPose, boolean stopAtEnd) {
+    if (isInitPose && stopAtEnd) {
+      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose()))
+        .andThen(new FollowTrajectoryCommand(trajectory, this))
+        .andThen(new InstantCommand(this::stop));
+    } else if (isInitPose) {
+      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose()))
+      .andThen(new FollowTrajectoryCommand(trajectory, this));
+    } else if (stopAtEnd) {
+      return new FollowTrajectoryCommand(trajectory, this)
+        .andThen(new InstantCommand(this::stop));
+    } else {
+    return new FollowTrajectoryCommand(trajectory, this);
+    }
+  }
+
+  public Command newCommandFromTrajectory(PathPlannerTrajectory trajectory) {
+    return new FollowTrajectoryCommand(trajectory, this);
   }
 
   @Override
