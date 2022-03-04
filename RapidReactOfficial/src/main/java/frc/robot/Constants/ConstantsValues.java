@@ -76,7 +76,7 @@ public class ConstantsValues {
      * SHOOTER
      */
     //TODO tune shooter PID values
-    public static final double flywheelP = 0;
+    public static final double flywheelP = 0.000300;
     public static final double flywheelI = 0;
     public static final double flywheelD = 0;
     public static final double flywheelIZone = 0;
@@ -85,9 +85,14 @@ public class ConstantsValues {
     public static final double flywheelMaxOutput = 1;
 
     // Shooter feedforward values
-    public static final double flywheelKs = 0;
-    public static final double flywheelKv = 0;
-    public static final double flywheelKa = 0;
+    public static final double flywheelKs = 0.00141601;
+    public static final double flywheelKv = 0.0020;
+    public static final double flywheelKa = 0.0081225;
+
+    // Rate limit
+    public static final double shooterRateLimit = 500;
+
+    public static final double shooterVelocityConversionFactor = 0.6666667;
 
     // Vector tree map
     public static final TreeMap<Range, Vector> vectorMap = new TreeMap<Range, Vector>();
@@ -131,8 +136,8 @@ public class ConstantsValues {
     /**
      * INTAKE
      */
-    public static final double intakePower = 0.7;
-    public static final double ejectPower = 0.5;
+    public static final double intakePower = 0.66;
+    public static final double ejectPower = -0.5;
 
     /**
      * AUTO AIM
@@ -166,7 +171,7 @@ public class ConstantsValues {
     public static final double transferIntakeSpeed = 0.3;
     public static final double rampIntakeSpeed = 0.3;
     public static final double verticalExpelSpeed = 0.3;
-    public static final double rampExpelSpeed = -0.3;
+    public static final double rampExpelSpeed = 0.3;
     public static final double transferExpelSpeed = -0.3;
 
     public static final double rampJogSpeed = 0.3;

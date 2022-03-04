@@ -11,6 +11,7 @@ import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.Constants.ConstantsPorts;
@@ -224,7 +225,7 @@ public class IndexSubsystem extends SubsystemBase {
    * @return
    */
   public boolean isEntranceSensorTriggered() {
-    return entranceSensor.get();
+    return !entranceSensor.get();
   }
 
   /**
@@ -232,7 +233,7 @@ public class IndexSubsystem extends SubsystemBase {
    * @return
    */
   public boolean isRampSensorTriggered() {
-    return rampSensor.get();
+    return !rampSensor.get();
   }
 
   /**
@@ -240,7 +241,7 @@ public class IndexSubsystem extends SubsystemBase {
    * @return
    */
   public boolean isVerticalSensorTriggered() {
-    return verticalSensor.get();
+    return !verticalSensor.get();
   }
 
   /**
@@ -248,7 +249,7 @@ public class IndexSubsystem extends SubsystemBase {
    * @return
    */
   public boolean isShooterSensorTriggered() {
-    return shooterSensor.get();
+    return !shooterSensor.get();
   }
 
   /**
@@ -387,7 +388,7 @@ public class IndexSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.putBoolean("shooterBB", isShooterSensorTriggered());
     updateBlocks();
   }
 

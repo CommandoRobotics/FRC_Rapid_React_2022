@@ -1,14 +1,14 @@
 {
   "NetworkTables": {
     "SmartDashboard": {
-      "Field": {
-        "open": true
-      },
       "open": true
     },
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/DriveSubsystem": "Subsystem",
+      "/LiveWindow/IndexSubsystem": "Subsystem",
       "/LiveWindow/ShooterSubsystem": "Subsystem",
+      "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[1]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[2]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[3]": "Digital Input",
@@ -20,11 +20,15 @@
       "/LiveWindow/Ungrouped/MecanumDrive[1]": "MecanumDrive",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/PIDController[1]": "PIDController",
       "/SmartDashboard/PIDController[2]": "PIDController",
+      "/SmartDashboard/PIDController[3]": "PIDController",
       "/SmartDashboard/PIDController[4]": "PIDController",
       "/SmartDashboard/PIDController[5]": "PIDController"
     },
@@ -44,5 +48,30 @@
   "NetworkTables Settings": {
     "mode": "Client",
     "serverTeam": "5889"
+  },
+  "Plots": {
+    "Plot <0>": {
+      "plots": [
+        {
+          "axis": [
+            {
+              "autoFit": true
+            }
+          ],
+          "height": 338,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/RPM"
+            }
+          ]
+        }
+      ]
+    }
   }
 }
