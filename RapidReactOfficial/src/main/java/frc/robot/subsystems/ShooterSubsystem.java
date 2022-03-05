@@ -98,9 +98,6 @@ public class ShooterSubsystem extends SubsystemBase {
     // Instantiate motor feedforwards
     flywheelFF = new SimpleMotorFeedforward(ConstantsValues.flywheelKs, ConstantsValues.flywheelKv, ConstantsValues.flywheelKa);
     
-    // Instantiate rate limiter
-    rateLimit = new SlewRateLimiter(ConstantsValues.shooterRateLimit, 0);
-
     // Instantiate the limelight
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
 
@@ -109,8 +106,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Add ranges and vectors to the vector treemap
     // Note: Velocities are in RPM, angles are in degrees, and ranges are in meters.
-    ConstantsValues.addToVectorMap(0, 3, 2000, defaultShotAngle);
-    ConstantsValues.addToVectorMap(3, 10, 4000, defaultShotAngle);
+    ConstantsValues.addToVectorMap(0, 1.8, 0, defaultShotAngle);
+    ConstantsValues.addToVectorMap(1.8, 2.3, 2200, defaultShotAngle);
+    ConstantsValues.addToVectorMap(2.3, 2.8, 2350, defaultShotAngle);
+    ConstantsValues.addToVectorMap(2.8, 3.3, 2550, defaultShotAngle);
     //TODO adjust the above vectors, as they're just examples
 
     // Add motors to the simulation
@@ -118,10 +117,12 @@ public class ShooterSubsystem extends SubsystemBase {
       REVPhysicsSim.getInstance().addSparkMax(flywheelLeader, DCMotor.getNEO(1));
       REVPhysicsSim.getInstance().addSparkMax(flywheelFollower, DCMotor.getNEO(1));
     }
-    if(Robot.isReal()) {
-      SmartDashboard.putNumber("setShooterRPM", 0);
-      SmartDashboard.putNumber("flywheelP", ConstantsValues.flywheelP);
-    }
+    SmartDashboard.putNumber("flywheelP", ConstantsValues.flywheelP);
+    SmartDashboard.putNumber("LLAngle", ConstantsValues.limelightMountingAngle);
+    SmartDashboard.putNumber("LLHeight", ConstantsValues.shooterHeightMeters);
+
+    SmartDashboard.putNumber("targetRpm", currentManualVelocity);
+
   }
 
   /**
@@ -264,13 +265,17 @@ public class ShooterSubsystem extends SubsystemBase {
    * @param target The target RPM of the flywheel.
    */
   public void setFlywheelTargetRpm(double targetRPM) {
+    if(targetRPM > 0) {
     flywheelPid.setReference(
-      rateLimit.calculate(targetRPM), 
+      targetRPM, 
       ControlType.kVelocity, 
       0, 
-      flywheelFF.calculate(rateLimit.calculate(targetRPM)), 
+      flywheelFF.calculate(targetRPM), 
       ArbFFUnits.kVoltage);
-    SmartDashboard.putNumber("bottomFlywheelFF", flywheelFF.calculate(rateLimit.calculate(targetRPM)));
+    } else {
+      flywheelFollower.stopMotor();
+    }
+    SmartDashboard.putNumber("bottomFlywheelFF", flywheelFF.calculate(targetRPM));
   }
 
   /**
@@ -367,6 +372,7 @@ public class ShooterSubsystem extends SubsystemBase {
     } else {
       currentManualVelocity = 0;
     }
+    SmartDashboard.putNumber("targetRpm", currentManualVelocity);
   }
 
   /**
@@ -380,7 +386,13 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    SmartDashboard.putNumber("arbFF", flywheelFF.calculate(SmartDashboard.getNumber("setShooterRPM", 0)));
+    currentManualVelocity = SmartDashboard.getNumber("targetRpm", currentManualVelocity);
+
+    SmartDashboard.putNumber("horizontalDistanceLL", getHorizontalDistanceToHub());
+
+    ConstantsValues.limelightMountingAngle = SmartDashboard.getNumber("LLAngle", ConstantsValues.limelightMountingAngle);
+    ConstantsValues.shooterHeightMeters = SmartDashboard.getNumber("LLHeight", ConstantsValues.shooterHeightMeters);
+
     // Get the current flywheel values from the Smart dashboard
     // This will allow us to adjust these values on the fly from the Smart Dashboard
     double currentFlywheelP = SmartDashboard.getNumber("flywheelP", 0);

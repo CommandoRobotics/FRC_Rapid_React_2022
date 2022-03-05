@@ -89,16 +89,12 @@ public class ConstantsValues {
     public static final double flywheelKv = 0.0023;
     public static final double flywheelKa = 0.0081225;
 
-    // Rate limit
-    public static final double shooterRateLimit = 500;
-
     public static final double shooterVelocityConversionFactor = 1;
 
     // Vector tree map
     public static final TreeMap<Range, Vector> vectorMap = new TreeMap<Range, Vector>();
 
     // Other shooter values
-    public static final double shooterHeightMeters = Units.inchesToMeters(10);
 
     public static final double flywheelVelocityConversionFactor = 1;
 
@@ -107,7 +103,9 @@ public class ConstantsValues {
     public static final double flywheelAtVelocityIterations = 10;
 
     // Limelight values
-    public static final double limelightMountingAngle = 17; // The angle at which the Limelight is mounted above the horizon in degrees.
+    public static double limelightMountingAngle = 32.5; // The angle at which the Limelight is mounted above the horizon in degrees.
+    public static double shooterHeightMeters = Units.inchesToMeters(29.75);
+
 
     public static final double flywheelExpelVolts = 2;
 
@@ -180,7 +178,7 @@ public class ConstantsValues {
     public static final double verticalJogSpeed = 0.3;
     public static final double transferJogSpeed = 0.3;
 
-    public static final double verticalShootSpeed = 0.3;
+    public static final double verticalShootSpeed = 0.2;
 
 
     //Camera translation relative to robot
