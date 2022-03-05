@@ -21,8 +21,9 @@ public class ConstantsPorts {
      */
     public static final int leftWinchId = 13;
     public static final int rightWinchId = 14;
-    public static final int midClimberId = 15;
-    public static final int traversalClimberId = 2;
+    public static final int midClimberForwardId = 2;
+    public static final int midClimberReverseId = 3;
+    public static final int traversalClimberId = 15;
     public static final int topLimitSwitchPort = 3;
     public static final int bottomLimitSwitchPort = 2;
 

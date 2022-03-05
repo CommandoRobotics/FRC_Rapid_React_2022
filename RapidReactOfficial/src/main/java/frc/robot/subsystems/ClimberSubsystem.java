@@ -5,18 +5,20 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsPorts;
 
 public class ClimberSubsystem extends SubsystemBase {
 
-  Solenoid midClimb, traversalClimb;
+  Solenoid traversalClimb;
+  DoubleSolenoid midClimb;
   CANSparkMax leftWinch, rightWinch;
   
   DigitalInput toplimitSwitch = new DigitalInput(ConstantsPorts.topLimitSwitchPort);
@@ -29,28 +31,28 @@ public class ClimberSubsystem extends SubsystemBase {
   /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
 
-    midClimb = new Solenoid(PneumaticsModuleType.REVPH, ConstantsPorts.midClimberId);
-    traversalClimb = new Solenoid(PneumaticsModuleType.REVPH, ConstantsPorts.traversalClimberId);
+    midClimb = new DoubleSolenoid(PneumaticsModuleType.REVPH, ConstantsPorts.midClimberForwardId, ConstantsPorts.midClimberReverseId);
+    //traversalClimb = new Solenoid(PneumaticsModuleType.REVPH, ConstantsPorts.traversalClimberId);
 
-    leftWinch = new CANSparkMax(ConstantsPorts.leftWinchId, MotorType.kBrushless);
-    rightWinch = new CANSparkMax(ConstantsPorts.rightWinchId, MotorType.kBrushless);
+    //leftWinch = new CANSparkMax(ConstantsPorts.leftWinchId, MotorType.kBrushless);
+    //rightWinch = new CANSparkMax(ConstantsPorts.rightWinchId, MotorType.kBrushless);
 
     ntInst = NetworkTableInstance.getDefault();
     ntInst.getTable("CommandoDash").getSubTable("SensorData")
-      .getEntry("midSolenoidState").setBoolean(midClimb.get());
-    ntInst.getTable("CommandoDash").getSubTable("SensorData")
-      .getEntry("traversalSolenoidState").setBoolean(traversalClimb.get());
+      .getEntry("midSolenoidState").setBoolean(isMidClimbExtended());
+    // ntInst.getTable("CommandoDash").getSubTable("SensorData")
+    //   .getEntry("traversalSolenoidState").setBoolean(traversalClimb.get());
 
   }
 
   //Extend Middle Solenoid
   public void midUp() {
-    midClimb.set(true);
+    midClimb.set(Value.kForward);
   }
 
   //Retract Middle Solenoid
   public void midDown() {
-    midClimb.set(false);
+    midClimb.set(Value.kReverse);
   }
 
   //Toggle Middle Solenoid 
@@ -60,12 +62,12 @@ public class ClimberSubsystem extends SubsystemBase {
 
   //Extend Traversal Solenoid
   public void traversalUp() {
-    midClimb.set(true);
+    traversalClimb.set(true);
   }
 
   //Retract Traversal Solenoid
   public void traversalDown() {
-    midClimb.set(false);
+    traversalClimb.set(false);
   }
 
   //Toggle Traversal Solenoid
@@ -94,10 +96,18 @@ public class ClimberSubsystem extends SubsystemBase {
     }
   }
 
+  /**
+   * Get whether the mid climb is extended
+   * @return
+   */
+  public boolean isMidClimbExtended() {
+    return midClimb.get() == Value.kForward;
+  }
+
   @Override
   public void periodic() {
     //Update CDD with the mid solenoid state
-    boolean currMidState = midClimb.get();
+    boolean currMidState = isMidClimbExtended();
     if (previousMidState != currMidState) {
         ntInst.getTable("CommandoDash").getSubTable("SensorData")
             .getEntry("midSolenoidState").setBoolean(currMidState);
@@ -105,11 +115,11 @@ public class ClimberSubsystem extends SubsystemBase {
     previousMidState = currMidState;
 
     //Update CDD with the traversal solenoid state
-    boolean currTraversalState = traversalClimb.get();
-    if (previousTraversalState != currTraversalState) {
-        ntInst.getTable("CommandoDash").getSubTable("SensorData")
-            .getEntry("traversalSolenoidState").setBoolean(currTraversalState);
-    }
-    previousTraversalState = currTraversalState;
+    // boolean currTraversalState = traversalClimb.get();
+    // if (previousTraversalState != currTraversalState) {
+    //     ntInst.getTable("CommandoDash").getSubTable("SensorData")
+    //         .getEntry("traversalSolenoidState").setBoolean(currTraversalState);
+    // }
+    // previousTraversalState = currTraversalState;
   }
 }
