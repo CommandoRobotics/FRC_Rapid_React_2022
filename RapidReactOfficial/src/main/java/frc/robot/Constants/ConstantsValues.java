@@ -76,18 +76,18 @@ public class ConstantsValues {
      * SHOOTER
      */
     //TODO tune shooter PID values
-    public static final double flywheelP = 0.00020;
-    public static final double flywheelI = 0;
-    public static final double flywheelD = 0.0005;
-    public static final double flywheelIZone = 0;
-    public static final double flywheelFF = 0;
-    public static final double flywheelMinOutput = -1;
-    public static final double flywheelMaxOutput = 1;
+    public static double flywheelP = 0.000250;
+    public static double flywheelI = 0;
+    public static double flywheelD = 0;
+    public static double flywheelIZone = 0;
+    public static double flywheelFF = 0;
+    public static double flywheelMinOutput = -1;
+    public static double flywheelMaxOutput = 1;
 
     // Shooter feedforward values
-    public static final double flywheelKs = 0.0015;
-    public static final double flywheelKv = 0.0023;
-    public static final double flywheelKa = 0.0081225;
+    public static double flywheelKs = 0.0015;
+    public static double flywheelKv = 0.002157;
+    public static double flywheelKa = 0.0081225;
 
     public static final double shooterVelocityConversionFactor = 1;
 
@@ -108,6 +108,8 @@ public class ConstantsValues {
 
 
     public static final double flywheelExpelVolts = 2;
+
+    public static final double flywheelRateLimit = 1000;
 
     /*
     Methods for adding values to vector treemap
