@@ -6,11 +6,12 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ConstantsValues;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class AimDrivetrainUsingVisionCommand extends CommandBase {
@@ -18,6 +19,7 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
   DoubleSupplier x, y, rotation;
   DriveSubsystem driveSubsystem;
   AutoAimSubsystem autoAimSubsystem;
+  NetworkTable sensorTable;
 
   /**
    * An AimDrivetrainUsingVision command
@@ -35,12 +37,15 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
     this.autoAimSubsystem = autoAimSubsystem;
     addRequirements(driveSubsystem);
     addRequirements(autoAimSubsystem);
+    // Instantiate sensor table for CommandoDash integration
+    sensorTable = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData");
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     autoAimSubsystem.enableLimelightLed();
+    sensorTable.getEntry("isAutoAiming").setBoolean(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -49,15 +54,25 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
     boolean fieldCentric = driveSubsystem.isFieldCentricToggleEnabled();
     if(autoAimSubsystem.isTargetSeen()) {
       // Automatically rotate the robot to the target
+
+      // Calculate rotation value
+      double rotationValue = IntakeSubsystem.scaleAroundZero(
+        autoAimSubsystem.calculatePanOutput(
+          autoAimSubsystem.getLimelightXOffset()
+        ), 
+        ConstantsValues.panPidMinOutput
+      );
+
+      // Update CommandoDash
+      sensorTable.getEntry("isRobotAimed").setBoolean(rotationValue == 0);
+
+      // Drive the robot
       driveSubsystem.driveMecanum(
         // Forward/reverse value
         y.getAsDouble(), 
         // Strafe value
         x.getAsDouble(),
-        // Calculate rotation value using PID and Limelight offset 
-        IntakeSubsystem.scaleAroundZero(autoAimSubsystem.calculatePanOutput(
-          autoAimSubsystem.getLimelightXOffset()
-        ), ConstantsValues.panPidMinOutput),
+        rotationValue,
         fieldCentric
         );
     } else {
@@ -76,6 +91,7 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
   public void end(boolean interrupted) {
     autoAimSubsystem.disableLimelightLed();
     driveSubsystem.stop();
+    sensorTable.getEntry("isAutoAiming").setBoolean(false);
   }
 
   // Returns true when the command should end.
