@@ -90,11 +90,6 @@
         "window": {
           "visible": true
         }
-      },
-      "/SmartDashboard/PIDController[2]": {
-        "window": {
-          "visible": true
-        }
       }
     }
   },

@@ -99,7 +99,7 @@ public class ConstantsValues {
     public static final double flywheelVelocityConversionFactor = 1;
 
     //TODO adjust Limelight mounting values
-    public static final double flywheelAtVelocityDeadband = 50;
+    public static final double flywheelAtVelocityDeadband = 25; // Amount to be added or subtracted from the shooter velocity to determine if we're at velocity
     public static final double flywheelAtVelocityIterations = 10;
 
     // Limelight values

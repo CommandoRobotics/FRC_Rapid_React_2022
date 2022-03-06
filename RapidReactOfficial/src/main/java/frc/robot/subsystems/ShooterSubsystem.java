@@ -56,9 +56,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
   SlewRateLimiter rateLimit;
 
-  double previousFlywheelP = ConstantsValues.flywheelP;
+  // Some variables that are used locally for inter-method logic
+  private int flywheelAtVelocityIteration = 0;
+  private double currentTargetRpm = 0;
 
   double currentManualVelocity = 0;
+
+  private NetworkTable sensorTable;
+
 
   public ShooterSubsystem() {
     // Instantiate the shooter motor controllers
@@ -120,18 +125,15 @@ public class ShooterSubsystem extends SubsystemBase {
       REVPhysicsSim.getInstance().addSparkMax(flywheelLeader, DCMotor.getNEO(1));
       REVPhysicsSim.getInstance().addSparkMax(flywheelFollower, DCMotor.getNEO(1));
     }
+
+    sensorTable = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData");
+
+    // Add values to smart dashboard
     SmartDashboard.putNumber("flywheelP", ConstantsValues.flywheelP);
     SmartDashboard.putNumber("flywheelI", ConstantsValues.flywheelI);
     SmartDashboard.putNumber("flywheelD", ConstantsValues.flywheelD);
-    SmartDashboard.putNumber("flywheelKs", ConstantsValues.flywheelKs);
-    SmartDashboard.putNumber("flywheelKa", ConstantsValues.flywheelKa);
-    SmartDashboard.putNumber("flywheelKv", ConstantsValues.flywheelKv);
-
-
-
     SmartDashboard.putNumber("LLAngle", ConstantsValues.limelightMountingAngle);
     SmartDashboard.putNumber("LLHeight", ConstantsValues.shooterHeightMeters);
-
     SmartDashboard.putNumber("targetRpm", currentManualVelocity);
 
   }
@@ -394,32 +396,38 @@ public class ShooterSubsystem extends SubsystemBase {
     return currentManualVelocity;
   }
 
+  /**
+   * Update the network tables that integrate our shooter with CommandoDash
+   */
+  private void updateCommandoDash() {
+    sensorTable.getEntry("manualCycleSpeed").setDouble(getCurrentManualVelocity());
+    sensorTable.getEntry("shooterRpm").setDouble(getFlywheelVelocity());
+    sensorTable.getEntry("isAtTargetVelocity").setBoolean(flywheelAtVelocityIteration >= ConstantsValues.flywheelAtVelocityIterations);
+  }
+
   @Override
   public void periodic() {
 
-    currentManualVelocity = SmartDashboard.getNumber("targetRpm", currentManualVelocity);
-
-    SmartDashboard.putNumber("horizontalDistanceLL", getHorizontalDistanceToHub());
-
-    ConstantsValues.limelightMountingAngle = SmartDashboard.getNumber("LLAngle", ConstantsValues.limelightMountingAngle);
-    ConstantsValues.shooterHeightMeters = SmartDashboard.getNumber("LLHeight", ConstantsValues.shooterHeightMeters);
-    ConstantsValues.flywheelI = SmartDashboard.getNumber("flywheelI", ConstantsValues.flywheelI);
-    ConstantsValues.flywheelD = SmartDashboard.getNumber("flywheelD", ConstantsValues.flywheelD);
-    ConstantsValues.flywheelKs = SmartDashboard.getNumber("flywheelKs", ConstantsValues.flywheelKs);
-    ConstantsValues.flywheelKv = SmartDashboard.getNumber("flywheelKv", ConstantsValues.flywheelKv);
-    ConstantsValues.flywheelKa = SmartDashboard.getNumber("flywheelKa", ConstantsValues.flywheelKa);
-
-    // Get the current flywheel values from the Smart dashboard
-    // This will allow us to adjust these values on the fly from the Smart Dashboard
-    double currentFlywheelP = SmartDashboard.getNumber("flywheelP", 0);
-
-    // Check if the numbers on the Smart Dashboard have changed, and change our values if they have.
-    if (currentFlywheelP != previousFlywheelP) {
-      flywheelPid.setP(currentFlywheelP);
-      previousFlywheelP = currentFlywheelP;
+    // Check if the flywheel is at the target velocity
+    if(getFlywheelVelocity() > currentTargetRpm-ConstantsValues.flywheelAtVelocityDeadband && getFlywheelVelocity() < currentTargetRpm+ConstantsValues.flywheelAtVelocityDeadband) {
+      flywheelAtVelocityIteration++;
+    } else {
+      flywheelAtVelocityIteration = 0;
     }
 
+    // Update CommandoDash
+    updateCommandoDash();
+
+    // Write to smart dashboard
+    currentManualVelocity = SmartDashboard.getNumber("targetRpm", currentManualVelocity);
+    SmartDashboard.putNumber("horizontalDistanceLL", getHorizontalDistanceToHub());
+    ConstantsValues.limelightMountingAngle = SmartDashboard.getNumber("LLAngle", ConstantsValues.limelightMountingAngle);
+    ConstantsValues.shooterHeightMeters = SmartDashboard.getNumber("LLHeight", ConstantsValues.shooterHeightMeters);
+    ConstantsValues.flywheelP = SmartDashboard.getNumber("flywheelP", ConstantsValues.flywheelP);
+    ConstantsValues.flywheelI = SmartDashboard.getNumber("flywheelI", ConstantsValues.flywheelI);
+    ConstantsValues.flywheelD = SmartDashboard.getNumber("flywheelD", ConstantsValues.flywheelD);
     SmartDashboard.putNumber("RPM", getFlywheelVelocity());
+
   }
 
   @Override

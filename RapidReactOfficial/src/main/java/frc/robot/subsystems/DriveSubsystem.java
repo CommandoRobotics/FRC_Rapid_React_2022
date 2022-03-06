@@ -18,6 +18,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveMotorVoltages;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -47,6 +49,8 @@ public class DriveSubsystem extends SubsystemBase {
   MecanumDriveOdometry odometry;
   Field2d field;
   boolean isFieldCentricEnabled = true;
+
+  NetworkTable sensorTable;
 
   public DriveSubsystem() {
 
@@ -116,6 +120,9 @@ public class DriveSubsystem extends SubsystemBase {
     field = new Field2d();
 
     drive.setDeadband(ConstantsValues.driveDeadband);
+
+    // Instantiate table for CommandoDash integration
+    sensorTable = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData");
 
     // Add our field to the smart dash
     SmartDashboard.putData("Field", field);
@@ -401,8 +408,21 @@ public class DriveSubsystem extends SubsystemBase {
     return new FollowTrajectoryCommand(trajectory, this);
   }
 
+  /**
+   * Update the network tables that integrate our drivetrain with CommandoDash
+   */
+  private void updateCommandoDash() {
+    sensorTable.getEntry("isCentric").setBoolean(isFieldCentricEnabled);
+    sensorTable.getEntry("gyroAngle").setDouble(getHeading());
+  }
+
   @Override
   public void periodic() {
+
+    // Update CommandoDash
+    updateCommandoDash();
+
+    // Update odometry
     odometry.update(Rotation2d.fromDegrees(getHeading()), getWheelSpeeds());
     field.setRobotPose(odometry.getPoseMeters());
   }
