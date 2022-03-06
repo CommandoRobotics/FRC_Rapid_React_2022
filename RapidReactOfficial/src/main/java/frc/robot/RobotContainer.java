@@ -179,6 +179,14 @@ public class RobotContainer {
     // Start button - Expell all
     new JoystickButton(operatorController, XboxController.Button.kStart.value)
     .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
+
+    // Dpad up - Climber up
+    new Trigger(() -> operatorController.getPOV() == 0)
+      .whenActive(climberSubsystem::midUp);
+
+    // Dpad down - Climber down
+    new Trigger(() -> operatorController.getPOV() == 180)
+    .whenActive(climberSubsystem::midDown);
   
   }
 

@@ -373,13 +373,13 @@ public class ShooterSubsystem extends SubsystemBase {
     if(currentManualVelocity == 0) {
       currentManualVelocity = 1000;
     } else if(currentManualVelocity == 1000) {
+      currentManualVelocity = 1500;
+    } else if(currentManualVelocity == 1500) {
       currentManualVelocity = 2000;
     } else if(currentManualVelocity == 2000) {
+      currentManualVelocity = 2500;
+    } else if(currentManualVelocity == 2500) {
       currentManualVelocity = 3000;
-    } else if(currentManualVelocity == 3000) {
-      currentManualVelocity = 4000;
-    } else if(currentManualVelocity == 4000) {
-      currentManualVelocity = 5000;
     } else {
       currentManualVelocity = 0;
     }
