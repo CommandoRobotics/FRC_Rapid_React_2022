@@ -83,6 +83,8 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
         rotation.getAsDouble(), 
         fieldCentric
         );
+      // Update CommandoDash
+      sensorTable.getEntry("isRobotAimed").setBoolean(false);
     }
   }
 
@@ -92,6 +94,7 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
     autoAimSubsystem.disableLimelightLed();
     driveSubsystem.stop();
     sensorTable.getEntry("isAutoAiming").setBoolean(false);
+    sensorTable.getEntry("isRobotAimed").setBoolean(false);
   }
 
   // Returns true when the command should end.

@@ -112,9 +112,16 @@ public class ShooterSubsystem extends SubsystemBase {
     // Add ranges and vectors to the vector treemap
     // Note: Velocities are in RPM, angles are in degrees, and ranges are in meters.
     ConstantsValues.addToVectorMap(0, 1.8, 0, defaultShotAngle);
-    ConstantsValues.addToVectorMap(1.8, 2.3, 2200, defaultShotAngle);
-    ConstantsValues.addToVectorMap(2.3, 2.8, 2350, defaultShotAngle);
-    ConstantsValues.addToVectorMap(2.8, 3.3, 2550, defaultShotAngle);
+    ConstantsValues.addToVectorMap(1.8, 2.3, 2350, defaultShotAngle);
+    ConstantsValues.addToVectorMap(2.3, 3.1, 2500, defaultShotAngle);
+    ConstantsValues.addToVectorMap(3.1, 3.8, 2700, defaultShotAngle);
+    ConstantsValues.addToVectorMap(3.8, 4.3, 2900, defaultShotAngle);
+    ConstantsValues.addToVectorMap(4.3, 5, 3050, defaultShotAngle);
+    ConstantsValues.addToVectorMap(5, 5.8, 3250, defaultShotAngle);
+    ConstantsValues.addToVectorMap(5.8, 6.1, 3525, defaultShotAngle);
+    ConstantsValues.addToVectorMap(6.1, 6.4, 3575, defaultShotAngle);
+    // Default shot for long range
+    ConstantsValues.addToVectorMap(6.4, 200, 3575, defaultShotAngle);
     //TODO adjust the above vectors, as they're just examples
 
     // Create rate limiter for RPM change
@@ -278,6 +285,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * @param target The target RPM of the flywheel.
    */
   public void setFlywheelTargetRpm(double targetRPM) {
+    currentTargetRpm = targetRPM;
     if(targetRPM > 0) {
     flywheelPid.setReference(
       rateLimit.calculate(targetRPM), 
@@ -347,7 +355,7 @@ public class ShooterSubsystem extends SubsystemBase {
     double distanceToHubMeters = getHorizontalDistanceToHub();
 
     // Make sure we can see a target
-    if(getHorizontalDistanceToHub() == -1) {
+    if(getHorizontalDistanceToHub() <= 0) {
       // We can not see the target, so return a vector with no magnitude or direction.
       return new Vector(0, 0);
     }
@@ -401,7 +409,7 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   private void updateCommandoDash() {
     sensorTable.getEntry("manualCycleSpeed").setDouble(getCurrentManualVelocity());
-    sensorTable.getEntry("shooterRpm").setDouble(getFlywheelVelocity());
+    sensorTable.getEntry("shooterRPM").setDouble(getFlywheelVelocity());
     sensorTable.getEntry("isAtTargetVelocity").setBoolean(flywheelAtVelocityIteration >= ConstantsValues.flywheelAtVelocityIterations);
   }
 
@@ -409,7 +417,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
 
     // Check if the flywheel is at the target velocity
-    if(getFlywheelVelocity() > currentTargetRpm-ConstantsValues.flywheelAtVelocityDeadband && getFlywheelVelocity() < currentTargetRpm+ConstantsValues.flywheelAtVelocityDeadband) {
+    if((getFlywheelVelocity() > currentTargetRpm-ConstantsValues.flywheelAtVelocityDeadband) && (getFlywheelVelocity() < currentTargetRpm+ConstantsValues.flywheelAtVelocityDeadband)) {
       flywheelAtVelocityIteration++;
     } else {
       flywheelAtVelocityIteration = 0;
@@ -419,6 +427,7 @@ public class ShooterSubsystem extends SubsystemBase {
     updateCommandoDash();
 
     // Write to smart dashboard
+    SmartDashboard.putNumber("autoTargetVel", currentTargetRpm);
     currentManualVelocity = SmartDashboard.getNumber("targetRpm", currentManualVelocity);
     SmartDashboard.putNumber("horizontalDistanceLL", getHorizontalDistanceToHub());
     ConstantsValues.limelightMountingAngle = SmartDashboard.getNumber("LLAngle", ConstantsValues.limelightMountingAngle);

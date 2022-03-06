@@ -99,8 +99,8 @@ public class ConstantsValues {
     public static final double flywheelVelocityConversionFactor = 1;
 
     //TODO adjust Limelight mounting values
-    public static final double flywheelAtVelocityDeadband = 25; // Amount to be added or subtracted from the shooter velocity to determine if we're at velocity
-    public static final double flywheelAtVelocityIterations = 10;
+    public static final double flywheelAtVelocityDeadband = 30; // Amount to be added or subtracted from the shooter velocity to determine if we're at velocity
+    public static final double flywheelAtVelocityIterations = 8;
 
     // Limelight values
     public static double limelightMountingAngle = 32.5; // The angle at which the Limelight is mounted above the horizon in degrees.
@@ -137,7 +137,7 @@ public class ConstantsValues {
     /**
      * INTAKE
      */
-    public static final double intakePower = 0.66;
+    public static final double intakePower = 0.4;
     public static final double ejectPower = -0.5;
 
     /**

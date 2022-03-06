@@ -1,7 +1,4 @@
 {
-  "CameraPublisher": {
-    "open": true
-  },
   "NetworkTables Settings": {
     "listenAddress": "10.58.89.12",
     "mode": "Client",
