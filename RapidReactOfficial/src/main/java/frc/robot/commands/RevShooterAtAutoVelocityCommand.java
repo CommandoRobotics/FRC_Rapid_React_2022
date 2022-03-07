@@ -4,7 +4,11 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Projectile.Range;
 import frc.robot.subsystems.ShooterSubsystem;
 
 /**
@@ -13,6 +17,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class RevShooterAtAutoVelocityCommand extends CommandBase {
 
   ShooterSubsystem shooterSubsystem;
+  NetworkTableEntry vectorMapRange = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData").getEntry("vectorMapRange");
 
   /** Creates a new RevShooterAtAutoVelocityCommand. */
   public RevShooterAtAutoVelocityCommand(ShooterSubsystem shooterSubsystem) {
@@ -30,9 +35,9 @@ public class RevShooterAtAutoVelocityCommand extends CommandBase {
   @Override
   public void execute() {
     shooterSubsystem.enableLimelightLed();
-    shooterSubsystem.setFlywheelTargetRpm(
-      shooterSubsystem.calculateIdealLaunchVector().velocity
-    );
+    Range range = shooterSubsystem.findRangeGivenDistance(shooterSubsystem.getHorizontalDistanceToHub());
+    shooterSubsystem.setFlywheelTargetRpm(shooterSubsystem.calculateIdealLaunchVector().velocity);
+    vectorMapRange.setString(range.minValue + " - " + range.maxValue);
   }
 
   // Called once the command ends or is interrupted.
@@ -40,6 +45,7 @@ public class RevShooterAtAutoVelocityCommand extends CommandBase {
   public void end(boolean interrupted) {
     shooterSubsystem.disableLimelightLed();
     shooterSubsystem.stop();
+    vectorMapRange.setString("_._ - _._");
   }
 
   // Returns true when the command should end.
