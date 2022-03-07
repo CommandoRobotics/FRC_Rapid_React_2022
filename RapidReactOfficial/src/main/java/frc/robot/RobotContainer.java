@@ -206,8 +206,8 @@ public class RobotContainer {
     switch (autoSelected) {
       case "IdealAuto":
         return null; //TODO Add "IdealAuto" command
-      case "SecondAuto":
-        return null; //TODO Add "SecondAuto" command
+      case "DoubleShot":
+        return null; //TODO Add "DoubleShot" command
       case "Spare":
         return null; //TODO Add "Spare" command
       case "FullSend":
