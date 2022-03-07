@@ -11,8 +11,10 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveMotorVoltages;
@@ -61,10 +63,10 @@ public class DriveSubsystem extends SubsystemBase {
     rearRightSpark = new CANSparkMax(ConstantsPorts.rearRightSparkId, MotorType.kBrushless);
 
     // Invert the Spark Maxes
-    frontLeftSpark.setInverted(true);
-    frontRightSpark.setInverted(false);
-    rearLeftSpark.setInverted(true);
-    rearRightSpark.setInverted(false);
+    frontLeftSpark.setInverted(false);
+    frontRightSpark.setInverted(true);
+    rearLeftSpark.setInverted(false);
+    rearRightSpark.setInverted(true);
 
     // Instantiate the drive encoders
     frontLeftEncoder = frontLeftSpark.getEncoder();
@@ -307,10 +309,18 @@ public class DriveSubsystem extends SubsystemBase {
    * @param wheelSpeeds A MecanumDriveWheelSpeeds object containing the speeds to set each wheel to
    */
   public void setWheelSpeeds(MecanumDriveWheelSpeeds wheelSpeeds) {
-    frontLeftPidController.setReference(wheelSpeeds.frontLeftMetersPerSecond, ControlType.kVelocity);
-    frontRightPidController.setReference(wheelSpeeds.frontRightMetersPerSecond, ControlType.kVelocity);
-    rearLeftPidController.setReference(wheelSpeeds.rearLeftMetersPerSecond, ControlType.kVelocity);
-    rearRightPidController.setReference(wheelSpeeds.rearRightMetersPerSecond, ControlType.kVelocity);
+    frontLeftPidController.setReference(
+      wheelSpeeds.frontLeftMetersPerSecond, 
+      ControlType.kVelocity);
+    frontRightPidController.setReference(
+      wheelSpeeds.frontRightMetersPerSecond, 
+      ControlType.kVelocity);    
+    rearLeftPidController.setReference(
+      wheelSpeeds.rearLeftMetersPerSecond, 
+      ControlType.kVelocity);    
+    rearRightPidController.setReference(
+      wheelSpeeds.rearRightMetersPerSecond, 
+      ControlType.kVelocity);
     drive.feed();
   }
 
@@ -422,6 +432,10 @@ public class DriveSubsystem extends SubsystemBase {
     // Update CommandoDash
     updateCommandoDash();
 
+    SmartDashboard.putNumber("FRDriveVelocity", getWheelSpeeds().frontRightMetersPerSecond);
+    SmartDashboard.putNumber("FLDriveVelocity", getWheelSpeeds().frontLeftMetersPerSecond);
+    SmartDashboard.putNumber("RRDriveVelocity", getWheelSpeeds().rearRightMetersPerSecond);
+    SmartDashboard.putNumber("RLDriveVelocity", getWheelSpeeds().rearLeftMetersPerSecond);
     // Update odometry
     odometry.update(Rotation2d.fromDegrees(getHeading()), getWheelSpeeds());
     field.setRobotPose(odometry.getPoseMeters());

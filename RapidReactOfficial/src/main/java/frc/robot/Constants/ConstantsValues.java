@@ -11,19 +11,13 @@ import frc.robot.Projectile.Range;
 import frc.robot.Projectile.Vector;
 
 public class ConstantsValues {
-
-    /**
-     * AUTONOMOUS
-     */
-    public static final double defaultAutonomousMaxVelocity = 8;
-    public static final double defaultAutonomousMaxAcceleration = 5;
     
     /**
      * DRIVE
      */
     public static final double driveDeadband = 0.1;
     // PID and feedforward values for each wheel on the drivetrain
-    public static final double driveWheelP = 0;
+    public static final double driveWheelP = 3.0853;
     public static final double driveWheelI = 0;
     public static final double driveWheelD = 0;
     public static final double driveWheelIZone = 0;
@@ -50,11 +44,11 @@ public class ConstantsValues {
     public static final double wheelDiameterMeters = Units.inchesToMeters(6);
     public static final double wheelCircumferenceMeters = wheelDiameterMeters*Math.PI;
     public static final double driveGearRatio = 8.45;
-    public static final double distancePerMotorRotationMeters = wheelCircumferenceMeters/driveGearRatio;
+    public static final double distancePerMotorRotationMeters = 0.1183*wheelCircumferenceMeters/42;
     
     // Motor translations relative to the center of the robot
-    public static final double trackWidthMeters = 0; // Distance between the left and right wheels
-    public static final double wheelBaseMeters = 0; // Distance between the very bottom of the front and rear wheels
+    public static final double trackWidthMeters = Units.inchesToMeters(22.5); // Distance between the left and right wheels
+    public static final double wheelBaseMeters = Units.inchesToMeters(21); // Distance between the very bottom of the front and rear wheels
     public static final MecanumDriveKinematics mecanumDriveKinematics = new MecanumDriveKinematics(
         new Translation2d(wheelBaseMeters/2, trackWidthMeters/2), 
         new Translation2d(wheelBaseMeters/2, -trackWidthMeters/2), 
@@ -63,13 +57,13 @@ public class ConstantsValues {
         );
 
     // Misc drive values
-    public static double maxWheelVelocityMetersPerSecond;
-    public static final double rotationMaxVelocityMetersPerSec = 0;
-    public static final double rotationMaxAccelerationMetersPerSecPerSec = 0;
+    public static double maxWheelVelocityMetersPerSecond = 10;
+    public static final double rotationMaxVelocityMetersPerSec = 5;
+    public static final double rotationMaxAccelerationMetersPerSecPerSec = 10;
     public static final double driveMaxVel = 10;
-    public static final double driveMaxAcc = 5;
-    public static final double mecanumFeedForwardKS = 0;
-    public static final double mecanumFeedForwardKV = 0;
+    public static final double driveMaxAcc = 2;
+    public static final double mecanumFeedForwardKS = 0.18366;
+    public static final double mecanumFeedForwardKV = 2.1665;
     public static final SimpleMotorFeedforward mecanumFeedForward = new SimpleMotorFeedforward(mecanumFeedForwardKS, mecanumFeedForwardKV);
 
     /**

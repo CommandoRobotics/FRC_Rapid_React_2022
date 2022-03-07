@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AimDrivetrainUsingVisionCommand;
 import frc.robot.commands.DriveWithFieldCentricToggleCommand;
 import frc.robot.commands.ExpelAllCommand;
+import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.commands.HoundCargo;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.JogIndexRampCommand;
@@ -68,14 +70,16 @@ public class RobotContainer {
     commandoDashNT = ntInst.getTable("CommandoDash");
 
     // Load all paths
-    //PathFetcher.loadAllPaths();
+    PathFetcher.loadAllPaths();
     
     // Set any default commands
     // Driver sticks: drive
     driveSubsystem.setDefaultCommand(new DriveWithFieldCentricToggleCommand(driveSubsystem, 
-    () -> driverController.getLeftY(),
-    () -> -driverController.getLeftX(), 
-    () -> -driverController.getRightX()));
+    () -> -driverController.getLeftY(),
+    () -> driverController.getLeftX(), 
+    () -> driverController.getRightX()));
+
+    shooterSubsystem.disableLimelightLed();
 
     configureButtonBindings();
   }
@@ -104,9 +108,9 @@ public class RobotContainer {
     // Right bumper - Enable auto aim (drive based auto aim)
     new JoystickButton(driverController, XboxController.Button.kRightBumper.value)
     .whileActiveOnce(new AimDrivetrainUsingVisionCommand(
-      () -> driverController.getLeftY(), 
-      () -> -driverController.getLeftX(), 
-      () -> -driverController.getRightX(), 
+      () -> -driverController.getLeftY(), 
+      () -> driverController.getLeftX(), 
+      () -> driverController.getRightX(), 
       driveSubsystem, 
       autoAimSubsystem)
       );
@@ -118,9 +122,9 @@ public class RobotContainer {
     // A - Hound cargo
     new JoystickButton(driverController, XboxController.Button.kA.value)
       .whileActiveOnce(new HoundCargo(intakeSubsystem, driveSubsystem,       
-                      () -> driverController.getLeftY(), 
-                      () -> -driverController.getLeftX(), 
-                      () -> -driverController.getRightX()));
+                      () -> -driverController.getLeftY(), 
+                      () -> driverController.getLeftX(), 
+                      () -> driverController.getRightX()));
 
     // Back button - Expell all
     new JoystickButton(driverController, XboxController.Button.kBack.value)
@@ -187,6 +191,9 @@ public class RobotContainer {
     // Dpad down - Climber down
     new Trigger(() -> operatorController.getPOV() == 180)
     .whenActive(climberSubsystem::midDown);
+
+    new JoystickButton(driverController, XboxController.Button.kB.value)
+      .whenActive(driveSubsystem.newCommandFromTrajectory(PathFetcher.fetchTuning(0), true, true));
   
   }
 
