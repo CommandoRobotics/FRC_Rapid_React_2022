@@ -5,8 +5,8 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 
 public class PathFetcher {
 
-    static double defaultMaxVel = 8;
-    static double defaultMaxAccel = 2;
+    static double defaultMaxVel = 3;
+    static double defaultMaxAccel = 1;
 
     static PathPlannerTrajectory[] doubleShot = new PathPlannerTrajectory[2];
     static PathPlannerTrajectory[] ideal = new PathPlannerTrajectory[4];

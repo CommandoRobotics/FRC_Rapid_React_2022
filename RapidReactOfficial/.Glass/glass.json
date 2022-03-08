@@ -3,8 +3,7 @@
     "CommandoDash": {
       "SensorData": {
         "open": true
-      },
-      "open": true
+      }
     },
     "types": {
       "/FMSInfo": "FMSInfo",
@@ -40,16 +39,22 @@
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Front Left Trajectory PID": "PIDController",
+      "/SmartDashboard/Front Left Trajectory PID NeverEnding": "PIDController",
       "/SmartDashboard/Front Right Trajectory PID": "PIDController",
+      "/SmartDashboard/Front Right Trajectory PID NeverEnding": "PIDController",
       "/SmartDashboard/PIDController[1]": "PIDController",
       "/SmartDashboard/PIDController[2]": "PIDController",
       "/SmartDashboard/PIDController[3]": "PIDController",
       "/SmartDashboard/PIDController[4]": "PIDController",
       "/SmartDashboard/PIDController[5]": "PIDController",
       "/SmartDashboard/Rear Left Trajectory PID": "PIDController",
+      "/SmartDashboard/Rear Left Trajectory PID NeverEnding": "PIDController",
       "/SmartDashboard/Rear Right Trajectory PID": "PIDController",
+      "/SmartDashboard/Rear Right Trajectory PID NeverEnding": "PIDController",
       "/SmartDashboard/X PID Controller": "PIDController",
-      "/SmartDashboard/Y PID Controller": "PIDController"
+      "/SmartDashboard/X PID Controller NeverEnding": "PIDController",
+      "/SmartDashboard/Y PID Controller": "PIDController",
+      "/SmartDashboard/Y PID Controller NeverEnding": "PIDController"
     },
     "windows": {
       "/LiveWindow/Ungrouped/MecanumDrive[1]": {
@@ -63,12 +68,14 @@
         }
       },
       "/SmartDashboard/Field": {
-        "image": "C:\\Users\\robotics\\Downloads\\Screenshot 2022-03-06 141234.png",
+        "image": "C:\\Users\\robotics\\Downloads\\Screenshot 2022-03-06 141234.png"
+      },
+      "/SmartDashboard/X PID Controller NeverEnding": {
         "window": {
           "visible": true
         }
       },
-      "/SmartDashboard/X PID Controller": {
+      "/SmartDashboard/Y PID Controller NeverEnding": {
         "window": {
           "visible": true
         }
@@ -119,7 +126,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     },
     "Plot <1>": {
       "plots": [
@@ -170,7 +180,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     }
   }
 }

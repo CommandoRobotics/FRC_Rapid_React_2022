@@ -31,7 +31,7 @@ public class ConstantsValues {
     public static final double driveYD = 0;
 
     // PID values for drivetrain x
-    public static final double driveXP = 0;
+    public static final double driveXP = 1.75;
     public static final double driveXI = 0;
     public static final double driveXD = 0;
 
@@ -44,7 +44,7 @@ public class ConstantsValues {
     public static final double wheelDiameterMeters = Units.inchesToMeters(6);
     public static final double wheelCircumferenceMeters = wheelDiameterMeters*Math.PI;
     public static final double driveGearRatio = 8.45;
-    public static final double distancePerMotorRotationMeters = 0.1183*wheelCircumferenceMeters/42;
+    public static final double distancePerMotorRotationMeters = ((wheelCircumferenceMeters/driveGearRatio)/42)/1.386;
     
     // Motor translations relative to the center of the robot
     public static final double trackWidthMeters = Units.inchesToMeters(22.5); // Distance between the left and right wheels
@@ -60,8 +60,8 @@ public class ConstantsValues {
     public static double maxWheelVelocityMetersPerSecond = 10;
     public static final double rotationMaxVelocityMetersPerSec = 5;
     public static final double rotationMaxAccelerationMetersPerSecPerSec = 10;
-    public static final double driveMaxVel = 10;
-    public static final double driveMaxAcc = 2;
+    public static final double driveMaxVel = 3;
+    public static final double driveMaxAcc = 1;
     public static final double mecanumFeedForwardKS = 0.18366;
     public static final double mecanumFeedForwardKV = 2.1665;
     public static final SimpleMotorFeedforward mecanumFeedForward = new SimpleMotorFeedforward(mecanumFeedForwardKS, mecanumFeedForwardKV);
