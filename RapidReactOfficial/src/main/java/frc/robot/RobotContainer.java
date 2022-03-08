@@ -79,7 +79,7 @@ public class RobotContainer {
     () -> driverController.getLeftX(), 
     () -> driverController.getRightX()));
 
-    shooterSubsystem.enableLimelightLed();
+    shooterSubsystem.disableLimelightLed();
 
     configureButtonBindings();
   }
