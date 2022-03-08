@@ -191,10 +191,6 @@ public class RobotContainer {
     // Dpad down - Climber down
     new Trigger(() -> operatorController.getPOV() == 180)
     .whenActive(climberSubsystem::midDown);
-
-    new JoystickButton(driverController, XboxController.Button.kB.value)
-      .whenActive(driveSubsystem.newCommandFromTrajectory(PathFetcher.fetchTuning(0), true, true));
-  
   }
 
   /**

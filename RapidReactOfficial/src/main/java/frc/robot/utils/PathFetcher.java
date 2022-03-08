@@ -49,27 +49,6 @@ public class PathFetcher {
             defaultMaxVel, 
             defaultMaxAccel
         );
-
-        // Load all tuning paths
-        
-        tuning[0] = PathPlanner.loadPath(
-            "X Path", 
-            defaultMaxVel, 
-            defaultMaxAccel
-        );
-
-        tuning[1] = PathPlanner.loadPath(
-            "Y Path", 
-            defaultMaxVel, 
-            defaultMaxAccel
-        );
-
-        tuning[2] = PathPlanner.loadPath(
-            "Rotation Path", 
-            defaultMaxVel, 
-            defaultMaxAccel
-        );
-        
     }
 
     /**
@@ -89,14 +68,4 @@ public class PathFetcher {
     public static PathPlannerTrajectory fetchIdeal(int part) {
         return ideal[part];
     }
-
-    /**
-    * Get a specific part of the ideal autonomous path
-    * @param part The part of the ideal autonomous path specified
-    * @return
-    */
-   public static PathPlannerTrajectory fetchTuning(int part) {
-       return tuning[part];
-   }
-
 }
