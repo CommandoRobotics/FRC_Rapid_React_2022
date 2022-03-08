@@ -5,13 +5,17 @@
 package frc.robot;
 
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Triggers.TriggerPOV;
+import frc.robot.Triggers.TriggerPOV.POVDirection;
 import frc.robot.commands.AimDrivetrainUsingVisionCommand;
 import frc.robot.commands.DriveWithFieldCentricToggleCommand;
 import frc.robot.commands.ExpelAllCommand;
@@ -56,7 +60,7 @@ public class RobotContainer {
   // Define subsystems
   ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   DriveSubsystem driveSubsystem = new DriveSubsystem();
-  IntakeSubsystem intakeSubsystem = new IntakeSubsystem(driveSubsystem);
+  //IntakeSubsystem intakeSubsystem = new IntakeSubsystem(driveSubsystem);
   ClimberSubsystem climberSubsystem = new ClimberSubsystem(); 
   IndexSubsystem indexSubsystem = new IndexSubsystem();
   AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem();
@@ -64,6 +68,9 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer(NetworkTableInstance networkTableInst) {
+
+    //Silence the "Missing Joystick" warnings
+    DriverStation.silenceJoystickConnectionWarning(true);
 
     // Network Tables Instantiation
     ntInst = networkTableInst;
@@ -97,13 +104,13 @@ public class RobotContainer {
     */
 
     // Right trigger - Intake
-    new Trigger(() -> driverController.getRightTriggerAxis() > 0.1)
-    .whileActiveOnce(new IntakeCommand(intakeSubsystem, indexSubsystem));
+    // new Trigger(() -> driverController.getRightTriggerAxis() > 0.1)
+    // .whileActiveOnce(new IntakeCommand(intakeSubsystem, indexSubsystem));
 
     // Left trigger - Eject
-    new Trigger(() -> driverController.getLeftTriggerAxis() > 0.1)
-    .whileActiveContinuous(intakeSubsystem::intakeOut)
-    .whenInactive(intakeSubsystem::stop);
+    // new Trigger(() -> driverController.getLeftTriggerAxis() > 0.1)
+    // .whileActiveContinuous(intakeSubsystem::intakeOut)
+    // .whenInactive(intakeSubsystem::stop);
 
     // Right bumper - Enable auto aim (drive based auto aim)
     new JoystickButton(driverController, XboxController.Button.kRightBumper.value)
@@ -116,19 +123,19 @@ public class RobotContainer {
       );
 
     // Left bumper - Toggle intake lifter
-    new JoystickButton(driverController, XboxController.Button.kLeftBumper.value)
-    .whenActive(intakeSubsystem::toggleExtend);
+    // new JoystickButton(driverController, XboxController.Button.kLeftBumper.value)
+    // .whenActive(intakeSubsystem::toggleExtend);
 
     // A - Hound cargo
-    new JoystickButton(driverController, XboxController.Button.kA.value)
-      .whileActiveOnce(new HoundCargo(intakeSubsystem, driveSubsystem,       
-                      () -> -driverController.getLeftY(), 
-                      () -> driverController.getLeftX(), 
-                      () -> driverController.getRightX()));
+    // new JoystickButton(driverController, XboxController.Button.kA.value)
+    //   .whileActiveOnce(new HoundCargo(intakeSubsystem, driveSubsystem,       
+    //                   () -> -driverController.getLeftY(), 
+    //                   () -> driverController.getLeftX(), 
+    //                   () -> driverController.getRightX()));
 
     // Back button - Expell all
-    new JoystickButton(driverController, XboxController.Button.kBack.value)
-    .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
+    // new JoystickButton(driverController, XboxController.Button.kBack.value)
+    // .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
 
     // Start - Reset field centric driving
     new JoystickButton(driverController, XboxController.Button.kStart.value)
@@ -181,8 +188,8 @@ public class RobotContainer {
     .whileActiveOnce(new JogIndexRampReverseCommand(indexSubsystem));
 
     // Start button - Expell all
-    new JoystickButton(operatorController, XboxController.Button.kStart.value)
-    .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
+    // new JoystickButton(operatorController, XboxController.Button.kStart.value)
+    // .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
 
     // Dpad up - Climber up
     new Trigger(() -> operatorController.getPOV() == 0)
@@ -192,9 +199,12 @@ public class RobotContainer {
     new Trigger(() -> operatorController.getPOV() == 180)
     .whenActive(climberSubsystem::midDown);
 
-    new JoystickButton(driverController, XboxController.Button.kB.value)
-      .whenActive(driveSubsystem.newCommandFromTrajectory(PathFetcher.fetchTuning(0), true, true));
-  
+    /**
+     * DRIVE TUNING
+     */
+
+    new TriggerPOV(driverController, POVDirection.kDown)
+      .whileActiveOnce(driveSubsystem.getNeverEndingTrajectory(PathFetcher.fetchTuning(0), true, true));
   }
 
   /**
@@ -220,4 +230,6 @@ public class RobotContainer {
         return null; //TODO Determine default command (or have null? recomend not tho)
     }
   }
+
+
 }

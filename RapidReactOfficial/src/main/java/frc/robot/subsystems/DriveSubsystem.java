@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
 import frc.robot.commands.FollowTrajectoryCommand;
+import frc.robot.commands.FollowTrajectoryCommandNeverEnding;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -115,6 +116,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Instantiate the NavX
     navX = new AHRS(SPI.Port.kMXP);
+    navX.reset();
 
     // Instantiate other mecanum drive utilities
     drive = new MecanumDrive(frontLeftSpark, rearLeftSpark, frontRightSpark, rearRightSpark);
@@ -418,6 +420,22 @@ public class DriveSubsystem extends SubsystemBase {
     return new FollowTrajectoryCommand(trajectory, this);
   }
 
+  public Command getNeverEndingTrajectory(PathPlannerTrajectory trajectory, boolean isInitPose, boolean stopAtEnd) {
+    if (isInitPose && stopAtEnd) {
+      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose()))
+        .andThen(new FollowTrajectoryCommandNeverEnding(trajectory, this))
+        .andThen(new InstantCommand(this::stop));
+    } else if (isInitPose) {
+      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose()))
+      .andThen(new FollowTrajectoryCommandNeverEnding(trajectory, this));
+    } else if (stopAtEnd) {
+      return new FollowTrajectoryCommandNeverEnding(trajectory, this)
+        .andThen(new InstantCommand(this::stop));
+    } else {
+    return new FollowTrajectoryCommandNeverEnding(trajectory, this);
+    }
+  }
+
   /**
    * Update the network tables that integrate our drivetrain with CommandoDash
    */
@@ -436,6 +454,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("FLDriveVelocity", getWheelSpeeds().frontLeftMetersPerSecond);
     SmartDashboard.putNumber("RRDriveVelocity", getWheelSpeeds().rearRightMetersPerSecond);
     SmartDashboard.putNumber("RLDriveVelocity", getWheelSpeeds().rearLeftMetersPerSecond);
+    
     // Update odometry
     odometry.update(Rotation2d.fromDegrees(getHeading()), getWheelSpeeds());
     field.setRobotPose(odometry.getPoseMeters());
