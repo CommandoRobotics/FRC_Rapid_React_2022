@@ -191,10 +191,6 @@ public class RobotContainer {
     // Dpad down - Climber down
     new Trigger(() -> operatorController.getPOV() == 180)
     .whenActive(climberSubsystem::midDown);
-
-    new JoystickButton(driverController, XboxController.Button.kB.value)
-      .whenActive(driveSubsystem.newCommandFromTrajectory(PathFetcher.fetchTuning(0), true, true));
-  
   }
 
   /**
@@ -206,8 +202,8 @@ public class RobotContainer {
     switch (autoSelected) {
       case "IdealAuto":
         return null; //TODO Add "IdealAuto" command
-      case "SecondAuto":
-        return null; //TODO Add "SecondAuto" command
+      case "DoubleShot":
+        return null; //TODO Add "DoubleShot" command
       case "Spare":
         return null; //TODO Add "Spare" command
       case "FullSend":
