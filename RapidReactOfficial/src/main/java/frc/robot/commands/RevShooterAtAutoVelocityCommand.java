@@ -37,7 +37,11 @@ public class RevShooterAtAutoVelocityCommand extends CommandBase {
     shooterSubsystem.enableLimelightLed();
     Range range = shooterSubsystem.findRangeGivenDistance(shooterSubsystem.getHorizontalDistanceToHub());
     shooterSubsystem.setFlywheelTargetRpm(shooterSubsystem.calculateIdealLaunchVector().velocity);
-    vectorMapRange.setString(range.minValue + " - " + range.maxValue);
+    if(range != null) {
+      vectorMapRange.setString(range.minValue + " - " + range.maxValue);
+    } else {
+      vectorMapRange.setString("_._ - _._");
+    }
   }
 
   // Called once the command ends or is interrupted.
