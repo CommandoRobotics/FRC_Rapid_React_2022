@@ -19,7 +19,7 @@ public class ConstantsValues {
 
     // Drive limits
     public static final double driveDeadband = 0.1;
-    public static final int driveCurrentLimit = 40;
+    public static final int driveCurrentLimit = 50;
 
     // PID and feedforward values for each wheel on the drivetrain
     public static final double driveWheelP = 3.0853;
