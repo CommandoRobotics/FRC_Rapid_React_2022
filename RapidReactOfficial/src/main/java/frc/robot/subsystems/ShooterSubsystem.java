@@ -54,8 +54,6 @@ public class ShooterSubsystem extends SubsystemBase {
   // Feedforward
   SimpleMotorFeedforward flywheelFF;
 
-  SlewRateLimiter rateLimit;
-
   // Some variables that are used locally for inter-method logic
   private int flywheelAtVelocityIteration = 0;
   private double currentTargetRpm = 0;
@@ -104,6 +102,10 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheelPid.setFF(ConstantsValues.flywheelFF);
     flywheelPid.setOutputRange(ConstantsValues.flywheelMinOutput, ConstantsValues.flywheelMaxOutput);
 
+    // Set the ramp rates of the flywheel
+    flywheelLeader.setClosedLoopRampRate(ConstantsValues.flywheelSecondsToSpinUp);
+    flywheelLeader.setOpenLoopRampRate(ConstantsValues.flywheelSecondsToSpinUp);
+
     // Instantiate motor feedforwards
     flywheelFF = new SimpleMotorFeedforward(ConstantsValues.flywheelKs, ConstantsValues.flywheelKv);
     
@@ -127,9 +129,6 @@ public class ShooterSubsystem extends SubsystemBase {
     // Default shot for long range
     ConstantsValues.addToVectorMap(6.4, 200, 3575, defaultShotAngle);
     //TODO adjust the above vectors, as they're just examples
-
-    // Create rate limiter for RPM change
-    rateLimit = new SlewRateLimiter(ConstantsValues.flywheelRateLimit, 0);
 
     // Add motors to the simulation
     if(Robot.isSimulation()) {
@@ -292,15 +291,15 @@ public class ShooterSubsystem extends SubsystemBase {
     currentTargetRpm = targetRPM;
     if(targetRPM > 0) {
     flywheelPid.setReference(
-      rateLimit.calculate(targetRPM), 
+      targetRPM, 
       ControlType.kVelocity, 
       0, 
-      flywheelFF.calculate(rateLimit.calculate(targetRPM)), 
+      flywheelFF.calculate(targetRPM), 
       ArbFFUnits.kVoltage);
     } else {
       flywheelFollower.stopMotor();
     }
-    SmartDashboard.putNumber("bottomFlywheelFF", flywheelFF.calculate(rateLimit.calculate(targetRPM)));
+    SmartDashboard.putNumber("bottomFlywheelFF", flywheelFF.calculate(targetRPM));
   }
 
   /**

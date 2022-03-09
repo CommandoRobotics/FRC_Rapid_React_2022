@@ -106,7 +106,7 @@ public class ConstantsValues {
 
     public static final double flywheelExpelVolts = 2;
 
-    public static final double flywheelRateLimit = 1000;
+    public static final double flywheelSecondsToSpinUp = 4; // The number of seconds it should take to spin up the flywheel from 0 to 1.
 
     public static final int flywheelCurrentLimit = 40;
 
