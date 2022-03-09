@@ -441,7 +441,6 @@ public class ShooterSubsystem extends SubsystemBase {
     ConstantsValues.flywheelI = SmartDashboard.getNumber("flywheelI", ConstantsValues.flywheelI);
     ConstantsValues.flywheelD = SmartDashboard.getNumber("flywheelD", ConstantsValues.flywheelD);
     SmartDashboard.putNumber("ActualRPM", getFlywheelVelocity());
-
   }
 
   @Override

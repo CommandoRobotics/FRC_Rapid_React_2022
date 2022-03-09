@@ -56,7 +56,7 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
       // Automatically rotate the robot to the target
 
       // Calculate rotation value
-      double rotationValue = IntakeSubsystem.scaleAroundZero(
+      double rotationValue = -IntakeSubsystem.scaleAroundZero(
         autoAimSubsystem.calculatePanOutput(
           autoAimSubsystem.getLimelightXOffset()
         ), 

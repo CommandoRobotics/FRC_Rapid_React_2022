@@ -25,6 +25,7 @@ import frc.robot.commands.JogIndexVerticalReverseCommand;
 import frc.robot.commands.RevShooterAtAutoVelocityCommand;
 import frc.robot.commands.RevShooterAtManualVelocityCommand;
 import frc.robot.commands.RunIndexToShootCommand;
+import frc.robot.commands.AutonomousCommands.DoubleShotTaxiAutonomous;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -203,7 +204,7 @@ public class RobotContainer {
       case "IdealAuto":
         return null; //TODO Add "IdealAuto" command
       case "DoubleShot":
-        return null; //TODO Add "DoubleShot" command
+        return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem);
       case "Spare":
         return null; //TODO Add "Spare" command
       case "FullSend":

@@ -121,6 +121,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Instantiate the NavX
     navX = new AHRS(SPI.Port.kMXP);
+    navX.reset();
 
     // Instantiate other mecanum drive utilities
     drive = new MecanumDrive(frontLeftSpark, rearLeftSpark, frontRightSpark, rearRightSpark);
@@ -392,9 +393,10 @@ public class DriveSubsystem extends SubsystemBase {
    * Set the pose of the robot
    * @param pose
    */
-  public void setPose(Pose2d pose) {
+  public void setPose(Pose2d pose, Rotation2d desiredRotation) {
     resetEncoders();
-    odometry.resetPosition(pose, Rotation2d.fromDegrees(-getHeading()));
+    Pose2d adjustedPose = new Pose2d(pose.getX(), pose.getY(), desiredRotation);
+    odometry.resetPosition(adjustedPose, Rotation2d.fromDegrees(-getHeading()));
   }
 
   /**
@@ -406,11 +408,11 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public Command newCommandFromTrajectory(PathPlannerTrajectory trajectory, boolean isInitPose, boolean stopAtEnd) {
     if (isInitPose && stopAtEnd) {
-      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose()))
+      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose(), trajectory.getInitialState().holonomicRotation))
         .andThen(new FollowTrajectoryCommand(trajectory, this))
         .andThen(new InstantCommand(this::stop));
     } else if (isInitPose) {
-      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose()))
+      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose(), trajectory.getInitialState().holonomicRotation))
       .andThen(new FollowTrajectoryCommand(trajectory, this));
     } else if (stopAtEnd) {
       return new FollowTrajectoryCommand(trajectory, this)
@@ -442,8 +444,9 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("FLDriveVelocity", getWheelSpeeds().frontLeftMetersPerSecond);
     SmartDashboard.putNumber("RRDriveVelocity", getWheelSpeeds().rearRightMetersPerSecond);
     SmartDashboard.putNumber("RLDriveVelocity", getWheelSpeeds().rearLeftMetersPerSecond);
+    
     // Update odometry
-    odometry.update(Rotation2d.fromDegrees(getHeading()), getWheelSpeeds());
+    odometry.update(Rotation2d.fromDegrees(-getHeading()), getWheelSpeeds());
     field.setRobotPose(odometry.getPoseMeters());
   }
 }
