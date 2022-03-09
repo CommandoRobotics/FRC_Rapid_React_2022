@@ -216,7 +216,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public Translation2d estimateRobotToCargoTransformation(PhotonPipelineResult result) {
         if (result.hasTargets()) {
             //TODO Verify Yaw needs to be reversed
-            return PhotonUtils.estimateCameraToTargetTranslation(getDistanceToCargo(result), Rotation2d.fromDegrees(-result.getBestTarget().getYaw()))
+            return PhotonUtils.estimateCameraToTargetTranslation(-getDistanceToCargo(result), Rotation2d.fromDegrees(result.getBestTarget().getYaw()))
                 .plus(ConstantsValues.houndToRobotTranslation2d);
         } else {
             System.out.println("estimateRobotToCargoTransformation() was not able to find a target and therefore returned (0,0)");
