@@ -9,9 +9,9 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.AutoAimAutonomousCommand;
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.RunIndexToShootCommand;
+import frc.robot.commands.AutoAimCommands.AutoAimAutonomousCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootCommand;
+import frc.robot.commands.IntakeCommands.IntakeCommand;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexSubsystem;
@@ -39,7 +39,7 @@ public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
       new SequentialCommandGroup(
         // Extend the intake
         new InstantCommand(intakeSubsystem::extend, intakeSubsystem).andThen(
-          new PrintCommand("Finished Extending Intake")),
+          new PrintCommand("Finished extending Intake")),
         // Start the intake
         new IntakeCommand(intakeSubsystem, indexSubsystem).andThen(
           new PrintCommand("Finished starting intake"))
@@ -49,7 +49,7 @@ public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
       driveSubsystem.newCommandFromTrajectory(
       PathFetcher.fetchDoubleShot(0), 
       true, // This is the intial pose
-      false // The robot should not stop after this trajectory is finished
+      true // The robot should stop after this trajectory is finished
       ).andThen(
         new PrintCommand("Finished DoubleShot Path 1"))
     ),

@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
-import frc.robot.commands.FollowTrajectoryCommand;
+import frc.robot.commands.DriveCommands.FollowTrajectoryCommand;
 
 public class DriveSubsystem extends SubsystemBase {
 
