@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
-import frc.robot.commands.FollowTrajectoryCommand;
+import frc.robot.commands.DriveCommands.FollowTrajectoryCommand;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -80,6 +80,12 @@ public class DriveSubsystem extends SubsystemBase {
     rearLeftEncoder.setVelocityConversionFactor(ConstantsValues.distancePerMotorRotationMeters);
     rearRightEncoder.setVelocityConversionFactor(ConstantsValues.distancePerMotorRotationMeters);
     //TODO add position conversion factors
+
+    // Set the power limiters for the drive motors
+    frontLeftSpark.setSmartCurrentLimit(ConstantsValues.driveCurrentLimit);
+    frontRightSpark.setSmartCurrentLimit(ConstantsValues.driveCurrentLimit);
+    rearLeftSpark.setSmartCurrentLimit(ConstantsValues.driveCurrentLimit);
+    rearRightSpark.setSmartCurrentLimit(ConstantsValues.driveCurrentLimit);
 
     // Instantiate the drive PID controllers
     frontLeftPidController = frontLeftSpark.getPIDController();
@@ -247,6 +253,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void stop() {
     drive.stopMotor();
+    drive.feed();
   }
 
   /**

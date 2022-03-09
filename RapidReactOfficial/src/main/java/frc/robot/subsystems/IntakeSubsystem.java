@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -52,6 +51,9 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem(DriveSubsystem driveSubsystem) {
         intake = new CANSparkMax(ConstantsPorts.intakeID, MotorType.kBrushless);
         intake.setInverted(true);
+
+        //Set intake current limit
+        intake.setSmartCurrentLimit(ConstantsValues.intakeCurrentLimit);
 
         intakeEncoder = intake.getEncoder();
         // intakeEncoder.setVelocityConversionFactor(0);
@@ -214,7 +216,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public Translation2d estimateRobotToCargoTransformation(PhotonPipelineResult result) {
         if (result.hasTargets()) {
             //TODO Verify Yaw needs to be reversed
-            return PhotonUtils.estimateCameraToTargetTranslation(getDistanceToCargo(result), Rotation2d.fromDegrees(-result.getBestTarget().getYaw()))
+            return PhotonUtils.estimateCameraToTargetTranslation(-getDistanceToCargo(result), Rotation2d.fromDegrees(result.getBestTarget().getYaw()))
                 .plus(ConstantsValues.houndToRobotTranslation2d);
         } else {
             System.out.println("estimateRobotToCargoTransformation() was not able to find a target and therefore returned (0,0)");

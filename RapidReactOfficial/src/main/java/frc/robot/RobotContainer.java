@@ -7,25 +7,27 @@ package frc.robot;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AimDrivetrainUsingVisionCommand;
-import frc.robot.commands.DriveWithFieldCentricToggleCommand;
-import frc.robot.commands.ExpelAllCommand;
-import frc.robot.commands.FollowTrajectoryCommand;
-import frc.robot.commands.HoundCargo;
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.JogIndexRampCommand;
-import frc.robot.commands.JogIndexRampReverseCommand;
-import frc.robot.commands.JogIndexVerticalCommand;
-import frc.robot.commands.JogIndexVerticalReverseCommand;
-import frc.robot.commands.RevShooterAtAutoVelocityCommand;
-import frc.robot.commands.RevShooterAtManualVelocityCommand;
-import frc.robot.commands.RunIndexToShootCommand;
+import frc.robot.commands.AutoAimCommands.AimDrivetrainUsingVisionCommand;
 import frc.robot.commands.AutonomousCommands.DoubleShotTaxiAutonomous;
+import frc.robot.commands.AutonomousCommands.IdealAutonomous;
+import frc.robot.commands.DriveCommands.DriveWithFieldCentricToggleCommand;
+import frc.robot.commands.DriveCommands.FollowTrajectoryCommand;
+import frc.robot.commands.IndexCommands.JogIndexRampCommand;
+import frc.robot.commands.IndexCommands.JogIndexRampReverseCommand;
+import frc.robot.commands.IndexCommands.JogIndexVerticalCommand;
+import frc.robot.commands.IndexCommands.JogIndexVerticalReverseCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootCommand;
+import frc.robot.commands.IntakeCommands.HoundCargo;
+import frc.robot.commands.IntakeCommands.IntakeCommand;
+import frc.robot.commands.MiscellanousCommands.ExpelAllCommand;
+import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityCommand;
+import frc.robot.commands.ShooterCommands.RevShooterAtManualVelocityCommand;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -99,7 +101,9 @@ public class RobotContainer {
 
     // Right trigger - Intake
     new Trigger(() -> driverController.getRightTriggerAxis() > 0.1)
-    .whileActiveOnce(new IntakeCommand(intakeSubsystem, indexSubsystem));
+    .whenActive(new IntakeCommand(intakeSubsystem, indexSubsystem))
+    .whenInactive(intakeSubsystem::stop, intakeSubsystem)
+    .whenInactive(indexSubsystem::stopAll, intakeSubsystem);
 
     // Left trigger - Eject
     new Trigger(() -> driverController.getLeftTriggerAxis() > 0.1)
@@ -142,14 +146,14 @@ public class RobotContainer {
     /*
       OPERATOR CONTROLLER
     */
-    // Left trigger and NOT a - Set shootervelocity to manually selected velocity
+    // Left trigger and a - Set shootervelocity to manually selected velocity
     new Trigger(() -> operatorController.getAButton())
-    .negate()
     .and(new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.1))
     .whileActiveOnce(new RevShooterAtManualVelocityCommand(shooterSubsystem));
 
-    // Left trigger and a - Set shooter velocity automatically based on Limelight
+    // Left trigger and NOT a - Set shooter velocity automatically based on Limelight
     new Trigger(() -> operatorController.getAButton())
+    .negate()
     .and(new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.1))
     .whileActiveOnce(new RevShooterAtAutoVelocityCommand(shooterSubsystem));
 
@@ -159,7 +163,8 @@ public class RobotContainer {
 
     // Right trigger - Run vertical index to effectively shoot
     new Trigger(() -> (operatorController.getRightTriggerAxis() > 0.1))
-    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem));
+    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem))
+    .whenInactive(indexSubsystem::stopAll, indexSubsystem);
 
     // Y and not alt - Jog index vertical
     operatorAlt.negate()
@@ -202,7 +207,7 @@ public class RobotContainer {
   public Command getAutonomousCommand(String autoSelected) {
     switch (autoSelected) {
       case "IdealAuto":
-        return null; //TODO Add "IdealAuto" command
+        return new IdealAutonomous(driveSubsystem, shooterSubsystem, intakeSubsystem, indexSubsystem, autoAimSubsystem);
       case "DoubleShot":
         return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem);
       case "Spare":
@@ -214,7 +219,7 @@ public class RobotContainer {
       case "Taxi - Default":
         return null; //TODO Add "Taxi - Default" command
       default:
-        return null; //TODO Determine default command (or have null? recomend not tho)
+        return null; //TODO Determine default command (or have null? tho I wouldn't recommend that)
     }
   }
 }

@@ -2,25 +2,20 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
-
-import java.util.function.DoubleSupplier;
+package frc.robot.commands.IndexCommands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.Constants.ConstantsValues;
+import frc.robot.subsystems.IndexSubsystem;
 
-public class DriveFieldCentricCommand extends CommandBase {
+public class JogIndexRampCommand extends CommandBase {
 
-  DriveSubsystem driveSubsystem;
-  DoubleSupplier y, x, rotation;
+  IndexSubsystem indexSubsystem;
 
-  /** Creates a new DriveFieldCentric. */
-  public DriveFieldCentricCommand(DriveSubsystem driveSubsystem, DoubleSupplier y, DoubleSupplier x, DoubleSupplier rotation) {
-    this.driveSubsystem = driveSubsystem;
-    this.y = y;
-    this.x = x;
-    this.rotation = rotation;
-    addRequirements(driveSubsystem);
+  /** Creates a new JogIndexRampCommand. */
+  public JogIndexRampCommand(IndexSubsystem indexSubsystem) {
+    this.indexSubsystem = indexSubsystem;
+    addRequirements(indexSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -30,13 +25,15 @@ public class DriveFieldCentricCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveSubsystem.driveMecanum(y.getAsDouble(), x.getAsDouble(), rotation.getAsDouble(), true);
+    indexSubsystem.setRamp(ConstantsValues.rampJogSpeed);
+    indexSubsystem.setTransfer(ConstantsValues.transferJogSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    driveSubsystem.stop();
+    indexSubsystem.stopRamp();
+    indexSubsystem.stopTransfer();
   }
 
   // Returns true when the command should end.
