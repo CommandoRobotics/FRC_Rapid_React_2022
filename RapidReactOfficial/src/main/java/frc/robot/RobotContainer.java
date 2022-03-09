@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,6 +27,7 @@ import frc.robot.commands.RevShooterAtAutoVelocityCommand;
 import frc.robot.commands.RevShooterAtManualVelocityCommand;
 import frc.robot.commands.RunIndexToShootCommand;
 import frc.robot.commands.AutonomousCommands.DoubleShotTaxiAutonomous;
+import frc.robot.commands.AutonomousCommands.IdealAutonomous;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -99,7 +101,9 @@ public class RobotContainer {
 
     // Right trigger - Intake
     new Trigger(() -> driverController.getRightTriggerAxis() > 0.1)
-    .whileActiveOnce(new IntakeCommand(intakeSubsystem, indexSubsystem));
+    .whenActive(new IntakeCommand(intakeSubsystem, indexSubsystem))
+    .whenInactive(intakeSubsystem::stop, intakeSubsystem)
+    .whenInactive(indexSubsystem::stopAll, intakeSubsystem);
 
     // Left trigger - Eject
     new Trigger(() -> driverController.getLeftTriggerAxis() > 0.1)
@@ -159,7 +163,8 @@ public class RobotContainer {
 
     // Right trigger - Run vertical index to effectively shoot
     new Trigger(() -> (operatorController.getRightTriggerAxis() > 0.1))
-    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem));
+    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem))
+    .whenInactive(indexSubsystem::stopAll, indexSubsystem);
 
     // Y and not alt - Jog index vertical
     operatorAlt.negate()
@@ -202,7 +207,7 @@ public class RobotContainer {
   public Command getAutonomousCommand(String autoSelected) {
     switch (autoSelected) {
       case "IdealAuto":
-        return null; //TODO Add "IdealAuto" command
+        return new IdealAutonomous(driveSubsystem, shooterSubsystem, intakeSubsystem, indexSubsystem, autoAimSubsystem);
       case "DoubleShot":
         return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem);
       case "Spare":

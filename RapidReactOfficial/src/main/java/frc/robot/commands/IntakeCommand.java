@@ -14,6 +14,8 @@ public class IntakeCommand extends CommandBase {
   IntakeSubsystem intakeSubsystem;
   IndexSubsystem indexSubsystem;
 
+  boolean isFinished = false;
+
   /** Creates a new IntakeCommand. */
   public IntakeCommand(IntakeSubsystem intakeSubsystem, IndexSubsystem indexSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
@@ -32,18 +34,17 @@ public class IntakeCommand extends CommandBase {
     intakeSubsystem.setPower(ConstantsValues.intakePower);
     indexSubsystem.setRamp(ConstantsValues.rampIntakeSpeed);
     indexSubsystem.setTransfer(ConstantsValues.transferIntakeSpeed);
+    isFinished = true;
+    
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    intakeSubsystem.stop();
-    indexSubsystem.stopAll();
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return isFinished;
   }
 }

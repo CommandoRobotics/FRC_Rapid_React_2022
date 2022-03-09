@@ -253,6 +253,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void stop() {
     drive.stopMotor();
+    drive.feed();
   }
 
   /**

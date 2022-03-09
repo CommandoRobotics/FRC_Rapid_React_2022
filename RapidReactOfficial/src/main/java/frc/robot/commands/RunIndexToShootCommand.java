@@ -14,6 +14,7 @@ import frc.robot.subsystems.IndexSubsystem;
 public class RunIndexToShootCommand extends CommandBase {
 
   IndexSubsystem indexSubsystem;
+  boolean isFinished = false;
 
   /** Creates a new RunVerticalToShootCommand. */
   public RunIndexToShootCommand(IndexSubsystem indexSubsystem) {
@@ -31,17 +32,16 @@ public class RunIndexToShootCommand extends CommandBase {
     indexSubsystem.setVertical(ConstantsValues.verticalShootSpeed);
     indexSubsystem.setRamp(ConstantsValues.rampJogSpeed);
     indexSubsystem.setTransfer(ConstantsValues.transferJogSpeed);
+    isFinished = true;
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    indexSubsystem.stopAll();
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return isFinished;
   }
 }
