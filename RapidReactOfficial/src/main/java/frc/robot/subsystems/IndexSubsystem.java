@@ -73,7 +73,7 @@ public class IndexSubsystem extends SubsystemBase {
     rampSensorTriggeredPrevious = isRampSensorTriggered();
     entranceSensorTriggeredPrevious = isEntranceSensorTriggered();
     // A ball can't physically block this sensor on robot start.
-    // However, a human can. And we want to avoid that.
+    // However, a human can. And we want to avoid that. -I see, that would be a problem -Soto
     shooterSensorTriggeredPrevious = false;  
     if(verticalSensorTriggeredPrevious) {
       blocks[verticalSensorBlock] = 1;

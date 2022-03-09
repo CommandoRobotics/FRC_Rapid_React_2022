@@ -15,7 +15,12 @@ public class ConstantsValues {
     /**
      * DRIVE
      */
+
+
+    // Drive limits
     public static final double driveDeadband = 0.1;
+    public static final int driveCurrentLimit = 40;
+
     // PID and feedforward values for each wheel on the drivetrain
     public static final double driveWheelP = 3.0853;
     public static final double driveWheelI = 0;
@@ -105,6 +110,8 @@ public class ConstantsValues {
 
     public static final double flywheelRateLimit = 1000;
 
+    public static final int flywheelCurrentLimit = 40;
+
     /*
     Methods for adding values to vector treemap
     */
@@ -133,6 +140,7 @@ public class ConstantsValues {
      */
     public static final double intakePower = 0.4;
     public static final double ejectPower = -0.5;
+    public static final int intakeCurrentLimit = 20;
 
     /**
      * AUTO AIM

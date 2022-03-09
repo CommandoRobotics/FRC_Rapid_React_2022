@@ -213,7 +213,7 @@ public class RobotContainer {
       case "Taxi - Default":
         return null; //TODO Add "Taxi - Default" command
       default:
-        return null; //TODO Determine default command (or have null? recomend not tho)
+        return null; //TODO Determine default command (or have null? tho I wouldn't recommend that)
     }
   }
 }

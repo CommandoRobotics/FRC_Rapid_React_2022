@@ -83,6 +83,10 @@ public class ShooterSubsystem extends SubsystemBase {
     // Other flywheel inversions are set in the section below
     flywheelFollower.follow(flywheelLeader, true);
 
+    // Set the spark's current limit
+    flywheelLeader.setSmartCurrentLimit(ConstantsValues.flywheelCurrentLimit);
+    flywheelFollower.setSmartCurrentLimit(ConstantsValues.flywheelCurrentLimit);
+
     // Instantiate the encoders
     flywheelEncoder = flywheelLeader.getEncoder();
     

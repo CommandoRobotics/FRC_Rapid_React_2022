@@ -81,6 +81,12 @@ public class DriveSubsystem extends SubsystemBase {
     rearRightEncoder.setVelocityConversionFactor(ConstantsValues.distancePerMotorRotationMeters);
     //TODO add position conversion factors
 
+    // Set the power limiters for the drive motors
+    frontLeftSpark.setSmartCurrentLimit(ConstantsValues.driveCurrentLimit);
+    frontRightSpark.setSmartCurrentLimit(ConstantsValues.driveCurrentLimit);
+    rearLeftSpark.setSmartCurrentLimit(ConstantsValues.driveCurrentLimit);
+    rearRightSpark.setSmartCurrentLimit(ConstantsValues.driveCurrentLimit);
+
     // Instantiate the drive PID controllers
     frontLeftPidController = frontLeftSpark.getPIDController();
     frontRightPidController = frontRightSpark.getPIDController();
