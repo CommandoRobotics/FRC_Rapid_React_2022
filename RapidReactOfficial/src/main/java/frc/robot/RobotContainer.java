@@ -142,14 +142,14 @@ public class RobotContainer {
     /*
       OPERATOR CONTROLLER
     */
-    // Left trigger and NOT a - Set shootervelocity to manually selected velocity
+    // Left trigger and a - Set shootervelocity to manually selected velocity
     new Trigger(() -> operatorController.getAButton())
-    .negate()
     .and(new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.1))
     .whileActiveOnce(new RevShooterAtManualVelocityCommand(shooterSubsystem));
 
-    // Left trigger and a - Set shooter velocity automatically based on Limelight
+    // Left trigger and NOT a - Set shooter velocity automatically based on Limelight
     new Trigger(() -> operatorController.getAButton())
+    .negate()
     .and(new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.1))
     .whileActiveOnce(new RevShooterAtAutoVelocityCommand(shooterSubsystem));
 
