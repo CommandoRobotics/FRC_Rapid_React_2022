@@ -26,7 +26,7 @@ public class ConstantsValues {
     public static final double driveWheelMaxOutput = 0;
 
     // PID values for drivetrain y
-    public static final double driveYP = 0;
+    public static final double driveYP = 1.75;
     public static final double driveYI = 0;
     public static final double driveYD = 0;
 
@@ -36,7 +36,7 @@ public class ConstantsValues {
     public static final double driveXD = 0;
 
     // PID values for drivetrain rotation
-    public static final double driveRotationP = 0;
+    public static final double driveRotationP = 2.5;
     public static final double driveRotationI = 0;
     public static final double driveRotationD = 0;
 
@@ -58,10 +58,8 @@ public class ConstantsValues {
 
     // Misc drive values
     public static double maxWheelVelocityMetersPerSecond = 10;
-    public static final double rotationMaxVelocityMetersPerSec = 5;
-    public static final double rotationMaxAccelerationMetersPerSecPerSec = 10;
-    public static final double driveMaxVel = 3;
-    public static final double driveMaxAcc = 1;
+    public static final double rotationMaxVelocityMetersPerSec = 8;
+    public static final double rotationMaxAccelerationMetersPerSecPerSec = 6;
     public static final double mecanumFeedForwardKS = 0.18366;
     public static final double mecanumFeedForwardKV = 2.1665;
     public static final SimpleMotorFeedforward mecanumFeedForward = new SimpleMotorFeedforward(mecanumFeedForwardKS, mecanumFeedForwardKV);

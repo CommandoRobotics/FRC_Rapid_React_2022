@@ -29,6 +29,7 @@ import frc.robot.commands.JogIndexVerticalReverseCommand;
 import frc.robot.commands.RevShooterAtAutoVelocityCommand;
 import frc.robot.commands.RevShooterAtManualVelocityCommand;
 import frc.robot.commands.RunIndexToShootCommand;
+import frc.robot.commands.AutonomousCommands.DoubleShotTaxiAutonomous;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -60,7 +61,7 @@ public class RobotContainer {
   // Define subsystems
   ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
   DriveSubsystem driveSubsystem = new DriveSubsystem();
-  //IntakeSubsystem intakeSubsystem = new IntakeSubsystem(driveSubsystem);
+  IntakeSubsystem intakeSubsystem = new IntakeSubsystem(driveSubsystem);
   ClimberSubsystem climberSubsystem = new ClimberSubsystem(); 
   IndexSubsystem indexSubsystem = new IndexSubsystem();
   AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem();
@@ -123,8 +124,8 @@ public class RobotContainer {
       );
 
     // Left bumper - Toggle intake lifter
-    // new JoystickButton(driverController, XboxController.Button.kLeftBumper.value)
-    // .whenActive(intakeSubsystem::toggleExtend);
+    new JoystickButton(driverController, XboxController.Button.kLeftBumper.value)
+    .whenActive(intakeSubsystem::toggleExtend);
 
     // A - Hound cargo
     // new JoystickButton(driverController, XboxController.Button.kA.value)
@@ -204,7 +205,7 @@ public class RobotContainer {
      */
 
     new TriggerPOV(driverController, POVDirection.kDown)
-      .whileActiveOnce(driveSubsystem.getNeverEndingTrajectory(PathFetcher.fetchTuning(0), true, true));
+      .whileActiveOnce(driveSubsystem.newCommandFromTrajectory(PathFetcher.fetchTuning(0), true, true));
   }
 
   /**
@@ -217,7 +218,7 @@ public class RobotContainer {
       case "IdealAuto":
         return null; //TODO Add "IdealAuto" command
       case "DoubleShot":
-        return null; //TODO Add "DoubleShot" command
+        return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem);
       case "Spare":
         return null; //TODO Add "Spare" command
       case "FullSend":
