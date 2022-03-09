@@ -101,13 +101,13 @@ public class IntakeSubsystem extends SubsystemBase {
     //raise lifter
     public void extend() {
         on = true;
-        lifter.set(Value.kForward);
+        lifter.set(Value.kReverse);
     }
 
     //lower lifter
     public void retract() {
         on = false;
-        lifter.set(Value.kReverse);
+        lifter.set(Value.kForward);
     }
 
     //toggle
