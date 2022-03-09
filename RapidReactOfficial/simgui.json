@@ -97,14 +97,29 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/PIDController[3]": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/PIDController[4]": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/PIDController[5]": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
   "NetworkTables": {
     "CommandoDash": {
-      "SensorData": {
-        "open": true
-      },
+      "open": true
+    },
+    "SmartDashboard": {
       "open": true
     },
     "photonvision": {

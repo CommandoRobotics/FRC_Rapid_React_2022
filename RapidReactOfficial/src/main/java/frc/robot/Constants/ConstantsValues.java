@@ -191,22 +191,22 @@ public class ConstantsValues {
         new Translation2d(houndXOffsetMeters, houndYOffsetMeters);
 
     //CargoHound PID values
-    public static final double houndXP = 0;
+    public static final double houndXP = 0.04;
     public static final double houndXI = 0;
     public static final double houndXD = 0;
 
-    public static final double houndYP = 0;
+    public static final double houndYP = 0.150;
     public static final double houndYI = 0;
     public static final double houndYD = 0;
 
     public static final double houndMaxRVel = 10;
     public static final double houndMaxRAcc = 5;
-    public static final double houndRP = 0;
+    public static final double houndRP = 0.04;
     public static final double houndRI = 0;
     public static final double houndRD = 0;
     public static final TrapezoidProfile.Constraints houndRConstraints =
         new TrapezoidProfile.Constraints(houndMaxRVel, houndMaxRAcc);
 
     public static final double noCargoTime = 0.5;
-    public static final double minHoundPIDOut = 0.1;
+    public static final double minHoundPIDOut = 0.15;
 }
