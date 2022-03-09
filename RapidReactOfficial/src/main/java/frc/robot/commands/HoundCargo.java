@@ -92,11 +92,11 @@ public class HoundCargo extends CommandBase {
     if (houndResult.hasTargets()) {
       //Drive based PID from the different values measured
       driveSubsystem.driveMecanum(
-          IntakeSubsystem.scaleAroundZero(
+          -IntakeSubsystem.scaleAroundZero(
             //TODO Not sure if this needs to be negative or not
             yPID.calculate(-intakeSubsystem.getDistanceToCargo(houndResult)), 
             ConstantsValues.minHoundPIDOut), 
-          IntakeSubsystem.scaleAroundZero(
+          -IntakeSubsystem.scaleAroundZero(
             xPID.calculate(-houndResult.getBestTarget().getYaw()),
             ConstantsValues.minHoundPIDOut),
           IntakeSubsystem.scaleAroundZero(
@@ -111,11 +111,11 @@ public class HoundCargo extends CommandBase {
     } else if ((noCargoTimer.get() <= ConstantsValues.noCargoTime) && (previousResult != null) && previousResult.hasTargets()) {
       //If we've seen a ball within the alloted time, but don't see one now, use a previous input to continue following the ball
       driveSubsystem.driveMecanum(
-        IntakeSubsystem.scaleAroundZero(
+        -IntakeSubsystem.scaleAroundZero(
           //TODO Not sure if this needs to be negative or not
           yPID.calculate(-intakeSubsystem.getDistanceToCargo(previousResult)), 
           ConstantsValues.minHoundPIDOut), 
-        IntakeSubsystem.scaleAroundZero(
+        -IntakeSubsystem.scaleAroundZero(
           xPID.calculate(-previousResult.getBestTarget().getYaw()),
           ConstantsValues.minHoundPIDOut),
         IntakeSubsystem.scaleAroundZero(
