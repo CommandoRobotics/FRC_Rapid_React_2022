@@ -101,7 +101,10 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheelPid.setIZone(ConstantsValues.flywheelIZone);
     flywheelPid.setFF(ConstantsValues.flywheelFF);
     flywheelPid.setOutputRange(ConstantsValues.flywheelMinOutput, ConstantsValues.flywheelMaxOutput);
+
+    // Set the ramp rates of the flywheel
     flywheelLeader.setClosedLoopRampRate(ConstantsValues.flywheelSecondsToSpinUp);
+    flywheelLeader.setOpenLoopRampRate(ConstantsValues.flywheelSecondsToSpinUp);
 
     // Instantiate motor feedforwards
     flywheelFF = new SimpleMotorFeedforward(ConstantsValues.flywheelKs, ConstantsValues.flywheelKv);
