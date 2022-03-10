@@ -5,15 +5,12 @@
 package frc.robot.commands.AutonomousCommands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.AutoAimCommands.AutoAimAutonomousCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootAutonomousCommand;
-import frc.robot.commands.IndexCommands.RunIndexToShootCommand;
 import frc.robot.commands.IntakeCommands.IntakeCommand;
-import frc.robot.commands.ShooterCommands.RevShooterAtRpmAutonomousCommand;
+import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityAutonomousCommand;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexSubsystem;
@@ -35,38 +32,41 @@ public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
   {
     addCommands(
 
-    // Extend the intake, start the intake, and drive at the same time
-    new ParallelCommandGroup(
-      // Extend the intake and THEN start it
-      new SequentialCommandGroup(
-        // Extend the intake
-        new InstantCommand(intakeSubsystem::extend, intakeSubsystem).andThen(
-          new PrintCommand("Finished extending Intake")),
-        // Start the intake
-        new IntakeCommand(intakeSubsystem, indexSubsystem).andThen(
-          new PrintCommand("Finished starting intake"))
-      ),
+    // Reset gyro
+    new InstantCommand(driveSubsystem::resetGyro),
 
-      // Drive to the ball outside tarmac
-      driveSubsystem.newCommandFromTrajectory(
-      PathFetcher.fetchDoubleShot(0), 
-      true, // This is the intial pose
-      true // The robot should stop after this trajectory is finished
-      ).andThen(
-        new PrintCommand("Finished DoubleShot Path 1"))
+    // Extend the intake, start the intake, and drive at the same time
+    // Extend the intake
+    new InstantCommand(intakeSubsystem::extend),
+    new PrintCommand("Finished extending Intake"),
+    
+    // Start the intake
+    new IntakeCommand(intakeSubsystem, indexSubsystem),
+    new PrintCommand("Finished starting intake"),
+
+    // Wait to extend and start intake
+    new WaitCommand(0.5),
+
+    // Drive to the ball outside tarmac
+    driveSubsystem.newCommandFromTrajectory(
+    PathFetcher.fetchDoubleShot(0), 
+    true, // This is the intial pose
+    true // The robot should stop after this trajectory is finished
     ),
+    new PrintCommand("Finished DoubleShot Path 1"),
 
     // Rev the shooter
-    new RevShooterAtRpmAutonomousCommand(2000, shooterSubsystem)
-    .andThen(new PrintCommand("Finished reving shooter")),
+    new RevShooterAtAutoVelocityAutonomousCommand(shooterSubsystem),
+    new PrintCommand("Finished reving shooter"),
 
     // Actually shoot
-    new RunIndexToShootAutonomousCommand(indexSubsystem).andThen(
-      new PrintCommand("Finished running the index to shoot")),
+    new RunIndexToShootAutonomousCommand(indexSubsystem),
+    new PrintCommand("Finished running the index to shoot"),
 
     // Stop shooter and index
     new InstantCommand(() -> shooterSubsystem.stop(), shooterSubsystem),
     new InstantCommand(() -> indexSubsystem.stopAll(), indexSubsystem),
+    new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
     new PrintCommand("Finished stopping shooter and index"),
 
     // Pull the intake back in
