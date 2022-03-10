@@ -44,11 +44,6 @@ public class PathFetcher {
             defaultMaxVel, 
             defaultMaxAccel
         );
-        doubleShot[1] = PathPlanner.loadPath(
-            "Double Shot 2", 
-            defaultMaxVel, 
-            defaultMaxAccel
-        );
     }
 
     /**

@@ -407,6 +407,10 @@ public class ShooterSubsystem extends SubsystemBase {
     return currentManualVelocity;
   }
 
+  public boolean isFlywheelAtTargetVelocity() {
+    return flywheelAtVelocityIteration >=ConstantsValues.flywheelAtVelocityIterations && currentTargetRpm != 0;
+  }
+
   /**
    * Update the network tables that integrate our shooter with CommandoDash
    */
@@ -414,13 +418,13 @@ public class ShooterSubsystem extends SubsystemBase {
     sensorTable.getEntry("manualCycleSpeed").setDouble(getCurrentManualVelocity());
     sensorTable.getEntry("targetRPM").setDouble(currentTargetRpm);
     sensorTable.getEntry("shooterRPM").setDouble(getFlywheelVelocity());
-    sensorTable.getEntry("isAtTargetVelocity").setBoolean(flywheelAtVelocityIteration >= ConstantsValues.flywheelAtVelocityIterations);
+    sensorTable.getEntry("isAtTargetVelocity").setBoolean(isFlywheelAtTargetVelocity());
   }
 
   @Override
   public void periodic() {
 
-    // Check if the flywheel is at the target velocity
+    // Update whether the flywheel is at the target velocity
     if((getFlywheelVelocity() > currentTargetRpm-ConstantsValues.flywheelAtVelocityDeadband) && (getFlywheelVelocity() < currentTargetRpm+ConstantsValues.flywheelAtVelocityDeadband)) {
       flywheelAtVelocityIteration++;
     } else {

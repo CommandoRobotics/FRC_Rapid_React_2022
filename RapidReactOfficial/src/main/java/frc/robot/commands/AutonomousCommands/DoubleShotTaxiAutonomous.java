@@ -10,8 +10,10 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutoAimCommands.AutoAimAutonomousCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootAutonomousCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootCommand;
 import frc.robot.commands.IntakeCommands.IntakeCommand;
+import frc.robot.commands.ShooterCommands.RevShooterAtRpmAutonomousCommand;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexSubsystem;
@@ -54,45 +56,23 @@ public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
         new PrintCommand("Finished DoubleShot Path 1"))
     ),
 
-    // Drive while waiting for a bit, stopping the intake, and bringing the intake in
-    new ParallelCommandGroup(
-      // Drive to the shooter position
-      driveSubsystem.newCommandFromTrajectory(
-        PathFetcher.fetchDoubleShot(1),
-        false, // This is not the intial pose 
-        true // The robot will stop after this trajectory is finished
-      ).andThen(
-        new PrintCommand("Finished DoubleShot Path 2")),
-      // Wait for a bit, stop the intake, bring the intake in, and rev the shooter
-      new SequentialCommandGroup(
-        // Wait
-        new WaitCommand(1).andThen(
-          new PrintCommand("Finished Waiting 1 second")),
-        // Stop the intake
-        new InstantCommand(intakeSubsystem::stop, intakeSubsystem).andThen(
-          new PrintCommand("Finished stopping the intake")),
-        // Bring the intake back in
-        new InstantCommand(intakeSubsystem::retract, intakeSubsystem).andThen(
-          new PrintCommand("Finished retracting the intake")),
-        // Start reving the shooter
-        new InstantCommand(()-> shooterSubsystem.setFlywheelTargetRpm(2000), shooterSubsystem).andThen(
-          new PrintCommand("Finished reving the shooter"))
-      )
-    ),
+    // Rev the shooter
+    new RevShooterAtRpmAutonomousCommand(2000, shooterSubsystem)
+    .andThen(new PrintCommand("Finished reving shooter")),
 
-    // Auto aim
-    new AutoAimAutonomousCommand(driveSubsystem, autoAimSubsystem).andThen(
-      new PrintCommand("Finished starting to AutoAim")),
     // Actually shoot
-    new RunIndexToShootCommand(indexSubsystem).andThen(
+    new RunIndexToShootAutonomousCommand(indexSubsystem).andThen(
       new PrintCommand("Finished running the index to shoot")),
-    // Wait 3 seconds (for shooting)
-    new WaitCommand(3).andThen(
-      new PrintCommand("Finished waiting 3 seconds")),
+
     // Stop shooter and index
     new InstantCommand(() -> shooterSubsystem.stop(), shooterSubsystem),
-    new InstantCommand(() -> indexSubsystem.stopAll(), indexSubsystem).andThen(
-      new PrintCommand("Finished stopping shooter and index")),
+    new InstantCommand(() -> indexSubsystem.stopAll(), indexSubsystem),
+    new PrintCommand("Finished stopping shooter and index"),
+
+    // Pull the intake back in
+    new InstantCommand(intakeSubsystem::retract)
+    .andThen(new PrintCommand("Finished retracing intake")),
+    
     new PrintCommand("Finished DoubleShotAuto"));
   }
 }
