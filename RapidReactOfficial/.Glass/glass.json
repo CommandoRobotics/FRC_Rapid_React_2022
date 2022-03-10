@@ -5,11 +5,10 @@
         "open": true
       }
     },
-    "SmartDashboard": {
-      "Rotation PID Controller": {
+    "photonvision": {
+      "CargoHound": {
         "open": true
-      },
-      "open": true
+      }
     },
     "types": {
       "/FMSInfo": "FMSInfo",
@@ -100,6 +99,16 @@
       },
       "/SmartDashboard/Field": {
         "image": "C:\\Users\\robotics\\Downloads\\Screenshot 2022-03-06 141234.png",
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/PIDController[3]": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/PIDController[4]": {
         "window": {
           "visible": true
         }
