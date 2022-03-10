@@ -11,23 +11,22 @@ import frc.robot.subsystems.IndexSubsystem;
 
 public class RunIndexToShootAutonomousCommand extends CommandBase {
   IndexSubsystem indexSubsystem;
-  double commandStartTimeMillis;
-  double maxCommandRunTimeMillis = 5000;
+  double maxCommandRunTimeSeconds = 3;
   int timesBeamBroken = 0;
   boolean wasBeamBrokenPrevious = false;
   int timesBeamNeedsToBeBroken = 2;
+  Timer timer;
 
   /** Creates a new RunVerticalToShootCommand. */
   public RunIndexToShootAutonomousCommand(IndexSubsystem indexSubsystem) {
     this.indexSubsystem = indexSubsystem;
-    commandStartTimeMillis = Timer.getMatchTime();
+    timer = new Timer();
     addRequirements(indexSubsystem);
   }
 
   /** Creates a new RunVerticalToShootCommand. */
   public RunIndexToShootAutonomousCommand(int numberOfBallsToShoot, IndexSubsystem indexSubsystem) {
     this.indexSubsystem = indexSubsystem;
-    commandStartTimeMillis = Timer.getMatchTime();
     timesBeamNeedsToBeBroken = numberOfBallsToShoot;
     addRequirements(indexSubsystem);
   }
@@ -35,6 +34,8 @@ public class RunIndexToShootAutonomousCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    timer.reset();
+    timer.start();
     indexSubsystem.setVertical(ConstantsValues.verticalShootSpeed);
     indexSubsystem.setRamp(ConstantsValues.rampJogSpeed);
     indexSubsystem.setTransfer(ConstantsValues.transferJogSpeed);
@@ -43,17 +44,25 @@ public class RunIndexToShootAutonomousCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(indexSubsystem.isShooterSensorTriggered() && !wasBeamBrokenPrevious) {
-      timesBeamBroken++;
-      wasBeamBrokenPrevious = true;
-    } else if(!indexSubsystem.isShooterSensorTriggered()) {
+    if(indexSubsystem.isShooterSensorTriggered()) {
+      if(!wasBeamBrokenPrevious) {
+        timesBeamBroken++;
+        wasBeamBrokenPrevious = true;
+      }
+    } else {
       wasBeamBrokenPrevious = false;
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    indexSubsystem.stopAll();
+    wasBeamBrokenPrevious = false;
+    timesBeamBroken = 0;
+    timer.stop();
+    timer.reset();
+  }
 
   // Returns true when the command should end.
   @Override
@@ -63,6 +72,6 @@ public class RunIndexToShootAutonomousCommand extends CommandBase {
     1. The beam break sensor has been broken once for each ball we expected to shoot
     2. The run time of this command has passed the max allowed run time
     */
-    return timesBeamBroken >= timesBeamNeedsToBeBroken || Timer.getMatchTime() > commandStartTimeMillis+maxCommandRunTimeMillis;
+    return timesBeamBroken >= timesBeamNeedsToBeBroken || timer.get() > maxCommandRunTimeSeconds;
   }
 }
