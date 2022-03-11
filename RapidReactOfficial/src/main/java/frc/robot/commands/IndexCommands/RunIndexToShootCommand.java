@@ -29,9 +29,9 @@ public class RunIndexToShootCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    indexSubsystem.setVertical(ConstantsValues.verticalShootSpeed);
-    indexSubsystem.setRamp(ConstantsValues.rampJogSpeed);
-    indexSubsystem.setTransfer(ConstantsValues.transferJogSpeed);
+    indexSubsystem.setVerticalVoltage(ConstantsValues.verticalShootVolts);
+    indexSubsystem.setRampVoltage(ConstantsValues.rampJogVolts);
+    indexSubsystem.setTransferVoltage(ConstantsValues.transferJogVolts);
     isFinished = true;
   }
 

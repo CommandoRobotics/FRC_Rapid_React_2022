@@ -36,9 +36,9 @@ public class RunIndexToShootAutonomousCommand extends CommandBase {
   public void initialize() {
     timer.reset();
     timer.start();
-    indexSubsystem.setVertical(ConstantsValues.verticalShootSpeed);
-    indexSubsystem.setRamp(ConstantsValues.rampJogSpeed);
-    indexSubsystem.setTransfer(ConstantsValues.transferJogSpeed);
+    indexSubsystem.setVerticalVoltage(ConstantsValues.verticalShootVolts);
+    indexSubsystem.setRampVoltage(ConstantsValues.rampJogVolts);
+    indexSubsystem.setTransferVoltage(ConstantsValues.transferJogVolts);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -98,30 +98,6 @@ public class IndexSubsystem extends SubsystemBase {
 
   /**
    * Set the speed of the ramp index motor
-   * @param speed
-   */
-  public void setRamp(double speed) {
-    ramp.set(speed);
-  }
-
-  /**
-   * Set the speed of the vertical index motor
-   * @param speed
-   */
-  public void setVertical(double speed) {
-    vertical.set(speed);
-  }
-
-  /**
-   * Set the speed of the transfer motors
-   * @param speed
-   */
-  public void setTransfer(double speed) {
-    transferLeader.set(speed);
-  }
-
-  /**
-   * Set the voltage of the ramp index motor
    * @param volts
    */
   public void setRampVoltage(double volts) {
@@ -129,7 +105,7 @@ public class IndexSubsystem extends SubsystemBase {
   }
 
   /**
-   * Set the voltage of the vertical index motor
+   * Set the speed of the vertical index motor
    * @param volts
    */
   public void setVerticalVoltage(double volts) {
@@ -137,11 +113,35 @@ public class IndexSubsystem extends SubsystemBase {
   }
 
   /**
-   * Set the voltage of the transfer motors
+   * Set the speed of the transfer motors
    * @param volts
    */
   public void setTransferVoltage(double volts) {
     transferLeader.setVoltage(volts);
+  }
+
+  /**
+   * Set the voltage of the ramp index motor
+   * @param speed
+   */
+  public void setRamp(double speed) {
+    ramp.set(speed);
+  }
+
+  /**
+   * Set the voltage of the vertical index motor
+   * @param speed
+   */
+  public void setVertical(double speed) {
+    vertical.setVoltage(speed);
+  }
+
+  /**
+   * Set the voltage of the transfer motors
+   * @param speed
+   */
+  public void setTransfer(double speed) {
+    transferLeader.setVoltage(speed);
   }
 
   /**

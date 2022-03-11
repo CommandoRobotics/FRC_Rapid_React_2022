@@ -32,8 +32,8 @@ public class IntakeCommand extends CommandBase {
   @Override
   public void execute() {
     intakeSubsystem.setPower(ConstantsValues.intakePower);
-    indexSubsystem.setRamp(ConstantsValues.rampIntakeSpeed);
-    indexSubsystem.setTransfer(ConstantsValues.transferIntakeSpeed);
+    indexSubsystem.setRampVoltage(ConstantsValues.rampIntakeVolts);
+    indexSubsystem.setTransferVoltage(ConstantsValues.transferIntakeVolts);
     isFinished = true;
     
   }

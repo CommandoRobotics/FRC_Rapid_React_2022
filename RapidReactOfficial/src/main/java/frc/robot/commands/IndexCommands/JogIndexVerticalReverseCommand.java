@@ -25,7 +25,7 @@ public class JogIndexVerticalReverseCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    indexSubsystem.setVertical(-ConstantsValues.verticalJogSpeed);
+    indexSubsystem.setVerticalVoltage(-ConstantsValues.verticalJogVolts);
   }
 
   // Called once the command ends or is interrupted.

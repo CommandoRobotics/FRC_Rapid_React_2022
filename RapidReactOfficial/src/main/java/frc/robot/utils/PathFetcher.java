@@ -11,6 +11,7 @@ public class PathFetcher {
     static PathPlannerTrajectory[] doubleShot = new PathPlannerTrajectory[2];
     static PathPlannerTrajectory[] ideal = new PathPlannerTrajectory[4];
     static PathPlannerTrajectory[] tuning = new PathPlannerTrajectory[3];
+    static PathPlannerTrajectory[] taxi = new PathPlannerTrajectory[1];
 
     /**
      * Load all paths
@@ -44,6 +45,11 @@ public class PathFetcher {
             defaultMaxVel, 
             defaultMaxAccel
         );
+        taxi[0] = PathPlanner.loadPath(
+            "Taxi Only", 
+            defaultMaxVel, 
+            defaultMaxAccel
+        );
     }
 
     /**
@@ -62,5 +68,14 @@ public class PathFetcher {
      */
     public static PathPlannerTrajectory fetchIdeal(int part) {
         return ideal[part];
+    }
+
+    /**
+     * Get a specific part of the taxi autonomous path
+     * @param part The part of the taxi path specified
+     * @return
+     */
+    public static PathPlannerTrajectory fetchTaxi(int part) {
+        return taxi[part];
     }
 }

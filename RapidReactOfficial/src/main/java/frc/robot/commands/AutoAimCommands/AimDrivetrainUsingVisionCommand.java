@@ -13,6 +13,7 @@ import frc.robot.Constants.ConstantsValues;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 public class AimDrivetrainUsingVisionCommand extends CommandBase {
 
@@ -45,6 +46,7 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
   @Override
   public void initialize() {
     autoAimSubsystem.enableLimelightLed();
+    autoAimSubsystem.enableLimelightSnapshot();
     sensorTable.getEntry("isAutoAiming").setBoolean(true);
   }
 
@@ -95,6 +97,7 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
     driveSubsystem.stop();
     sensorTable.getEntry("isAutoAiming").setBoolean(false);
     sensorTable.getEntry("isRobotAimed").setBoolean(false);
+    autoAimSubsystem.disableLimelightSnapshot();
   }
 
   // Returns true when the command should end.

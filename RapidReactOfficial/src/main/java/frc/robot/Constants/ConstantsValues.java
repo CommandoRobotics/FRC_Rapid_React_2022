@@ -19,7 +19,7 @@ public class ConstantsValues {
 
     // Drive limits
     public static final double driveDeadband = 0.1;
-    public static final int driveCurrentLimit = 50;
+    public static final int driveCurrentLimit = 70;
 
     // PID and feedforward values for each wheel on the drivetrain
     public static final double driveWheelP = 3.0853;
@@ -96,17 +96,17 @@ public class ConstantsValues {
     public static final double flywheelVelocityConversionFactor = 1;
 
     //TODO adjust Limelight mounting values
-    public static final double flywheelAtVelocityDeadband = 30; // Amount to be added or subtracted from the shooter velocity to determine if we're at velocity
+    public static final double flywheelAtVelocityDeadband = 60; // Amount to be added or subtracted from the shooter velocity to determine if we're at velocity
     public static final double flywheelAtVelocityIterations = 8;
 
     // Limelight values
-    public static double limelightMountingAngle = 32.5; // The angle at which the Limelight is mounted above the horizon in degrees.
+    public static double limelightMountingAngle = 35; // The angle at which the Limelight is mounted above the horizon in degrees.
     public static double shooterHeightMeters = Units.inchesToMeters(29.75);
 
 
     public static final double flywheelExpelVolts = 2;
 
-    public static final double flywheelSecondsToSpinUp = 4; // The number of seconds it should take to spin up the flywheel from 0 to 1.
+    public static final double flywheelSecondsToSpinUp = 2000; // The number of seconds it should take to spin up the flywheel from 0 to 1.
 
     public static final int flywheelCurrentLimit = 40;
 
@@ -136,9 +136,9 @@ public class ConstantsValues {
     /**
      * INTAKE
      */
-    public static final double intakePower = 0.4;
+    public static final double intakePower = 0.5;
     public static final double ejectPower = -0.5;
-    public static final int intakeCurrentLimit = 20;
+    public static final int intakeCurrentLimit = 30;
 
     /**
      * AUTO AIM
@@ -156,7 +156,7 @@ public class ConstantsValues {
     public static final double panPositionConversionFactor = 1;
     public static final double tiltPositionConversionFactor = 1;
 
-    public static final double panPidDeadzone = 0.05;
+    public static final double panPidDeadzone = 0.03;
     public static final double panPidMaxOutput = 0.5;
     public static final double panPidMinOutput = 0.15;
 
@@ -170,17 +170,17 @@ public class ConstantsValues {
     public static final double rampVelocityConversionFactor = 1;
     public static final double verticalVelocityConversionFactor = 1;
 
-    public static final double transferIntakeSpeed = 0.3;
-    public static final double rampIntakeSpeed = 0.3;
-    public static final double verticalExpelSpeed = 0.3;
-    public static final double rampExpelSpeed = 0.3;
-    public static final double transferExpelSpeed = -0.3;
+    public static final double transferIntakeVolts = 3.6;
+    public static final double rampIntakeVolts = 3.6;
+    public static final double verticalExpelVolts = 3.6;
+    public static final double rampExpelVolts = 3.6;
+    public static final double transferExpelVolts = -3.6;
 
-    public static final double rampJogSpeed = 0.3;
-    public static final double verticalJogSpeed = 0.3;
-    public static final double transferJogSpeed = 0.3;
+    public static final double rampJogVolts = 3.6;
+    public static final double verticalJogVolts = 3.6;
+    public static final double transferJogVolts = 3.6;
 
-    public static final double verticalShootSpeed = 0.2;
+    public static final double verticalShootVolts = 4.0;
 
 
     //Camera translation relative to robot

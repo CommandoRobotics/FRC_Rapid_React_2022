@@ -36,9 +36,9 @@ public class ExpelAllCommand extends CommandBase {
   @Override
   public void execute() {
     intakeSubsystem.intakeOut();
-    indexSubsystem.setVertical(ConstantsValues.verticalExpelSpeed);
-    indexSubsystem.setRamp(ConstantsValues.rampExpelSpeed);
-    indexSubsystem.setTransfer(ConstantsValues.transferExpelSpeed);
+    indexSubsystem.setVerticalVoltage(ConstantsValues.verticalExpelVolts);
+    indexSubsystem.setRampVoltage(ConstantsValues.rampExpelVolts);
+    indexSubsystem.setTransferVoltage(ConstantsValues.transferExpelVolts);
     shooterSubsystem.setFlywheelVoltage(ConstantsValues.flywheelExpelVolts);
 
   }

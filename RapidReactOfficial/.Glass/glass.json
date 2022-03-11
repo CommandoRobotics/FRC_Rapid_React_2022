@@ -5,6 +5,9 @@
         "open": true
       }
     },
+    "SmartDashboard": {
+      "open": true
+    },
     "photonvision": {
       "CargoHound": {
         "open": true
@@ -169,10 +172,7 @@
             }
           ]
         }
-      ],
-      "window": {
-        "visible": false
-      }
+      ]
     },
     "Plot <1>": {
       "plots": [

@@ -20,12 +20,20 @@ public class RevShooterAtAutoVelocityAutonomousCommand extends CommandBase {
 
   ShooterSubsystem shooterSubsystem;
   NetworkTableEntry vectorMapRange = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData").getEntry("vectorMapRange");
-  double commandStartTimeMillis = Timer.getMatchTime();
-  final double maxCommandRunTimeMillis = 5000;
+  Timer timer;
+  double maxCommandRunTimeSeconds = 2;
 
   /** Creates a new RevShooterAtAutoVelocityAutonomousCommand. */
   public RevShooterAtAutoVelocityAutonomousCommand(ShooterSubsystem shooterSubsystem) {
     this.shooterSubsystem = shooterSubsystem;
+    timer = new Timer();
+    addRequirements(shooterSubsystem);
+  }
+
+  public RevShooterAtAutoVelocityAutonomousCommand(double maxTimeSeconds, ShooterSubsystem shooterSubsystem) {
+    this.shooterSubsystem = shooterSubsystem;
+    maxCommandRunTimeSeconds = maxTimeSeconds;
+    timer = new Timer();
     addRequirements(shooterSubsystem);
   }
 
@@ -33,6 +41,8 @@ public class RevShooterAtAutoVelocityAutonomousCommand extends CommandBase {
   @Override
   public void initialize() {
     shooterSubsystem.enableLimelightLed();
+    timer.reset();
+    timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -44,7 +54,7 @@ public class RevShooterAtAutoVelocityAutonomousCommand extends CommandBase {
     if(range != null) {
       vectorMapRange.setString(range.minValue + " - " + range.maxValue);
     } else {
-      vectorMapRange.setString("_._ - _._");
+      vectorMapRange.setString("0.0 - 0.0");
     }
   }
 
@@ -54,8 +64,12 @@ public class RevShooterAtAutoVelocityAutonomousCommand extends CommandBase {
     if(interrupted) {
       shooterSubsystem.disableLimelightLed();
       shooterSubsystem.stop();
-      vectorMapRange.setString("_._ - _._");
+      vectorMapRange.setString("0.0 - 0.0");
+    } else if(timer.get() > maxCommandRunTimeSeconds) {
+      shooterSubsystem.setFlywheelTargetRpm(2550); //TODO figure out default shooter value
     }
+    timer.stop();
+    timer.reset();
   }
 
   // Returns true when the command should end.
@@ -66,6 +80,6 @@ public class RevShooterAtAutoVelocityAutonomousCommand extends CommandBase {
     1. The shooter reports that it has reached its target velocity
     2. The max runtime of this command is overrun
     */
-    return Timer.getMatchTime() > commandStartTimeMillis+maxCommandRunTimeMillis || shooterSubsystem.isFlywheelAtTargetVelocity();
+    return timer.get() > maxCommandRunTimeSeconds || shooterSubsystem.isFlywheelAtTargetVelocity();
   }
 }

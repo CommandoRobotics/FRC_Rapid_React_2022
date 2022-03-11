@@ -62,6 +62,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private NetworkTable sensorTable;
 
+  SlewRateLimiter rateLimiter;
+
 
   public ShooterSubsystem() {
     // Instantiate the shooter motor controllers
@@ -82,8 +84,8 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheelFollower.follow(flywheelLeader, true);
 
     // Set the spark's current limit
-    flywheelLeader.setSmartCurrentLimit(ConstantsValues.flywheelCurrentLimit);
-    flywheelFollower.setSmartCurrentLimit(ConstantsValues.flywheelCurrentLimit);
+    //flywheelLeader.setSmartCurrentLimit(ConstantsValues.flywheelCurrentLimit);
+    //flywheelFollower.setSmartCurrentLimit(ConstantsValues.flywheelCurrentLimit);
 
     // Instantiate the encoders
     flywheelEncoder = flywheelLeader.getEncoder();
@@ -103,8 +105,9 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheelPid.setOutputRange(ConstantsValues.flywheelMinOutput, ConstantsValues.flywheelMaxOutput);
 
     // Set the ramp rates of the flywheel
-    flywheelLeader.setClosedLoopRampRate(ConstantsValues.flywheelSecondsToSpinUp);
-    flywheelLeader.setOpenLoopRampRate(ConstantsValues.flywheelSecondsToSpinUp);
+    rateLimiter = new SlewRateLimiter(ConstantsValues.flywheelSecondsToSpinUp, 0);
+    //flywheelLeader.setClosedLoopRampRate(ConstantsValues.flywheelSecondsToSpinUp);
+    //flywheelLeader.setOpenLoopRampRate(ConstantsValues.flywheelSecondsToSpinUp);
 
     // Instantiate motor feedforwards
     flywheelFF = new SimpleMotorFeedforward(ConstantsValues.flywheelKs, ConstantsValues.flywheelKv);
@@ -118,14 +121,14 @@ public class ShooterSubsystem extends SubsystemBase {
     // Add ranges and vectors to the vector treemap
     // Note: Velocities are in RPM, angles are in degrees, and ranges are in meters.
     ConstantsValues.addToVectorMap(0, 1.8, 0, defaultShotAngle);
-    ConstantsValues.addToVectorMap(1.8, 2.3, 2350, defaultShotAngle);
-    ConstantsValues.addToVectorMap(2.3, 3.1, 2500, defaultShotAngle);
-    ConstantsValues.addToVectorMap(3.1, 3.8, 2700, defaultShotAngle);
-    ConstantsValues.addToVectorMap(3.8, 4.3, 2900, defaultShotAngle);
-    ConstantsValues.addToVectorMap(4.3, 5, 3050, defaultShotAngle);
-    ConstantsValues.addToVectorMap(5, 5.8, 3250, defaultShotAngle);
-    ConstantsValues.addToVectorMap(5.8, 6.1, 3525, defaultShotAngle);
-    ConstantsValues.addToVectorMap(6.1, 6.4, 3575, defaultShotAngle);
+    ConstantsValues.addToVectorMap(1.8, 2.3, 2400, defaultShotAngle);
+    ConstantsValues.addToVectorMap(2.3, 3.1, 2550, defaultShotAngle);
+    ConstantsValues.addToVectorMap(3.1, 3.8, 2800, defaultShotAngle);
+    ConstantsValues.addToVectorMap(3.8, 4.3, 3050, defaultShotAngle);
+    ConstantsValues.addToVectorMap(4.3, 5, 3250, defaultShotAngle);
+    ConstantsValues.addToVectorMap(5, 5.8, 3450, defaultShotAngle);
+    ConstantsValues.addToVectorMap(5.8, 6.1, 3600, defaultShotAngle);
+    ConstantsValues.addToVectorMap(6.1, 6.4, 3700, defaultShotAngle);
     // Default shot for long range
     ConstantsValues.addToVectorMap(6.4, 200, 3575, defaultShotAngle);
     //TODO adjust the above vectors, as they're just examples
@@ -291,15 +294,15 @@ public class ShooterSubsystem extends SubsystemBase {
     currentTargetRpm = targetRPM;
     if(targetRPM > 0) {
     flywheelPid.setReference(
-      targetRPM, 
+      rateLimiter.calculate(targetRPM), 
       ControlType.kVelocity, 
       0, 
-      flywheelFF.calculate(targetRPM), 
+      flywheelFF.calculate(rateLimiter.calculate(targetRPM)), 
       ArbFFUnits.kVoltage);
     } else {
       flywheelFollower.stopMotor();
     }
-    SmartDashboard.putNumber("bottomFlywheelFF", flywheelFF.calculate(targetRPM));
+    SmartDashboard.putNumber("bottomFlywheelFF", flywheelFF.calculate(rateLimiter.calculate(targetRPM)));
   }
 
   /**

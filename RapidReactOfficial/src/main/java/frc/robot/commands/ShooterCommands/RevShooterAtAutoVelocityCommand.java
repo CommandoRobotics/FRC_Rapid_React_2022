@@ -39,7 +39,7 @@ public class RevShooterAtAutoVelocityCommand extends CommandBase {
     if(range != null) {
       vectorMapRange.setString(range.minValue + " - " + range.maxValue);
     } else {
-      vectorMapRange.setString("_._ - _._");
+      vectorMapRange.setString("0.0 - 0.0");
     }
   }
 
@@ -48,7 +48,7 @@ public class RevShooterAtAutoVelocityCommand extends CommandBase {
   public void end(boolean interrupted) {
     shooterSubsystem.disableLimelightLed();
     shooterSubsystem.stop();
-    vectorMapRange.setString("_._ - _._");
+    vectorMapRange.setString("0.0 - 0.0");
   }
 
   // Returns true when the command should end.

@@ -11,21 +11,25 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoAimCommands.AimDrivetrainUsingVisionCommand;
 import frc.robot.commands.AutonomousCommands.DoubleShotTaxiAutonomous;
 import frc.robot.commands.AutonomousCommands.IdealAutonomous;
+import frc.robot.commands.AutonomousCommands.TaxiAutonomous;
 import frc.robot.commands.DriveCommands.DriveWithFieldCentricToggleCommand;
 import frc.robot.commands.DriveCommands.FollowTrajectoryCommand;
 import frc.robot.commands.IndexCommands.JogIndexRampCommand;
 import frc.robot.commands.IndexCommands.JogIndexRampReverseCommand;
 import frc.robot.commands.IndexCommands.JogIndexVerticalCommand;
 import frc.robot.commands.IndexCommands.JogIndexVerticalReverseCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootAutonomousCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootCommand;
 import frc.robot.commands.IntakeCommands.HoundCargo;
 import frc.robot.commands.IntakeCommands.IntakeCommand;
 import frc.robot.commands.MiscellanousCommands.ExpelAllCommand;
+import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityAutonomousCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtManualVelocityCommand;
 import frc.robot.subsystems.AutoAimSubsystem;
@@ -71,6 +75,8 @@ public class RobotContainer {
     // Network Tables Instantiation
     ntInst = networkTableInst;
     commandoDashNT = ntInst.getTable("CommandoDash");
+
+    DriverStation.silenceJoystickConnectionWarning(true);
 
     // Load all paths
     PathFetcher.loadAllPaths();
@@ -197,6 +203,10 @@ public class RobotContainer {
     // Dpad down - Climber down
     new Trigger(() -> operatorController.getPOV() == 180)
     .whenActive(climberSubsystem::midDown);
+
+    new JoystickButton(operatorController, XboxController.Button.kX.value)
+    .whileActiveOnce(new RevShooterAtAutoVelocityAutonomousCommand(shooterSubsystem))
+    .whenInactive(shooterSubsystem::stop);
   }
 
   /**
@@ -207,7 +217,7 @@ public class RobotContainer {
   public Command getAutonomousCommand(String autoSelected) {
     switch (autoSelected) {
       case "IdealAuto":
-        return new IdealAutonomous(driveSubsystem, shooterSubsystem, intakeSubsystem, indexSubsystem, autoAimSubsystem);
+        return new IdealAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem);
       case "DoubleShot":
         return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem);
       case "Spare":
@@ -215,11 +225,11 @@ public class RobotContainer {
       case "FullSend":
         return null; //TODO Add "FullSend" command
       case "Taxi":
-        return null; //TODO Add "Taxi" command
+        return new TaxiAutonomous(driveSubsystem, intakeSubsystem);
       case "Taxi - Default":
-        return null; //TODO Add "Taxi - Default" command
+        return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem); //TODO Add "Taxi - Default" command
       default:
-        return null; //TODO Determine default command (or have null? tho I wouldn't recommend that)
+        return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem); //TODO Determine default command (or have null? tho I wouldn't recommend that)
     }
   }
 }

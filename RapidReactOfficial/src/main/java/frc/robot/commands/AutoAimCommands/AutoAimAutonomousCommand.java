@@ -4,6 +4,7 @@
 
 package frc.robot.commands.AutoAimCommands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -12,18 +13,33 @@ public class AutoAimAutonomousCommand extends CommandBase {
 
   DriveSubsystem driveSubsystem;
   AutoAimSubsystem autoAimSubsystem;
+  Timer timer;
   boolean isFinished = false;
+  double commandMaxRunTimeSeconds = 2;
 
   /** Creates a new AutoAimAutonomousCommand. */
   public AutoAimAutonomousCommand(DriveSubsystem driveSubsystem, AutoAimSubsystem autoAimSubsystem) {
     this.driveSubsystem = driveSubsystem;
     this.autoAimSubsystem = autoAimSubsystem;
+    timer = new Timer();
+    addRequirements(driveSubsystem, autoAimSubsystem);
+  }
+
+  /** Creates a new AutoAimAutonomousCommand. */
+  public AutoAimAutonomousCommand(double maxTime, DriveSubsystem driveSubsystem, AutoAimSubsystem autoAimSubsystem) {
+    this.driveSubsystem = driveSubsystem;
+    this.autoAimSubsystem = autoAimSubsystem;
+    commandMaxRunTimeSeconds = maxTime;
+    timer = new Timer();
+    addRequirements(driveSubsystem, autoAimSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     autoAimSubsystem.enableLimelightLed();
+    timer.reset();
+    timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -49,6 +65,6 @@ public class AutoAimAutonomousCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return isFinished;
+    return isFinished || timer.get() > commandMaxRunTimeSeconds;
   }
 }
