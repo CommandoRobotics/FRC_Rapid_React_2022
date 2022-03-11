@@ -225,19 +225,19 @@ public class RobotContainer {
   public Command getAutonomousCommand(String autoSelected) {
     switch (autoSelected) {
       case "IdealAuto":
-        return new IdealAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem);
+        return new IdealAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem);
       case "DoubleShot":
-        return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem);
+        return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem);
       case "Spare":
         return null; //TODO Add "Spare" command
       case "FullSend":
         return null; //TODO Add "FullSend" command
       case "Taxi":
-        return new TaxiAutonomous(driveSubsystem, intakeSubsystem);
-      case "Taxi - Default":
-        return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem); //TODO Add "Taxi - Default" command
+        return new TaxiAutonomous(driveSubsystem, intakeSubsystem, climberSubsystem);
+      case "DoubleShot - Default":
+        return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem); //TODO Add "Taxi - Default" command
       default:
-        return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem); //TODO Determine default command (or have null? tho I wouldn't recommend that)
+        return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem); //TODO Determine default command (or have null? tho I wouldn't recommend that)
     }
   }
 }

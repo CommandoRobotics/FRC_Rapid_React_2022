@@ -16,6 +16,7 @@ import frc.robot.commands.IntakeCommands.IntakeCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityAutonomousCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtRpmAutonomousCommand;
 import frc.robot.subsystems.AutoAimSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -32,17 +33,19 @@ public class IdealAutonomous extends SequentialCommandGroup {
   ShooterSubsystem shooterSubsystem, 
   AutoAimSubsystem autoAimSubsystem,
   IndexSubsystem indexSubsystem, 
-  IntakeSubsystem intakeSubsystem) 
+  IntakeSubsystem intakeSubsystem,
+  ClimberSubsystem climberSubsystem) 
   {
     addCommands(
 
-    // Start running the shooter 
-    new RevShooterAtAutoVelocityAutonomousCommand(shooterSubsystem),
-
     // Reset gyro
     new InstantCommand(driveSubsystem::resetGyro),
+    new PrintCommand("Finished resetting gyro"),
 
-    // Extend the intake, start the intake, and drive at the same time
+    // Retract climber (just in case)
+    new InstantCommand(climberSubsystem::midDown),
+    new PrintCommand("Finished retracting climb"),
+
     // Extend the intake
     new InstantCommand(intakeSubsystem::extend),
     new PrintCommand("Finished extending Intake"),
@@ -51,50 +54,60 @@ public class IdealAutonomous extends SequentialCommandGroup {
     new IntakeCommand(intakeSubsystem, indexSubsystem),
     new PrintCommand("Finished starting intake"),
 
-    // Wait to extend and start intake
-    new WaitCommand(0.5),
-
-    // Drive to the ball outside tarmac
-    driveSubsystem.newCommandFromTrajectory(
-    PathFetcher.fetchDoubleShot(0), 
-    true, // This is the intial pose
-    true // The robot should stop after this trajectory is finished
+    // Start running the shooter while waiting and then driving
+    new RevShooterAtAutoVelocityAutonomousCommand(shooterSubsystem)
+    .alongWith(
+      new WaitCommand(0.5)
+      .andThen(driveSubsystem.newCommandFromTrajectory(
+        PathFetcher.fetchDoubleShot(0), 
+        true, // This is the intial pose
+        true // The robot should stop after this trajectory is finished
+        ))
     ),
     new PrintCommand("Finished DoubleShot Path 1"),
 
+    // Stop intake
+    new InstantCommand(intakeSubsystem::stop),
+    new PrintCommand("Finished stopping the intake"),
+
     // Actually shoot
-    new RunIndexToShootAutonomousCommand(indexSubsystem),
+    new RunIndexToShootAutonomousCommand(2, 2, indexSubsystem),
     new PrintCommand("Finished running the index to shoot"),
 
     // Stop index and intake
-    new InstantCommand(() -> indexSubsystem.stopAll(), indexSubsystem),
-    new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
-    new PrintCommand("Finished stopping index, and intake"),
+    new InstantCommand(indexSubsystem::stopAll, indexSubsystem),
+    new PrintCommand("Finished stopping the index"),
     
     new PrintCommand("Finished DoubleShotAuto Portion"),
 
     new IntakeCommand(intakeSubsystem, indexSubsystem),
-    new PrintCommand("Finished starting intake and index"),
+    new PrintCommand("Finished intake command"),
 
-    // Drive to to other ball
+    // Drive to other ball
     driveSubsystem.newCommandFromTrajectory(
       PathFetcher.fetchIdeal(1),
       false,
       true
     ),
+    new PrintCommand("Finished Ideal Path 2"),
 
     // Stop intake and index
     new InstantCommand(() -> indexSubsystem.stopAll(), indexSubsystem),
     new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
+    new PrintCommand("Finished stopping index and intake"),
 
     // Shoot
-    new RunIndexToShootAutonomousCommand(1, indexSubsystem),
+    new RunIndexToShootAutonomousCommand(2, 1, indexSubsystem),
+    new PrintCommand("Finished shooting 2 balls"),
 
-    // Stop index
-    new InstantCommand(indexSubsystem::stopAll),
+    // Stop index and shooter
+    new InstantCommand(indexSubsystem::stopAll, indexSubsystem),
+    new InstantCommand(shooterSubsystem::stop, shooterSubsystem),
+    new PrintCommand("Finished stoppign the index and the shooter"),
 
     // Start intake
     new IntakeCommand(intakeSubsystem, indexSubsystem),
+    new PrintCommand("Start the intake"),
 
     // Drive to last two balls
     driveSubsystem.newCommandFromTrajectory(
@@ -102,27 +115,41 @@ public class IdealAutonomous extends SequentialCommandGroup {
       false,
       true
     ),
+    new PrintCommand("Finished Ideal Path 3"),
 
     // Wait for human player to give us a ball
     new WaitCommand(0.9),
+    new PrintCommand("Finished waiting for ball from human player"),
 
-    // Drive to our shooting spot
+    // Drive to our shooting spot while reving the shooter
     driveSubsystem.newCommandFromTrajectory(
       PathFetcher.fetchIdeal(3),
       false,
       true
-    ),
+    ).alongWith(new RevShooterAtAutoVelocityAutonomousCommand(shooterSubsystem)),
+    new PrintCommand("Finished reving shooter and Ideal Path 4"),
+
 
     // Stop the intake and index
     new InstantCommand(intakeSubsystem::stop),
     new InstantCommand(indexSubsystem::stopAll),
+    new PrintCommand("Finished stopping the intake and index"),
 
     // Run the index to shoot
-    new RunIndexToShootAutonomousCommand(2, indexSubsystem)
+    new RunIndexToShootAutonomousCommand(2, 2, indexSubsystem),
+    new PrintCommand("Finished running index to shoot"),
 
+    // Stop everything
+    new InstantCommand(driveSubsystem::stop, driveSubsystem),
+    new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
+    new InstantCommand(indexSubsystem::stopAll, indexSubsystem),
+    new InstantCommand(shooterSubsystem::stop, shooterSubsystem),
+    new PrintCommand("Finished stopping everthing"),
 
+    // Retract intake
+    new InstantCommand(intakeSubsystem::retract),
+    new PrintCommand("Finished retracting intake")
 
-    
     );
 
   }

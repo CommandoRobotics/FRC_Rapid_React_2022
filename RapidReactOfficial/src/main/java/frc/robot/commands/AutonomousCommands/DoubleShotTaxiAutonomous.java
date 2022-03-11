@@ -12,6 +12,7 @@ import frc.robot.commands.IndexCommands.RunIndexToShootAutonomousCommand;
 import frc.robot.commands.IntakeCommands.IntakeCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityAutonomousCommand;
 import frc.robot.subsystems.AutoAimSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -28,14 +29,19 @@ public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
   ShooterSubsystem shooterSubsystem, 
   AutoAimSubsystem autoAimSubsystem,
   IndexSubsystem indexSubsystem, 
-  IntakeSubsystem intakeSubsystem) 
+  IntakeSubsystem intakeSubsystem, 
+  ClimberSubsystem climberSubsystem) 
   {
     addCommands(
 
     // Reset gyro
     new InstantCommand(driveSubsystem::resetGyro),
+    new PrintCommand("Finished resetting the gyro"),
 
-    // Extend the intake, start the intake, and drive at the same time
+    // Retract the climber (just in case)
+    new InstantCommand(climberSubsystem::midDown),
+    new PrintCommand("Finished retracting the climber"),
+
     // Extend the intake
     new InstantCommand(intakeSubsystem::extend),
     new PrintCommand("Finished extending Intake"),
@@ -58,6 +64,8 @@ public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
     // Rev the shooter
     new RevShooterAtAutoVelocityAutonomousCommand(shooterSubsystem),
     new PrintCommand("Finished reving shooter"),
+
+    new InstantCommand(autoAimSubsystem::enableLimelightSnapshot),
 
     // Actually shoot
     new RunIndexToShootAutonomousCommand(indexSubsystem),

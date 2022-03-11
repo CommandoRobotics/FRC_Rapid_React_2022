@@ -31,6 +31,14 @@ public class RunIndexToShootAutonomousCommand extends CommandBase {
     addRequirements(indexSubsystem);
   }
 
+  /** Creates a new RunVerticalToShootCommand. */
+  public RunIndexToShootAutonomousCommand(double maxTimeSeconds, int numberOfBallsToShoot, IndexSubsystem indexSubsystem) {
+    this.indexSubsystem = indexSubsystem;
+    timesBeamNeedsToBeBroken = numberOfBallsToShoot;
+    addRequirements(indexSubsystem);
+    maxCommandRunTimeSeconds = maxTimeSeconds;
+  }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {

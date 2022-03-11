@@ -46,7 +46,6 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
   @Override
   public void initialize() {
     autoAimSubsystem.enableLimelightLed();
-    autoAimSubsystem.enableLimelightSnapshot();
     sensorTable.getEntry("isAutoAiming").setBoolean(true);
   }
 
@@ -54,6 +53,7 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
   @Override
   public void execute() {
     boolean fieldCentric = driveSubsystem.isFieldCentricToggleEnabled();
+    autoAimSubsystem.enableLimelightLed();
     if(autoAimSubsystem.isTargetSeen()) {
       // Automatically rotate the robot to the target
 

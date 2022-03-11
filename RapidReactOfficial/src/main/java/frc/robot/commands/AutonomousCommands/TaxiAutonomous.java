@@ -6,6 +6,7 @@ package frc.robot.commands.AutonomousCommands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.utils.PathFetcher;
@@ -15,12 +16,13 @@ import frc.robot.utils.PathFetcher;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TaxiAutonomous extends SequentialCommandGroup {
   /** Creates a new TaxiAutonomous. */
-  public TaxiAutonomous(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem) {
+  public TaxiAutonomous(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem, ClimberSubsystem climberSubsystem) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new InstantCommand(driveSubsystem::resetGyro, driveSubsystem),
       new InstantCommand(intakeSubsystem::retract, intakeSubsystem),
+      new InstantCommand(climberSubsystem::midDown, climberSubsystem),
       driveSubsystem.newCommandFromTrajectory(
         PathFetcher.fetchTaxi(0),
         true,
