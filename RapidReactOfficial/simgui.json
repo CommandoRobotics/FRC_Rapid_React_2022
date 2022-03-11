@@ -92,26 +92,6 @@
         "window": {
           "visible": true
         }
-      },
-      "/SmartDashboard/PIDController[1]": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/PIDController[3]": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/PIDController[4]": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/PIDController[5]": {
-        "window": {
-          "visible": true
-        }
       }
     }
   },

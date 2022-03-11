@@ -235,12 +235,12 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         //Display Pose2d of the ball to the dash
-        if (getHoundData().hasTargets()) {
-            field.getObject("SeenCargo").setPose(
-                estimateCargoFieldPose2d(
-                    getHoundData(), 
-                    driveSubsystem.getPose()));
-        } 
+        // if (getHoundData().hasTargets()) {
+        //     field.getObject("SeenCargo").setPose(
+        //         estimateCargoFieldPose2d(
+        //             getHoundData(), 
+        //             driveSubsystem.getPose()));
+        // } 
 
         //Update the pipeline of the CargoHound. Default is Blue
         if (previousAlliance != DriverStation.getAlliance()) {

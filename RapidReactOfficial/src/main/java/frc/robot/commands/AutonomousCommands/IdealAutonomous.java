@@ -36,6 +36,9 @@ public class IdealAutonomous extends SequentialCommandGroup {
   {
     addCommands(
 
+    // Start running the shooter 
+    new RevShooterAtAutoVelocityAutonomousCommand(shooterSubsystem),
+
     // Reset gyro
     new InstantCommand(driveSubsystem::resetGyro),
 
@@ -57,103 +60,22 @@ public class IdealAutonomous extends SequentialCommandGroup {
     true, // This is the intial pose
     true // The robot should stop after this trajectory is finished
     ),
-    new PrintCommand("Finished DoubleShot Path 1 (Ideal Path 1)"),
-
-    // Rev the shooter
-    new RevShooterAtAutoVelocityAutonomousCommand(shooterSubsystem),
-    new PrintCommand("Finished reving shooter"),
+    new PrintCommand("Finished DoubleShot Path 1"),
 
     // Actually shoot
     new RunIndexToShootAutonomousCommand(indexSubsystem),
     new PrintCommand("Finished running the index to shoot"),
 
-    // Stop shooter and index
-    new InstantCommand(() -> shooterSubsystem.stop(), shooterSubsystem),
+    // Stop index and intake
     new InstantCommand(() -> indexSubsystem.stopAll(), indexSubsystem),
+    new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
     new PrintCommand("Finished stopping shooter and index"),
+
+    // Pull the intake back in
+    new InstantCommand(intakeSubsystem::retract)
+    .andThen(new PrintCommand("Finished retracting intake")),
     
-    new PrintCommand("Finished DoubleShotAuto portion"),
-    new PrintCommand("Starting remaining IdealAuto portion"),
-
-    // Drive to the third ball
-    driveSubsystem.newCommandFromTrajectory(
-      PathFetcher.fetchIdeal(1),
-      false,
-      true
-    ),
-    new PrintCommand("Finished Ideal Path 2"),
-
-    // Stop intake
-    new InstantCommand(intakeSubsystem::stop),
-    new InstantCommand(indexSubsystem::stopAll),
-    new PrintCommand("Finished stopping intake and index"),
-
-    // Auto aim
-    new AutoAimAutonomousCommand(driveSubsystem, autoAimSubsystem),
-    new PrintCommand("Finished auto aiming"),
-
-    // Rev the shooter
-    new RevShooterAtAutoVelocityAutonomousCommand(shooterSubsystem),
-    new PrintCommand("Finished reving shooter"),
-
-    // Actually shoot
-    new RunIndexToShootAutonomousCommand(indexSubsystem),
-    new PrintCommand("Finished running the index to shoot"),
-
-    // Stop shooter and index
-    new InstantCommand(() -> shooterSubsystem.stop(), shooterSubsystem),
-    new InstantCommand(() -> indexSubsystem.stopAll(), indexSubsystem),
-    new PrintCommand("Finished stopping shooter and index"),
-
-    new IntakeCommand(intakeSubsystem, indexSubsystem),
-    new PrintCommand("Finished starting intake"),
-
-    // Drive to the third ball
-    driveSubsystem.newCommandFromTrajectory(
-      PathFetcher.fetchIdeal(2),
-      false,
-      true
-    ),
-    new PrintCommand("Finished Ideal Path 3"),
-
-    new WaitCommand(2),
-    new PrintCommand("Finished waiting"),
-
-    new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
-    new InstantCommand(indexSubsystem::stopAll, indexSubsystem),
-    new PrintCommand("Finished stopping intake and index"),
-
-    // Drive to the shooting position
-    driveSubsystem.newCommandFromTrajectory(
-      PathFetcher.fetchIdeal(3),
-      false,
-      true
-    ),
-    new PrintCommand("Finished Ideal Path 4"),
-
-    // Auto aim
-    new AutoAimAutonomousCommand(driveSubsystem, autoAimSubsystem),
-    new PrintCommand("Finished auto aiming"),
-
-    // Rev the shooter
-    new RevShooterAtAutoVelocityAutonomousCommand(shooterSubsystem),
-    new PrintCommand("Finished reving shooter"),
-
-    // Actually shoot
-    new RunIndexToShootAutonomousCommand(indexSubsystem),
-    new PrintCommand("Finished running the index to shoot"),
-
-    // Stop everything
-    new InstantCommand(indexSubsystem::stopAll, indexSubsystem),
-    new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
-    new InstantCommand(shooterSubsystem::stop, shooterSubsystem),
-    new InstantCommand(driveSubsystem::stop, driveSubsystem),
-    new PrintCommand("Finished stopping everything"),
-
-    new InstantCommand(intakeSubsystem::retract, intakeSubsystem),
-    new PrintCommand("Finished retracting intake"),
-
-    new PrintCommand("Finished IdealAuto")
+    new PrintCommand("Finished DoubleShotAuto")
     
     );
 

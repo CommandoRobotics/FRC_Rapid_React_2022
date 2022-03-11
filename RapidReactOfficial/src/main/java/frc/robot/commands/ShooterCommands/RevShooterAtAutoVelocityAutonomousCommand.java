@@ -49,8 +49,8 @@ public class RevShooterAtAutoVelocityAutonomousCommand extends CommandBase {
   @Override
   public void execute() {
     shooterSubsystem.enableLimelightLed();
-    Range range = shooterSubsystem.findRangeGivenDistance(shooterSubsystem.getHorizontalDistanceToHub());
     shooterSubsystem.setFlywheelTargetRpm(shooterSubsystem.calculateIdealLaunchVector().velocity);
+    Range range = shooterSubsystem.findRangeGivenDistance(shooterSubsystem.getHorizontalDistanceToHub());
     if(range != null) {
       vectorMapRange.setString(range.minValue + " - " + range.maxValue);
     } else {
