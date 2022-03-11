@@ -28,6 +28,7 @@ public class RunIndexToShootAutonomousCommand extends CommandBase {
   public RunIndexToShootAutonomousCommand(int numberOfBallsToShoot, IndexSubsystem indexSubsystem) {
     this.indexSubsystem = indexSubsystem;
     timesBeamNeedsToBeBroken = numberOfBallsToShoot;
+    timer = new Timer();
     addRequirements(indexSubsystem);
   }
 
@@ -36,6 +37,7 @@ public class RunIndexToShootAutonomousCommand extends CommandBase {
     this.indexSubsystem = indexSubsystem;
     timesBeamNeedsToBeBroken = numberOfBallsToShoot;
     addRequirements(indexSubsystem);
+    timer = new Timer();
     maxCommandRunTimeSeconds = maxTimeSeconds;
   }
 

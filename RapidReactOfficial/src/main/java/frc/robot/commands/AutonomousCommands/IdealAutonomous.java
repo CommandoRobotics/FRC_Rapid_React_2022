@@ -71,7 +71,7 @@ public class IdealAutonomous extends SequentialCommandGroup {
     new PrintCommand("Finished stopping the intake"),
 
     // Actually shoot
-    new RunIndexToShootAutonomousCommand(2, 2, indexSubsystem),
+    new RunIndexToShootAutonomousCommand(1.75, 2, indexSubsystem),
     new PrintCommand("Finished running the index to shoot"),
 
     // Stop index and intake
@@ -97,7 +97,7 @@ public class IdealAutonomous extends SequentialCommandGroup {
     new PrintCommand("Finished stopping index and intake"),
 
     // Shoot
-    new RunIndexToShootAutonomousCommand(2, 1, indexSubsystem),
+    new RunIndexToShootAutonomousCommand(1.75, 1, indexSubsystem),
     new PrintCommand("Finished shooting 2 balls"),
 
     // Stop index and shooter
@@ -136,7 +136,7 @@ public class IdealAutonomous extends SequentialCommandGroup {
     new PrintCommand("Finished stopping the intake and index"),
 
     // Run the index to shoot
-    new RunIndexToShootAutonomousCommand(2, 2, indexSubsystem),
+    new RunIndexToShootAutonomousCommand(1.75, 2, indexSubsystem),
     new PrintCommand("Finished running index to shoot"),
 
     // Stop everything
