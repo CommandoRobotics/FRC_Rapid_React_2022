@@ -149,6 +149,14 @@ public class RobotContainer {
     new Trigger(() -> driverController.getPOV() == 0)
       .whenActive(driveSubsystem::toggleFieldCentric);
 
+    // X - Start running the difficult test path
+    new JoystickButton(driverController, XboxController.Button.kX.value)
+    .whileActiveOnce(driveSubsystem.newCommandFromTrajectory(
+      PathFetcher.fetchDifficultTestPath(0),
+      true,
+      true
+    ));
+
     /*
       OPERATOR CONTROLLER
     */

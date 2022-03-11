@@ -12,6 +12,7 @@ public class PathFetcher {
     static PathPlannerTrajectory[] ideal = new PathPlannerTrajectory[4];
     static PathPlannerTrajectory[] tuning = new PathPlannerTrajectory[3];
     static PathPlannerTrajectory[] taxi = new PathPlannerTrajectory[1];
+    static PathPlannerTrajectory[] difficultTestPath = new PathPlannerTrajectory[1];
 
     /**
      * Load all paths
@@ -50,6 +51,11 @@ public class PathFetcher {
             defaultMaxVel, 
             defaultMaxAccel
         );
+        difficultTestPath[0] = PathPlanner.loadPath(
+            "Difficult Test Path", 
+            defaultMaxVel, 
+            defaultMaxAccel
+        );
     }
 
     /**
@@ -77,5 +83,14 @@ public class PathFetcher {
      */
     public static PathPlannerTrajectory fetchTaxi(int part) {
         return taxi[part];
+    }
+
+    /**
+     * Get a specific part of the difficult test path autonomous
+     * @param part THe part of the difficult test path specified
+     * @return
+     */
+    public static PathPlannerTrajectory fetchDifficultTestPath(int part) {
+        return difficultTestPath[part];
     }
 }

@@ -69,13 +69,59 @@ public class IdealAutonomous extends SequentialCommandGroup {
     // Stop index and intake
     new InstantCommand(() -> indexSubsystem.stopAll(), indexSubsystem),
     new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
-    new PrintCommand("Finished stopping shooter and index"),
-
-    // Pull the intake back in
-    new InstantCommand(intakeSubsystem::retract)
-    .andThen(new PrintCommand("Finished retracting intake")),
+    new PrintCommand("Finished stopping index, and intake"),
     
-    new PrintCommand("Finished DoubleShotAuto")
+    new PrintCommand("Finished DoubleShotAuto Portion"),
+
+    new IntakeCommand(intakeSubsystem, indexSubsystem),
+    new PrintCommand("Finished starting intake and index"),
+
+    // Drive to to other ball
+    driveSubsystem.newCommandFromTrajectory(
+      PathFetcher.fetchIdeal(1),
+      false,
+      true
+    ),
+
+    // Stop intake and index
+    new InstantCommand(() -> indexSubsystem.stopAll(), indexSubsystem),
+    new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
+
+    // Shoot
+    new RunIndexToShootAutonomousCommand(1, indexSubsystem),
+
+    // Stop index
+    new InstantCommand(indexSubsystem::stopAll),
+
+    // Start intake
+    new IntakeCommand(intakeSubsystem, indexSubsystem),
+
+    // Drive to last two balls
+    driveSubsystem.newCommandFromTrajectory(
+      PathFetcher.fetchIdeal(2),
+      false,
+      true
+    ),
+
+    // Wait for human player to give us a ball
+    new WaitCommand(0.9),
+
+    // Drive to our shooting spot
+    driveSubsystem.newCommandFromTrajectory(
+      PathFetcher.fetchIdeal(3),
+      false,
+      true
+    ),
+
+    // Stop the intake and index
+    new InstantCommand(intakeSubsystem::stop),
+    new InstantCommand(indexSubsystem::stopAll),
+
+    // Run the index to shoot
+    new RunIndexToShootAutonomousCommand(2, indexSubsystem)
+
+
+
     
     );
 
