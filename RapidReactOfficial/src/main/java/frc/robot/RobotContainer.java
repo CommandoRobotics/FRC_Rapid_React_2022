@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Triggers.TriggerPOV;
+import frc.robot.Triggers.TriggerPOV.POVDirection;
 import frc.robot.commands.AutoAimCommands.AimDrivetrainUsingVisionCommand;
 import frc.robot.commands.AutonomousCommands.DoubleShotTaxiAutonomous;
 import frc.robot.commands.AutonomousCommands.IdealAutonomous;
@@ -27,6 +29,7 @@ import frc.robot.commands.IndexCommands.JogIndexVerticalReverseCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootAutoEndCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootAutonomousCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootWithBreakCommand;
 import frc.robot.commands.IntakeCommands.HoundCargo;
 import frc.robot.commands.IntakeCommands.IntakeCommand;
 import frc.robot.commands.MiscellanousCommands.ExpelAllCommand;
@@ -59,7 +62,7 @@ public class RobotContainer {
   XboxController operatorController = new XboxController(1);
 
   // Define alt triggers
-  Trigger operatorAlt = new Trigger(() -> operatorController.getLeftBumper());
+  Trigger operatorAlt = new TriggerPOV(operatorController, POVDirection.kLeft);
 
   // Define subsystems
   ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
@@ -181,8 +184,15 @@ public class RobotContainer {
     new JoystickButton(operatorController, XboxController.Button.kRightBumper.value)
     .whenActive(shooterSubsystem::cycleManualVelocity);
 
-    // Right trigger - Run vertical index to effectively shoot
-    new Trigger(() -> (operatorController.getRightTriggerAxis() > 0.1))
+    // Right trigger and NOT alt - Run vertical index to effectively shoot
+    operatorAlt.negate().and(
+    new Trigger(() -> (operatorController.getRightTriggerAxis() > 0.1)))
+    .whileActiveOnce(new RunIndexToShootWithBreakCommand(indexSubsystem))
+    .whenInactive(indexSubsystem::stopAll, indexSubsystem);
+
+    // Right trigger and alt - Run vertical index to effectively shoot
+    operatorAlt.and(
+    new Trigger(() -> (operatorController.getRightTriggerAxis() > 0.1)))
     .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem))
     .whenInactive(indexSubsystem::stopAll, indexSubsystem);
 
