@@ -5,29 +5,71 @@
 package frc.robot.commands.AutonomousCommands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootAutonomousCommand;
+import frc.robot.commands.IntakeCommands.IntakeCommand;
+import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityAutonomousCommand;
+import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.utils.PathFetcher;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TaxiAutonomous extends SequentialCommandGroup {
-  /** Creates a new TaxiAutonomous. */
-  public TaxiAutonomous(DriveSubsystem driveSubsystem, IntakeSubsystem intakeSubsystem, ClimberSubsystem climberSubsystem) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+  /** Creates a new DoubleShotTaxiAutonomous. */
+  public TaxiAutonomous(
+  DriveSubsystem driveSubsystem, 
+  ShooterSubsystem shooterSubsystem, 
+  AutoAimSubsystem autoAimSubsystem,
+  IndexSubsystem indexSubsystem, 
+  IntakeSubsystem intakeSubsystem, 
+  ClimberSubsystem climberSubsystem) 
+  {
     addCommands(
-      new InstantCommand(driveSubsystem::resetGyro, driveSubsystem),
-      new InstantCommand(intakeSubsystem::retract, intakeSubsystem),
-      new InstantCommand(climberSubsystem::midDown, climberSubsystem),
-      driveSubsystem.newCommandFromTrajectory(
-        PathFetcher.fetchTaxi(0),
-        true,
-        true
-      )
-    );
+
+    // Reset gyro
+    new InstantCommand(driveSubsystem::resetGyro),
+    new PrintCommand("Finished resetting the gyro"),
+
+    // Retract the climber (just in case)
+    new InstantCommand(climberSubsystem::midDown),
+    new PrintCommand("Finished retracting the climber"),
+
+    // Retract the intake (just in case)
+    new InstantCommand(intakeSubsystem::retract),
+    new PrintCommand("Finished retracting the intake"),
+
+    // Drive outside of the tarmac
+    driveSubsystem.newCommandFromTrajectory(
+    PathFetcher.fetchDoubleShot(0), 
+    true, // This is the intial pose
+    true // The robot should stop after this trajectory is finished
+    ),
+    new PrintCommand("Finished Taxi Path"),
+
+    // Rev the shooter
+    new RevShooterAtAutoVelocityAutonomousCommand(shooterSubsystem),
+    new PrintCommand("Finished reving shooter"),
+
+    new InstantCommand(autoAimSubsystem::enableLimelightSnapshot),
+
+    // Actually shoot
+    new RunIndexToShootAutonomousCommand(5, 1, indexSubsystem),
+    new PrintCommand("Finished running the index to shoot"),
+
+    // Stop shooter and index
+    new InstantCommand(() -> shooterSubsystem.stop(), shooterSubsystem),
+    new InstantCommand(() -> indexSubsystem.stopAll(), indexSubsystem),
+    new InstantCommand(driveSubsystem::stop, driveSubsystem),
+    new PrintCommand("Finished stopping shooter and index"),
+    
+    new PrintCommand("Finished DoubleShotAuto"));
   }
 }

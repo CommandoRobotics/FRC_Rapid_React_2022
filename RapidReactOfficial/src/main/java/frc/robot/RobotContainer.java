@@ -24,6 +24,7 @@ import frc.robot.commands.IndexCommands.JogIndexRampCommand;
 import frc.robot.commands.IndexCommands.JogIndexRampReverseCommand;
 import frc.robot.commands.IndexCommands.JogIndexVerticalCommand;
 import frc.robot.commands.IndexCommands.JogIndexVerticalReverseCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootAutoEndCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootAutonomousCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootCommand;
 import frc.robot.commands.IntakeCommands.HoundCargo;
@@ -157,6 +158,11 @@ public class RobotContainer {
       true
     ));
 
+    // Y - Run drivetrain at a set speed
+    new JoystickButton(driverController, XboxController.Button.kY.value)
+    .whileActiveOnce(new InstantCommand(() -> driveSubsystem.driveMecanum(0.3, 0, 0)))
+    .whenInactive(new InstantCommand(driveSubsystem::stop));
+
     /*
       OPERATOR CONTROLLER
     */
@@ -212,9 +218,7 @@ public class RobotContainer {
     new Trigger(() -> operatorController.getPOV() == 180)
     .whenActive(climberSubsystem::midDown);
 
-    new JoystickButton(operatorController, XboxController.Button.kX.value)
-    .whileActiveOnce(new RevShooterAtAutoVelocityAutonomousCommand(shooterSubsystem))
-    .whenInactive(shooterSubsystem::stop);
+    
   }
 
   /**
@@ -233,7 +237,7 @@ public class RobotContainer {
       case "FullSend":
         return null; //TODO Add "FullSend" command
       case "Taxi":
-        return new TaxiAutonomous(driveSubsystem, intakeSubsystem, climberSubsystem);
+        return new TaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem);
       case "DoubleShot - Default":
         return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem); //TODO Add "Taxi - Default" command
       default:

@@ -61,7 +61,10 @@
       "/LiveWindow/Ungrouped/PIDController[35]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[36]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[37]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[38]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[39]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[40]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[6]": "PIDController",
@@ -141,7 +144,7 @@
               "autoFit": true
             }
           ],
-          "height": 338,
+          "height": 387,
           "series": [
             {
               "color": [
@@ -172,7 +175,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     },
     "Plot <1>": {
       "plots": [
@@ -227,6 +233,38 @@
       "window": {
         "visible": false
       }
+    },
+    "Plot <2>": {
+      "plots": [
+        {
+          "axis": [
+            {
+              "autoFit": true
+            }
+          ],
+          "height": 724,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/ActualRPM"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/currentTargetVel"
+            }
+          ]
+        }
+      ]
     }
   }
 }

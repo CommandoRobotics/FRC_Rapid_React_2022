@@ -68,7 +68,7 @@ public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
     new InstantCommand(autoAimSubsystem::enableLimelightSnapshot),
 
     // Actually shoot
-    new RunIndexToShootAutonomousCommand(indexSubsystem),
+    new RunIndexToShootAutonomousCommand(1.75, 2, indexSubsystem),
     new PrintCommand("Finished running the index to shoot"),
 
     // Stop shooter and index

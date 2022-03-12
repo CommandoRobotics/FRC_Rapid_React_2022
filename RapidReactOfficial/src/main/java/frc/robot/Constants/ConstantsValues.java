@@ -97,7 +97,7 @@ public class ConstantsValues {
 
     //TODO adjust Limelight mounting values
     public static final double flywheelAtVelocityDeadband = 60; // Amount to be added or subtracted from the shooter velocity to determine if we're at velocity
-    public static final double flywheelAtVelocityIterations = 8;
+    public static final double flywheelAtVelocityIterations = 12;
 
     // Limelight values
     public static double limelightMountingAngle = 35; // The angle at which the Limelight is mounted above the horizon in degrees.
@@ -161,6 +161,8 @@ public class ConstantsValues {
     public static final double panPidMinOutput = 0.15;
 
     public static final double manualPanDeadband = 0.05;
+
+    public static final double limelightPanOffset = -1;
 
     /**
      * INDEX

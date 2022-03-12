@@ -290,7 +290,7 @@ public class AutoAimSubsystem extends SubsystemBase {
    * @return
    */
   public double calculatePanOutput(double limelightXOffset) {
-    double pidOutput = panPid.calculate(limelightXOffset);
+    double pidOutput = panPid.calculate(limelightXOffset+ConstantsValues.limelightPanOffset);
     return MathUtil.clamp(
       MathUtil.applyDeadband(pidOutput, ConstantsValues.panPidDeadzone), 
       -ConstantsValues.panPidMaxOutput, 
