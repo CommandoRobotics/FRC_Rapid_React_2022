@@ -81,6 +81,10 @@ public class IdealAutonomous extends SequentialCommandGroup {
         new InstantCommand(intakeSubsystem::stop),
         new PrintCommand("Finished stopping the intake"),
 
+        // Auto aim
+        new AutoAimAutonomousCommand(0.75, driveSubsystem, autoAimSubsystem),
+        new PrintCommand("Finished auto aim"),
+
         // Actually shoot
         new RunIndexToShootAutonomousCommand(1.75, 2, indexSubsystem),
         new PrintCommand("Finished running the index to shoot"),
@@ -106,6 +110,10 @@ public class IdealAutonomous extends SequentialCommandGroup {
         new InstantCommand(() -> indexSubsystem.stopAll(), indexSubsystem),
         new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
         new PrintCommand("Finished stopping index and intake"),
+
+        // Auto aim
+        new AutoAimAutonomousCommand(0.75, driveSubsystem, autoAimSubsystem),
+        new PrintCommand("Finished auto aim"),
 
         // Shoot
         new RunIndexToShootAutonomousCommand(1.75, 1, indexSubsystem),
@@ -150,6 +158,10 @@ public class IdealAutonomous extends SequentialCommandGroup {
         new InstantCommand(indexSubsystem::stopAll),
         new PrintCommand("Finished stopping the intake and index"),
 
+        // Auto aim
+        new AutoAimAutonomousCommand(0.75, driveSubsystem, autoAimSubsystem),
+        new PrintCommand("Finished auto aim"),
+
         // Run the index to shoot
         new RunIndexToShootAutonomousCommand(1.75, 2, indexSubsystem),
         new PrintCommand("Finished running index to shoot"),
@@ -162,15 +174,13 @@ public class IdealAutonomous extends SequentialCommandGroup {
         new InstantCommand(revCommandTwo::cancel),
         new PrintCommand("Finished stopping everthing")
       )
-      
 
     ),
-    
-    
-
     // Retract intake
     new InstantCommand(intakeSubsystem::retract),
-    new PrintCommand("Finished retracting intake")
+    new PrintCommand("Finished retracting intake"),
+
+    new PrintCommand("Finished Ideal Auto")
 
     );
 

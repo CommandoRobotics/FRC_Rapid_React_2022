@@ -159,6 +159,7 @@ public class ConstantsValues {
     public static final double panPidDeadzone = 0.03;
     public static final double panPidMaxOutput = 0.5;
     public static final double panPidMinOutput = 0.15;
+    public static final int panPidMaxIterations = 10;
 
     public static final double manualPanDeadband = 0.05;
 

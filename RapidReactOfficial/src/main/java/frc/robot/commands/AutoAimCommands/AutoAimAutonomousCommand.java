@@ -6,6 +6,7 @@ package frc.robot.commands.AutoAimCommands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ConstantsValues;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -15,7 +16,8 @@ public class AutoAimAutonomousCommand extends CommandBase {
   AutoAimSubsystem autoAimSubsystem;
   Timer timer;
   boolean isFinished = false;
-  double commandMaxRunTimeSeconds = 2;
+  double commandMaxRunTimeSeconds = 0.75;
+  int noTargetIterations = 0;
 
   /** Creates a new AutoAimAutonomousCommand. */
   public AutoAimAutonomousCommand(DriveSubsystem driveSubsystem, AutoAimSubsystem autoAimSubsystem) {
@@ -45,11 +47,21 @@ public class AutoAimAutonomousCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // Calculate pan output
-    double panOutput = autoAimSubsystem.calculatePanOutput(autoAimSubsystem.getLimelightXOffset());
-    // Determine if this command needs to end. This happens if the pan output is 0
-    // which means that the drivetrain has reached its target.
-    isFinished = panOutput == 0;
+    autoAimSubsystem.enableLimelightLed();
+    double limelightXOffset = autoAimSubsystem.getLimelightXOffset();
+    double panOutput = 0;
+    if(autoAimSubsystem.isTargetSeen()) {
+      // Calculate pan output
+      panOutput = autoAimSubsystem.calculatePanOutput(limelightXOffset);
+
+      // Decide if we need to end
+      isFinished = panOutput == 0;
+
+      noTargetIterations = 0;
+
+    } else {
+      noTargetIterations++;
+    }
 
     // Drive the robot using the given pan output
     driveSubsystem.driveMecanum(0, 0, panOutput);
@@ -65,6 +77,6 @@ public class AutoAimAutonomousCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return isFinished || timer.get() > commandMaxRunTimeSeconds;
+    return isFinished || timer.get() > commandMaxRunTimeSeconds || noTargetIterations >= ConstantsValues.panPidMaxIterations;
   }
 }
