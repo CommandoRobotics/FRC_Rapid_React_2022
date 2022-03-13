@@ -54,11 +54,16 @@ public class ShooterSubsystem extends SubsystemBase {
   // Feedforward
   SimpleMotorFeedforward flywheelFF;
 
-  SlewRateLimiter rateLimit;
-
-  double previousFlywheelP = ConstantsValues.flywheelP;
+  // Some variables that are used locally for inter-method logic
+  private int flywheelAtVelocityIteration = 0;
+  private double currentTargetRpm = 0;
 
   double currentManualVelocity = 0;
+
+  private NetworkTable sensorTable;
+
+  SlewRateLimiter rateLimiter;
+
 
   public ShooterSubsystem() {
     // Instantiate the shooter motor controllers
@@ -78,6 +83,10 @@ public class ShooterSubsystem extends SubsystemBase {
     // Other flywheel inversions are set in the section below
     flywheelFollower.follow(flywheelLeader, true);
 
+    // Set the spark's current limit
+    //flywheelLeader.setSmartCurrentLimit(ConstantsValues.flywheelCurrentLimit);
+    //flywheelFollower.setSmartCurrentLimit(ConstantsValues.flywheelCurrentLimit);
+
     // Instantiate the encoders
     flywheelEncoder = flywheelLeader.getEncoder();
     
@@ -95,12 +104,14 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheelPid.setFF(ConstantsValues.flywheelFF);
     flywheelPid.setOutputRange(ConstantsValues.flywheelMinOutput, ConstantsValues.flywheelMaxOutput);
 
-    // Instantiate motor feedforwards
-    flywheelFF = new SimpleMotorFeedforward(ConstantsValues.flywheelKs, ConstantsValues.flywheelKv, ConstantsValues.flywheelKa);
-    
-    // Instantiate rate limiter
-    rateLimit = new SlewRateLimiter(ConstantsValues.shooterRateLimit, 0);
+    // Set the ramp rates of the flywheel
+    rateLimiter = new SlewRateLimiter(ConstantsValues.flywheelSecondsToSpinUp, 0);
+    //flywheelLeader.setClosedLoopRampRate(ConstantsValues.flywheelSecondsToSpinUp);
+    //flywheelLeader.setOpenLoopRampRate(ConstantsValues.flywheelSecondsToSpinUp);
 
+    // Instantiate motor feedforwards
+    flywheelFF = new SimpleMotorFeedforward(ConstantsValues.flywheelKs, ConstantsValues.flywheelKv);
+    
     // Instantiate the limelight
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
 
@@ -109,8 +120,18 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Add ranges and vectors to the vector treemap
     // Note: Velocities are in RPM, angles are in degrees, and ranges are in meters.
-    ConstantsValues.addToVectorMap(0, 3, 2000, defaultShotAngle);
-    ConstantsValues.addToVectorMap(3, 10, 4000, defaultShotAngle);
+    ConstantsValues.addToVectorMap(0, 1.8, 2400, defaultShotAngle); // Not detectable
+    ConstantsValues.addToVectorMap(1.8, 2.3, 2400, defaultShotAngle);
+    ConstantsValues.addToVectorMap(2.3, 2.7, 2600, defaultShotAngle);
+    ConstantsValues.addToVectorMap(2.7, 3.1, 2700, defaultShotAngle);
+    ConstantsValues.addToVectorMap(3.1, 3.8, 2800, defaultShotAngle);
+    ConstantsValues.addToVectorMap(3.8, 4.3, 3050, defaultShotAngle);
+    ConstantsValues.addToVectorMap(4.3, 5, 3250, defaultShotAngle);
+    ConstantsValues.addToVectorMap(5, 5.8, 3450, defaultShotAngle);
+    ConstantsValues.addToVectorMap(5.8, 6.1, 3600, defaultShotAngle);
+    ConstantsValues.addToVectorMap(6.1, 6.4, 3700, defaultShotAngle);
+    // Default shot for long range
+    ConstantsValues.addToVectorMap(6.4, 200, 3700, defaultShotAngle);
     //TODO adjust the above vectors, as they're just examples
 
     // Add motors to the simulation
@@ -118,10 +139,17 @@ public class ShooterSubsystem extends SubsystemBase {
       REVPhysicsSim.getInstance().addSparkMax(flywheelLeader, DCMotor.getNEO(1));
       REVPhysicsSim.getInstance().addSparkMax(flywheelFollower, DCMotor.getNEO(1));
     }
-    if(Robot.isReal()) {
-      SmartDashboard.putNumber("setShooterRPM", 0);
-      SmartDashboard.putNumber("flywheelP", ConstantsValues.flywheelP);
-    }
+
+    sensorTable = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData");
+
+    // Add values to smart dashboard
+    SmartDashboard.putNumber("flywheelP", ConstantsValues.flywheelP);
+    SmartDashboard.putNumber("flywheelI", ConstantsValues.flywheelI);
+    SmartDashboard.putNumber("flywheelD", ConstantsValues.flywheelD);
+    SmartDashboard.putNumber("LLAngle", ConstantsValues.limelightMountingAngle);
+    SmartDashboard.putNumber("LLHeight", ConstantsValues.shooterHeightMeters);
+    SmartDashboard.putNumber("targetRpm", currentManualVelocity);
+
   }
 
   /**
@@ -264,13 +292,18 @@ public class ShooterSubsystem extends SubsystemBase {
    * @param target The target RPM of the flywheel.
    */
   public void setFlywheelTargetRpm(double targetRPM) {
+    currentTargetRpm = targetRPM;
+    if(targetRPM > 0) {
     flywheelPid.setReference(
-      rateLimit.calculate(targetRPM), 
+      rateLimiter.calculate(targetRPM), 
       ControlType.kVelocity, 
       0, 
-      flywheelFF.calculate(rateLimit.calculate(targetRPM)), 
+      flywheelFF.calculate(rateLimiter.calculate(targetRPM)), 
       ArbFFUnits.kVoltage);
-    SmartDashboard.putNumber("bottomFlywheelFF", flywheelFF.calculate(rateLimit.calculate(targetRPM)));
+    } else {
+      flywheelFollower.stopMotor();
+    }
+    SmartDashboard.putNumber("bottomFlywheelFF", flywheelFF.calculate(rateLimiter.calculate(targetRPM)));
   }
 
   /**
@@ -329,7 +362,7 @@ public class ShooterSubsystem extends SubsystemBase {
     double distanceToHubMeters = getHorizontalDistanceToHub();
 
     // Make sure we can see a target
-    if(getHorizontalDistanceToHub() == -1) {
+    if(getHorizontalDistanceToHub() <= 0) {
       // We can not see the target, so return a vector with no magnitude or direction.
       return new Vector(0, 0);
     }
@@ -357,16 +390,17 @@ public class ShooterSubsystem extends SubsystemBase {
     if(currentManualVelocity == 0) {
       currentManualVelocity = 1000;
     } else if(currentManualVelocity == 1000) {
+      currentManualVelocity = 1500;
+    } else if(currentManualVelocity == 1500) {
       currentManualVelocity = 2000;
     } else if(currentManualVelocity == 2000) {
+      currentManualVelocity = 2500;
+    } else if(currentManualVelocity == 2500) {
       currentManualVelocity = 3000;
-    } else if(currentManualVelocity == 3000) {
-      currentManualVelocity = 4000;
-    } else if(currentManualVelocity == 4000) {
-      currentManualVelocity = 5000;
     } else {
       currentManualVelocity = 0;
     }
+    SmartDashboard.putNumber("targetRpm", currentManualVelocity);
   }
 
   /**
@@ -377,21 +411,43 @@ public class ShooterSubsystem extends SubsystemBase {
     return currentManualVelocity;
   }
 
+  public boolean isFlywheelAtTargetVelocity() {
+    return flywheelAtVelocityIteration >=ConstantsValues.flywheelAtVelocityIterations && currentTargetRpm != 0;
+  }
+
+  /**
+   * Update the network tables that integrate our shooter with CommandoDash
+   */
+  private void updateCommandoDash() {
+    sensorTable.getEntry("manualCycleSpeed").setDouble(getCurrentManualVelocity());
+    sensorTable.getEntry("targetRPM").setDouble(currentTargetRpm);
+    sensorTable.getEntry("shooterRPM").setDouble(getFlywheelVelocity());
+    sensorTable.getEntry("isAtTargetVelocity").setBoolean(isFlywheelAtTargetVelocity());
+  }
+
   @Override
   public void periodic() {
 
-    SmartDashboard.putNumber("arbFF", flywheelFF.calculate(SmartDashboard.getNumber("setShooterRPM", 0)));
-    // Get the current flywheel values from the Smart dashboard
-    // This will allow us to adjust these values on the fly from the Smart Dashboard
-    double currentFlywheelP = SmartDashboard.getNumber("flywheelP", 0);
-
-    // Check if the numbers on the Smart Dashboard have changed, and change our values if they have.
-    if (currentFlywheelP != previousFlywheelP) {
-      flywheelPid.setP(currentFlywheelP);
-      previousFlywheelP = currentFlywheelP;
+    // Update whether the flywheel is at the target velocity
+    if((getFlywheelVelocity() > currentTargetRpm-ConstantsValues.flywheelAtVelocityDeadband) && (getFlywheelVelocity() < currentTargetRpm+ConstantsValues.flywheelAtVelocityDeadband)) {
+      flywheelAtVelocityIteration++;
+    } else {
+      flywheelAtVelocityIteration = 0;
     }
 
-    SmartDashboard.putNumber("RPM", getFlywheelVelocity());
+    // Update CommandoDash
+    updateCommandoDash();
+
+    // Write to smart dashboard
+    SmartDashboard.putNumber("currentTargetVel", currentTargetRpm);
+    currentManualVelocity = SmartDashboard.getNumber("manualTargetVel", currentManualVelocity);
+    SmartDashboard.putNumber("horizontalDistanceLL", getHorizontalDistanceToHub());
+    ConstantsValues.limelightMountingAngle = SmartDashboard.getNumber("LLAngle", ConstantsValues.limelightMountingAngle);
+    ConstantsValues.shooterHeightMeters = SmartDashboard.getNumber("LLHeight", ConstantsValues.shooterHeightMeters);
+    ConstantsValues.flywheelP = SmartDashboard.getNumber("flywheelP", ConstantsValues.flywheelP);
+    ConstantsValues.flywheelI = SmartDashboard.getNumber("flywheelI", ConstantsValues.flywheelI);
+    ConstantsValues.flywheelD = SmartDashboard.getNumber("flywheelD", ConstantsValues.flywheelD);
+    SmartDashboard.putNumber("ActualRPM", getFlywheelVelocity());
   }
 
   @Override

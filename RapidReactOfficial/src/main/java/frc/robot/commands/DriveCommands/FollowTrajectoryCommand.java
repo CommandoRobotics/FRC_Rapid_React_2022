@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.DriveCommands;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -66,7 +66,7 @@ public class FollowTrajectoryCommand extends CommandBase {
    */
   public FollowTrajectoryCommand(PathPlannerTrajectory trajectory, DriveSubsystem driveSubsystem) {
     PIDController xController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
-    PIDController yController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
+    PIDController yController = new PIDController(ConstantsValues.driveYP, ConstantsValues.driveYI, ConstantsValues.driveYD);
     ProfiledPIDController rProfiledPIDController =
      new ProfiledPIDController(
         ConstantsValues.driveRotationP, 
@@ -118,7 +118,7 @@ public class FollowTrajectoryCommand extends CommandBase {
   public FollowTrajectoryCommand(PathPlannerTrajectory trajectory, Supplier<Rotation2d> desiredRotation,
   DriveSubsystem driveSubsystem) {
       PIDController xController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
-      PIDController yController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
+      PIDController yController = new PIDController(ConstantsValues.driveYP, ConstantsValues.driveYI, ConstantsValues.driveYD);
       ProfiledPIDController rProfiledPIDController =
        new ProfiledPIDController(
           ConstantsValues.driveRotationP, 
@@ -174,7 +174,7 @@ public class FollowTrajectoryCommand extends CommandBase {
   public FollowTrajectoryCommand(PathPlannerTrajectory trajectory, Supplier<Rotation2d> desiredRotation,
     boolean outputWheelSpeeds, DriveSubsystem driveSubsystem) {
     PIDController xController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
-    PIDController yController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
+    PIDController yController = new PIDController(ConstantsValues.driveYP, ConstantsValues.driveYI, ConstantsValues.driveYD);
     ProfiledPIDController rProfiledPIDController =
     new ProfiledPIDController(
         ConstantsValues.driveRotationP, 
@@ -240,7 +240,7 @@ public class FollowTrajectoryCommand extends CommandBase {
   public FollowTrajectoryCommand(PathPlannerTrajectory trajectory, boolean outputWheelSpeeds,
   DriveSubsystem driveSubsystem) {
       PIDController xController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
-      PIDController yController = new PIDController(ConstantsValues.driveXP, ConstantsValues.driveXI, ConstantsValues.driveXD);
+      PIDController yController = new PIDController(ConstantsValues.driveYP, ConstantsValues.driveYI, ConstantsValues.driveYD);
       ProfiledPIDController rProfiledPIDController =
       new ProfiledPIDController(
           ConstantsValues.driveRotationP, 

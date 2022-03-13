@@ -4,30 +4,44 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.AimDrivetrainUsingVisionCommand;
-import frc.robot.commands.DriveWithFieldCentricToggleCommand;
-import frc.robot.commands.ExpelAllCommand;
-import frc.robot.commands.HoundCargo;
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.JogIndexRampCommand;
-import frc.robot.commands.JogIndexRampReverseCommand;
-import frc.robot.commands.JogIndexVerticalCommand;
-import frc.robot.commands.JogIndexVerticalReverseCommand;
-import frc.robot.commands.RevShooterAtAutoVelocityCommand;
-import frc.robot.commands.RevShooterAtManualVelocityCommand;
-import frc.robot.commands.RunIndexToShootCommand;
+import frc.robot.Triggers.TriggerPOV;
+import frc.robot.Triggers.TriggerPOV.POVDirection;
+import frc.robot.commands.AutoAimCommands.AimDrivetrainUsingVisionCommand;
+import frc.robot.commands.AutonomousCommands.DoubleShotTaxiAutonomous;
+import frc.robot.commands.AutonomousCommands.IdealAutonomous;
+import frc.robot.commands.AutonomousCommands.TaxiAutonomous;
+import frc.robot.commands.DriveCommands.DriveWithFieldCentricToggleCommand;
+import frc.robot.commands.DriveCommands.FollowTrajectoryCommand;
+import frc.robot.commands.IndexCommands.JogIndexRampCommand;
+import frc.robot.commands.IndexCommands.JogIndexRampReverseCommand;
+import frc.robot.commands.IndexCommands.JogIndexVerticalCommand;
+import frc.robot.commands.IndexCommands.JogIndexVerticalReverseCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootAutoEndCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootAutonomousCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootWithBreakCommand;
+import frc.robot.commands.IntakeCommands.HoundCargo;
+import frc.robot.commands.IntakeCommands.IntakeCommand;
+import frc.robot.commands.MiscellanousCommands.ExpelAllCommand;
+import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityAutonomousCommand;
+import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityCommand;
+import frc.robot.commands.ShooterCommands.RevShooterAtManualVelocityCommand;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.PowerSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.utils.PathFetcher;
 
@@ -48,7 +62,7 @@ public class RobotContainer {
   XboxController operatorController = new XboxController(1);
 
   // Define alt triggers
-  Trigger operatorAlt = new Trigger(() -> operatorController.getLeftBumper());
+  Trigger operatorAlt = new TriggerPOV(operatorController, POVDirection.kLeft);
 
   // Define subsystems
   ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
@@ -57,6 +71,7 @@ public class RobotContainer {
   ClimberSubsystem climberSubsystem = new ClimberSubsystem(); 
   IndexSubsystem indexSubsystem = new IndexSubsystem();
   AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem();
+  PowerSubsystem powerSubsystem = new PowerSubsystem();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer(NetworkTableInstance networkTableInst) {
@@ -65,15 +80,19 @@ public class RobotContainer {
     ntInst = networkTableInst;
     commandoDashNT = ntInst.getTable("CommandoDash");
 
+    DriverStation.silenceJoystickConnectionWarning(true);
+
     // Load all paths
-    //PathFetcher.loadAllPaths();
+    PathFetcher.loadAllPaths();
     
     // Set any default commands
     // Driver sticks: drive
     driveSubsystem.setDefaultCommand(new DriveWithFieldCentricToggleCommand(driveSubsystem, 
-    () -> driverController.getLeftY(),
-    () -> -driverController.getLeftX(), 
-    () -> -driverController.getRightX()));
+    () -> -driverController.getLeftY(),
+    () -> driverController.getLeftX(), 
+    () -> driverController.getRightX()));
+
+    shooterSubsystem.disableLimelightLed();
 
     configureButtonBindings();
   }
@@ -92,7 +111,9 @@ public class RobotContainer {
 
     // Right trigger - Intake
     new Trigger(() -> driverController.getRightTriggerAxis() > 0.1)
-    .whileActiveOnce(new IntakeCommand(intakeSubsystem, indexSubsystem));
+    .whenActive(new IntakeCommand(intakeSubsystem, indexSubsystem))
+    .whenInactive(intakeSubsystem::stop, intakeSubsystem)
+    .whenInactive(indexSubsystem::stopAll, intakeSubsystem);
 
     // Left trigger - Eject
     new Trigger(() -> driverController.getLeftTriggerAxis() > 0.1)
@@ -102,9 +123,9 @@ public class RobotContainer {
     // Right bumper - Enable auto aim (drive based auto aim)
     new JoystickButton(driverController, XboxController.Button.kRightBumper.value)
     .whileActiveOnce(new AimDrivetrainUsingVisionCommand(
-      () -> driverController.getLeftY(), 
-      () -> -driverController.getLeftX(), 
-      () -> -driverController.getRightX(), 
+      () -> -driverController.getLeftY(), 
+      () -> driverController.getLeftX(), 
+      () -> driverController.getRightX(), 
       driveSubsystem, 
       autoAimSubsystem)
       );
@@ -116,9 +137,9 @@ public class RobotContainer {
     // A - Hound cargo
     new JoystickButton(driverController, XboxController.Button.kA.value)
       .whileActiveOnce(new HoundCargo(intakeSubsystem, driveSubsystem,       
-                      () -> driverController.getLeftY(), 
-                      () -> -driverController.getLeftX(), 
-                      () -> -driverController.getRightX()));
+                      () -> -driverController.getLeftY(), 
+                      () -> driverController.getLeftX(), 
+                      () -> driverController.getRightX()));
 
     // Back button - Expell all
     new JoystickButton(driverController, XboxController.Button.kBack.value)
@@ -132,17 +153,30 @@ public class RobotContainer {
     new Trigger(() -> driverController.getPOV() == 0)
       .whenActive(driveSubsystem::toggleFieldCentric);
 
+    // X - Start running the difficult test path
+    new JoystickButton(driverController, XboxController.Button.kX.value)
+    .whileActiveOnce(driveSubsystem.newCommandFromTrajectory(
+      PathFetcher.fetchDifficultTestPath(0),
+      true,
+      true
+    ));
+
+    // Y - Run drivetrain at a set speed
+    new JoystickButton(driverController, XboxController.Button.kY.value)
+    .whileActiveOnce(new InstantCommand(() -> driveSubsystem.driveMecanum(0.3, 0, 0)))
+    .whenInactive(new InstantCommand(driveSubsystem::stop));
+
     /*
       OPERATOR CONTROLLER
     */
-    // Left trigger and NOT a - Set shootervelocity to manually selected velocity
+    // Left trigger and a - Set shootervelocity to manually selected velocity
     new Trigger(() -> operatorController.getAButton())
-    .negate()
     .and(new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.1))
     .whileActiveOnce(new RevShooterAtManualVelocityCommand(shooterSubsystem));
 
-    // Left trigger and a - Set shooter velocity automatically based on Limelight
+    // Left trigger and NOT a - Set shooter velocity automatically based on Limelight
     new Trigger(() -> operatorController.getAButton())
+    .negate()
     .and(new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.1))
     .whileActiveOnce(new RevShooterAtAutoVelocityCommand(shooterSubsystem));
 
@@ -150,9 +184,17 @@ public class RobotContainer {
     new JoystickButton(operatorController, XboxController.Button.kRightBumper.value)
     .whenActive(shooterSubsystem::cycleManualVelocity);
 
-    // Right trigger - Run vertical index to effectively shoot
-    new Trigger(() -> (operatorController.getRightTriggerAxis() > 0.1))
-    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem));
+    // Right trigger and NOT alt - Run vertical index to effectively shoot
+    operatorAlt.negate().and(
+    new Trigger(() -> (operatorController.getRightTriggerAxis() > 0.1)))
+    .whileActiveOnce(new RunIndexToShootWithBreakCommand(indexSubsystem))
+    .whenInactive(indexSubsystem::stopAll, indexSubsystem);
+
+    // Right trigger and alt - Run vertical index to effectively shoot
+    operatorAlt.and(
+    new Trigger(() -> (operatorController.getRightTriggerAxis() > 0.1)))
+    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem))
+    .whenInactive(indexSubsystem::stopAll, indexSubsystem);
 
     // Y and not alt - Jog index vertical
     operatorAlt.negate()
@@ -177,7 +219,16 @@ public class RobotContainer {
     // Start button - Expell all
     new JoystickButton(operatorController, XboxController.Button.kStart.value)
     .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
-  
+
+    // Dpad up - Climber up
+    new Trigger(() -> operatorController.getPOV() == 0)
+      .whenActive(climberSubsystem::midUp);
+
+    // Dpad down - Climber down
+    new Trigger(() -> operatorController.getPOV() == 180)
+    .whenActive(climberSubsystem::midDown);
+
+    
   }
 
   /**
@@ -188,19 +239,19 @@ public class RobotContainer {
   public Command getAutonomousCommand(String autoSelected) {
     switch (autoSelected) {
       case "IdealAuto":
-        return null; //TODO Add "IdealAuto" command
-      case "SecondAuto":
-        return null; //TODO Add "SecondAuto" command
+        return new IdealAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem);
+      case "DoubleShot":
+        return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem);
       case "Spare":
         return null; //TODO Add "Spare" command
       case "FullSend":
         return null; //TODO Add "FullSend" command
       case "Taxi":
-        return null; //TODO Add "Taxi" command
-      case "Taxi - Default":
-        return null; //TODO Add "Taxi - Default" command
+        return new TaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem);
+      case "DoubleShot - Default":
+        return new IdealAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem); //TODO Add "Taxi - Default" command
       default:
-        return null; //TODO Determine default command (or have null? recomend not tho)
+        return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem); //TODO Determine default command (or have null? tho I wouldn't recommend that)
     }
   }
 }

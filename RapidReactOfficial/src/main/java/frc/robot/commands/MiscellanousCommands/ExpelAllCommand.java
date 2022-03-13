@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.MiscellanousCommands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ConstantsValues;
@@ -36,9 +36,9 @@ public class ExpelAllCommand extends CommandBase {
   @Override
   public void execute() {
     intakeSubsystem.intakeOut();
-    indexSubsystem.setVertical(ConstantsValues.verticalExpelSpeed);
-    indexSubsystem.setRamp(ConstantsValues.rampExpelSpeed);
-    indexSubsystem.setTransfer(ConstantsValues.transferExpelSpeed);
+    indexSubsystem.setVerticalVoltage(ConstantsValues.verticalExpelVolts);
+    indexSubsystem.setRampVoltage(ConstantsValues.rampExpelVolts);
+    indexSubsystem.setTransferVoltage(ConstantsValues.transferExpelVolts);
     shooterSubsystem.setFlywheelVoltage(ConstantsValues.flywheelExpelVolts);
 
   }

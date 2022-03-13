@@ -6,10 +6,13 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 public class PathFetcher {
 
     static double defaultMaxVel = 8;
-    static double defaultMaxAccel = 5;
+    static double defaultMaxAccel = 3;
 
     static PathPlannerTrajectory[] doubleShot = new PathPlannerTrajectory[2];
     static PathPlannerTrajectory[] ideal = new PathPlannerTrajectory[4];
+    static PathPlannerTrajectory[] tuning = new PathPlannerTrajectory[3];
+    static PathPlannerTrajectory[] taxi = new PathPlannerTrajectory[1];
+    static PathPlannerTrajectory[] difficultTestPath = new PathPlannerTrajectory[1];
 
     /**
      * Load all paths
@@ -28,7 +31,7 @@ public class PathFetcher {
         );
         ideal[2] = PathPlanner.loadPath(
             "Ideal 3", 
-            defaultMaxVel, 
+            1.75, 
             defaultMaxAccel
         );
         ideal[3] = PathPlanner.loadPath(
@@ -43,12 +46,16 @@ public class PathFetcher {
             defaultMaxVel, 
             defaultMaxAccel
         );
-        doubleShot[1] = PathPlanner.loadPath(
-            "Double Shot 2", 
+        taxi[0] = PathPlanner.loadPath(
+            "Taxi Only", 
             defaultMaxVel, 
             defaultMaxAccel
         );
-        
+        difficultTestPath[0] = PathPlanner.loadPath(
+            "Difficult Test Path", 
+            defaultMaxVel, 
+            defaultMaxAccel
+        );
     }
 
     /**
@@ -69,4 +76,21 @@ public class PathFetcher {
         return ideal[part];
     }
 
+    /**
+     * Get a specific part of the taxi autonomous path
+     * @param part The part of the taxi path specified
+     * @return
+     */
+    public static PathPlannerTrajectory fetchTaxi(int part) {
+        return taxi[part];
+    }
+
+    /**
+     * Get a specific part of the difficult test path autonomous
+     * @param part THe part of the difficult test path specified
+     * @return
+     */
+    public static PathPlannerTrajectory fetchDifficultTestPath(int part) {
+        return difficultTestPath[part];
+    }
 }

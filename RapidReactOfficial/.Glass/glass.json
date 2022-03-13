@@ -1,12 +1,25 @@
 {
   "NetworkTables": {
+    "CommandoDash": {
+      "SensorData": {
+        "open": true
+      }
+    },
     "SmartDashboard": {
       "open": true
     },
+    "photonvision": {
+      "CargoHound": {
+        "open": true
+      }
+    },
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/ClimberSubsystem": "Subsystem",
       "/LiveWindow/DriveSubsystem": "Subsystem",
       "/LiveWindow/IndexSubsystem": "Subsystem",
+      "/LiveWindow/IntakeSubsystem": "Subsystem",
+      "/LiveWindow/PowerSubsystem": "Subsystem",
       "/LiveWindow/ShooterSubsystem": "Subsystem",
       "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[1]": "Digital Input",
@@ -18,19 +31,66 @@
       "/LiveWindow/Ungrouped/DigitalInput[7]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[8]": "Digital Input",
       "/LiveWindow/Ungrouped/MecanumDrive[1]": "MecanumDrive",
+      "/LiveWindow/Ungrouped/PIDController[10]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[11]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[12]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[13]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[14]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[15]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[16]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[17]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[18]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[19]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[20]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[21]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[22]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[23]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[24]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[25]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[26]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[27]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[28]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[29]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[30]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[31]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[32]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[33]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[34]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[35]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[36]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[37]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[38]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[39]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[40]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[6]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[7]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[8]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[9]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Front Left Trajectory PID": "PIDController",
+      "/SmartDashboard/Front Left Trajectory PID NeverEnding": "PIDController",
+      "/SmartDashboard/Front Right Trajectory PID": "PIDController",
+      "/SmartDashboard/Front Right Trajectory PID NeverEnding": "PIDController",
       "/SmartDashboard/PIDController[1]": "PIDController",
       "/SmartDashboard/PIDController[2]": "PIDController",
       "/SmartDashboard/PIDController[3]": "PIDController",
       "/SmartDashboard/PIDController[4]": "PIDController",
-      "/SmartDashboard/PIDController[5]": "PIDController"
+      "/SmartDashboard/PIDController[5]": "PIDController",
+      "/SmartDashboard/Rear Left Trajectory PID": "PIDController",
+      "/SmartDashboard/Rear Left Trajectory PID NeverEnding": "PIDController",
+      "/SmartDashboard/Rear Right Trajectory PID": "PIDController",
+      "/SmartDashboard/Rear Right Trajectory PID NeverEnding": "PIDController",
+      "/SmartDashboard/X PID Controller": "PIDController",
+      "/SmartDashboard/X PID Controller NeverEnding": "PIDController",
+      "/SmartDashboard/Y PID Controller": "PIDController",
+      "/SmartDashboard/Y PID Controller NeverEnding": "PIDController"
     },
     "windows": {
       "/LiveWindow/Ungrouped/MecanumDrive[1]": {
@@ -39,6 +99,32 @@
         }
       },
       "/LiveWindow/Ungrouped/Scheduler": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Field": {
+        "image": "C:\\Users\\robotics\\Downloads\\Screenshot 2022-03-06 141234.png",
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/PIDController[3]": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/PIDController[4]": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/X PID Controller NeverEnding": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Y PID Controller NeverEnding": {
         "window": {
           "visible": true
         }
@@ -58,7 +144,7 @@
               "autoFit": true
             }
           ],
-          "height": 338,
+          "height": 387,
           "series": [
             {
               "color": [
@@ -68,6 +154,113 @@
                 1.0
               ],
               "id": "NT:/SmartDashboard/RPM"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/targetRpm"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/autoTargetVel"
+            }
+          ]
+        }
+      ],
+      "window": {
+        "visible": false
+      }
+    },
+    "Plot <1>": {
+      "plots": [
+        {
+          "axis": [
+            {
+              "lockMax": true,
+              "lockMin": true
+            }
+          ],
+          "height": 338,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/FLDriveVelocity"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/FRDriveVelocity"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/RLDriveVelocity"
+            },
+            {
+              "color": [
+                0.7686275243759155,
+                0.30588236451148987,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/RRDriveVelocity"
+            }
+          ]
+        }
+      ],
+      "window": {
+        "visible": false
+      }
+    },
+    "Plot <2>": {
+      "plots": [
+        {
+          "axis": [
+            {
+              "autoFit": true
+            }
+          ],
+          "height": 724,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/ActualRPM"
+            },
+            {
+              "color": [
+                0.8666667342185974,
+                0.5176470875740051,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/currentTargetVel"
             }
           ]
         }

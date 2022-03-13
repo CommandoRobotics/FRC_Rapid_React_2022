@@ -22,9 +22,9 @@ import frc.robot.utils.PathFetcher;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
+public class TaxiAutonomous extends SequentialCommandGroup {
   /** Creates a new DoubleShotTaxiAutonomous. */
-  public DoubleShotTaxiAutonomous(
+  public TaxiAutonomous(
   DriveSubsystem driveSubsystem, 
   ShooterSubsystem shooterSubsystem, 
   AutoAimSubsystem autoAimSubsystem,
@@ -42,24 +42,17 @@ public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
     new InstantCommand(climberSubsystem::midDown),
     new PrintCommand("Finished retracting the climber"),
 
-    // Extend the intake
-    new InstantCommand(intakeSubsystem::extend),
-    new PrintCommand("Finished extending Intake"),
-    
-    // Start the intake
-    new IntakeCommand(intakeSubsystem, indexSubsystem),
-    new PrintCommand("Finished starting intake"),
+    // Retract the intake (just in case)
+    new InstantCommand(intakeSubsystem::retract),
+    new PrintCommand("Finished retracting the intake"),
 
-    // Wait to extend and start intake
-    new WaitCommand(0.5),
-
-    // Drive to the ball outside tarmac
+    // Drive outside of the tarmac
     driveSubsystem.newCommandFromTrajectory(
     PathFetcher.fetchDoubleShot(0), 
     true, // This is the intial pose
     true // The robot should stop after this trajectory is finished
     ),
-    new PrintCommand("Finished DoubleShot Path 1"),
+    new PrintCommand("Finished Taxi Path"),
 
     // Rev the shooter
     new RevShooterAtAutoVelocityAutonomousCommand(shooterSubsystem),
@@ -68,18 +61,14 @@ public class DoubleShotTaxiAutonomous extends SequentialCommandGroup {
     new InstantCommand(autoAimSubsystem::enableLimelightSnapshot),
 
     // Actually shoot
-    new RunIndexToShootAutonomousCommand(1.75, 2, indexSubsystem),
+    new RunIndexToShootAutonomousCommand(5, 1, indexSubsystem),
     new PrintCommand("Finished running the index to shoot"),
 
     // Stop shooter and index
     new InstantCommand(() -> shooterSubsystem.stop(), shooterSubsystem),
     new InstantCommand(() -> indexSubsystem.stopAll(), indexSubsystem),
-    new InstantCommand(intakeSubsystem::stop, intakeSubsystem),
+    new InstantCommand(driveSubsystem::stop, driveSubsystem),
     new PrintCommand("Finished stopping shooter and index"),
-
-    // Pull the intake back in
-    new InstantCommand(intakeSubsystem::retract)
-    .andThen(new PrintCommand("Finished retracing intake")),
     
     new PrintCommand("Finished DoubleShotAuto"));
   }

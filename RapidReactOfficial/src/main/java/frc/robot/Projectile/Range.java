@@ -17,7 +17,7 @@ public class Range implements Comparable<Range>{
         this.maxValue = maxValue;
         // Convert min value to an int and set it as the ID.
         // This is necessary for this object to be comparable.
-        id = Math.round((float)minValue);
+        id = Math.round((float)minValue*10);
     }
 
     /**

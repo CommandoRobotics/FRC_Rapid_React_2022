@@ -4,7 +4,7 @@ import edu.wpi.first.math.util.Units;
 
 public class ConstantsField {
 
-    public static final double highHubRimHeightMeters = Units.inchesToMeters(104);
+    public static final double highHubRimHeightMeters = Units.inchesToMeters(103);
 
     //TODO find CargoHound offsets for calibrating ball finding
     public static final double CAMERA_HEIGHT_METERS = 1;

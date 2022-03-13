@@ -11,13 +11,17 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxPIDController.ArbFFUnits;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveMotorVoltages;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -27,7 +31,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
-import frc.robot.commands.FollowTrajectoryCommand;
+import frc.robot.commands.DriveCommands.FollowTrajectoryCommand;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -48,6 +52,8 @@ public class DriveSubsystem extends SubsystemBase {
   Field2d field;
   boolean isFieldCentricEnabled = true;
 
+  NetworkTable sensorTable;
+
   public DriveSubsystem() {
 
     // Instantiate the Spark Maxes
@@ -57,10 +63,10 @@ public class DriveSubsystem extends SubsystemBase {
     rearRightSpark = new CANSparkMax(ConstantsPorts.rearRightSparkId, MotorType.kBrushless);
 
     // Invert the Spark Maxes
-    frontLeftSpark.setInverted(true);
-    frontRightSpark.setInverted(false);
-    rearLeftSpark.setInverted(true);
-    rearRightSpark.setInverted(false);
+    frontLeftSpark.setInverted(false);
+    frontRightSpark.setInverted(true);
+    rearLeftSpark.setInverted(false);
+    rearRightSpark.setInverted(true);
 
     // Instantiate the drive encoders
     frontLeftEncoder = frontLeftSpark.getEncoder();
@@ -74,6 +80,12 @@ public class DriveSubsystem extends SubsystemBase {
     rearLeftEncoder.setVelocityConversionFactor(ConstantsValues.distancePerMotorRotationMeters);
     rearRightEncoder.setVelocityConversionFactor(ConstantsValues.distancePerMotorRotationMeters);
     //TODO add position conversion factors
+
+    // Set the power limiters for the drive motors
+    frontLeftSpark.setSmartCurrentLimit(ConstantsValues.driveCurrentLimit);
+    frontRightSpark.setSmartCurrentLimit(ConstantsValues.driveCurrentLimit);
+    rearLeftSpark.setSmartCurrentLimit(ConstantsValues.driveCurrentLimit);
+    rearRightSpark.setSmartCurrentLimit(ConstantsValues.driveCurrentLimit);
 
     // Instantiate the drive PID controllers
     frontLeftPidController = frontLeftSpark.getPIDController();
@@ -109,6 +121,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     // Instantiate the NavX
     navX = new AHRS(SPI.Port.kMXP);
+    navX.reset();
 
     // Instantiate other mecanum drive utilities
     drive = new MecanumDrive(frontLeftSpark, rearLeftSpark, frontRightSpark, rearRightSpark);
@@ -116,6 +129,9 @@ public class DriveSubsystem extends SubsystemBase {
     field = new Field2d();
 
     drive.setDeadband(ConstantsValues.driveDeadband);
+
+    // Instantiate table for CommandoDash integration
+    sensorTable = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData");
 
     // Add our field to the smart dash
     SmartDashboard.putData("Field", field);
@@ -237,6 +253,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void stop() {
     drive.stopMotor();
+    drive.feed();
   }
 
   /**
@@ -300,10 +317,18 @@ public class DriveSubsystem extends SubsystemBase {
    * @param wheelSpeeds A MecanumDriveWheelSpeeds object containing the speeds to set each wheel to
    */
   public void setWheelSpeeds(MecanumDriveWheelSpeeds wheelSpeeds) {
-    frontLeftPidController.setReference(wheelSpeeds.frontLeftMetersPerSecond, ControlType.kVelocity);
-    frontRightPidController.setReference(wheelSpeeds.frontRightMetersPerSecond, ControlType.kVelocity);
-    rearLeftPidController.setReference(wheelSpeeds.rearLeftMetersPerSecond, ControlType.kVelocity);
-    rearRightPidController.setReference(wheelSpeeds.rearRightMetersPerSecond, ControlType.kVelocity);
+    frontLeftPidController.setReference(
+      wheelSpeeds.frontLeftMetersPerSecond, 
+      ControlType.kVelocity);
+    frontRightPidController.setReference(
+      wheelSpeeds.frontRightMetersPerSecond, 
+      ControlType.kVelocity);    
+    rearLeftPidController.setReference(
+      wheelSpeeds.rearLeftMetersPerSecond, 
+      ControlType.kVelocity);    
+    rearRightPidController.setReference(
+      wheelSpeeds.rearRightMetersPerSecond, 
+      ControlType.kVelocity);
     drive.feed();
   }
 
@@ -369,9 +394,10 @@ public class DriveSubsystem extends SubsystemBase {
    * Set the pose of the robot
    * @param pose
    */
-  public void setPose(Pose2d pose) {
+  public void setPose(Pose2d pose, Rotation2d desiredRotation) {
     resetEncoders();
-    odometry.resetPosition(pose, Rotation2d.fromDegrees(-getHeading()));
+    Pose2d adjustedPose = new Pose2d(pose.getX(), pose.getY(), desiredRotation);
+    odometry.resetPosition(adjustedPose, Rotation2d.fromDegrees(-getHeading()));
   }
 
   /**
@@ -383,11 +409,11 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public Command newCommandFromTrajectory(PathPlannerTrajectory trajectory, boolean isInitPose, boolean stopAtEnd) {
     if (isInitPose && stopAtEnd) {
-      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose()))
+      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose(), trajectory.getInitialState().holonomicRotation))
         .andThen(new FollowTrajectoryCommand(trajectory, this))
         .andThen(new InstantCommand(this::stop));
     } else if (isInitPose) {
-      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose()))
+      return new InstantCommand(() -> this.setPose(trajectory.getInitialPose(), trajectory.getInitialState().holonomicRotation))
       .andThen(new FollowTrajectoryCommand(trajectory, this));
     } else if (stopAtEnd) {
       return new FollowTrajectoryCommand(trajectory, this)
@@ -401,9 +427,27 @@ public class DriveSubsystem extends SubsystemBase {
     return new FollowTrajectoryCommand(trajectory, this);
   }
 
+  /**
+   * Update the network tables that integrate our drivetrain with CommandoDash
+   */
+  private void updateCommandoDash() {
+    sensorTable.getEntry("isCentric").setBoolean(isFieldCentricEnabled);
+    sensorTable.getEntry("gyroAngle").setDouble(getHeading());
+  }
+
   @Override
   public void periodic() {
-    odometry.update(Rotation2d.fromDegrees(getHeading()), getWheelSpeeds());
+
+    // Update CommandoDash
+    updateCommandoDash();
+
+    SmartDashboard.putNumber("FRDriveVelocity", getWheelSpeeds().frontRightMetersPerSecond);
+    SmartDashboard.putNumber("FLDriveVelocity", getWheelSpeeds().frontLeftMetersPerSecond);
+    SmartDashboard.putNumber("RRDriveVelocity", getWheelSpeeds().rearRightMetersPerSecond);
+    SmartDashboard.putNumber("RLDriveVelocity", getWheelSpeeds().rearLeftMetersPerSecond);
+    
+    // Update odometry
+    odometry.update(Rotation2d.fromDegrees(-getHeading()), getWheelSpeeds());
     field.setRobotPose(odometry.getPoseMeters());
   }
 }

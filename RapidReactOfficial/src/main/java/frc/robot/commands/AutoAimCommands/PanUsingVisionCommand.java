@@ -2,22 +2,18 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.AutoAimCommands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.AutoAimSubsystem;
-import frc.robot.subsystems.DriveSubsystem;
 
-public class AutoAimAutonomousCommand extends CommandBase {
+public class PanUsingVisionCommand extends CommandBase {
 
-  DriveSubsystem driveSubsystem;
   AutoAimSubsystem autoAimSubsystem;
-  boolean isFinished = false;
 
-  /** Creates a new AutoAimAutonomousCommand. */
-  public AutoAimAutonomousCommand(DriveSubsystem driveSubsystem, AutoAimSubsystem autoAimSubsystem) {
-    this.driveSubsystem = driveSubsystem;
+  public PanUsingVisionCommand(AutoAimSubsystem autoAimSubsystem) {
     this.autoAimSubsystem = autoAimSubsystem;
+    addRequirements(autoAimSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -29,26 +25,24 @@ public class AutoAimAutonomousCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // Calculate pan output
-    double panOutput = autoAimSubsystem.calculatePanOutput(autoAimSubsystem.getLimelightXOffset());
-    // Determine if this command needs to end. This happens if the pan output is 0
-    // which means that the drivetrain has reached its target.
-    isFinished = panOutput == 0;
-
-    // Drive the robot using the given pan output
-    driveSubsystem.driveMecanum(0, 0, panOutput);
+    autoAimSubsystem.enableLimelightLed();
+    if(autoAimSubsystem.isTargetSeen()) {
+      autoAimSubsystem.setPan(autoAimSubsystem.calculatePanOutput(autoAimSubsystem.getLimelightXOffset()));
+    } else {
+      autoAimSubsystem.stopPan();
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     autoAimSubsystem.disableLimelightLed();
-    driveSubsystem.stop();
+    autoAimSubsystem.stopPan();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return isFinished;
+    return false;
   }
 }

@@ -25,7 +25,7 @@ public class Robot extends TimedRobot {
 
   private NetworkTableInstance ntInst;
   private NetworkTable commandoDashNT;
-  private String selectedAuto = "Taxi - Default"; //TODO add default clause
+  private String selectedAuto = "DoubleShot - Default"; //TODO add default clause
   private Alliance previousAlliance = Alliance.Blue;
 
   /**
@@ -61,7 +61,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     //Update auto chooser
-    selectedAuto = commandoDashNT.getEntry("autoSelection").getString("Taxi - Default"); //TODO add default clause
+    selectedAuto = commandoDashNT.getEntry("autoSelection").getString("DoubleShot - Default"); //TODO add default clause
     commandoDashNT.getEntry("rioAutoSelection").setString(selectedAuto);
 
     //Update Robot Color
@@ -93,7 +93,7 @@ public class Robot extends TimedRobot {
     //Tell CommandoDash we're in auto
     commandoDashNT.getSubTable("AllianceAndModeData").getEntry("robotMode").setNumber(35);
 
-    selectedAuto = commandoDashNT.getEntry("autoSelection").getString("Taxi - Default"); //TODO add default clause
+    selectedAuto = commandoDashNT.getEntry("autoSelection").getString("DoubleShot - Default"); //TODO add default clause
     commandoDashNT.getEntry("rioAutoSelection").setString(selectedAuto);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuto);
 
