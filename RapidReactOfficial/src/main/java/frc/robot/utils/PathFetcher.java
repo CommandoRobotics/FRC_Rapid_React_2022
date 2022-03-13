@@ -31,7 +31,7 @@ public class PathFetcher {
         );
         ideal[2] = PathPlanner.loadPath(
             "Ideal 3", 
-            defaultMaxVel, 
+            1.75, 
             defaultMaxAccel
         );
         ideal[3] = PathPlanner.loadPath(

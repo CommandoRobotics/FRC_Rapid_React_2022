@@ -64,7 +64,7 @@ public class AutoAimAutonomousCommand extends CommandBase {
     }
 
     // Drive the robot using the given pan output
-    driveSubsystem.driveMecanum(0, 0, panOutput);
+    driveSubsystem.driveMecanum(0, 0, -panOutput);
   }
 
   // Called once the command ends or is interrupted.

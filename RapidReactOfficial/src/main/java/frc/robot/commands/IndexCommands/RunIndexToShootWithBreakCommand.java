@@ -17,13 +17,11 @@ public class RunIndexToShootWithBreakCommand extends SequentialCommandGroup {
 
   /** Creates a new RunIndexToShootWithBreakCommand. */
   public RunIndexToShootWithBreakCommand(IndexSubsystem indexSubsystem) {
-    SmartDashboard.putNumber("indexFirstShotDurationSec", 0.5);
-    SmartDashboard.putNumber("indexPauseDurationSec", 0.25);
     addCommands(
       new RunIndexToShootCommand(indexSubsystem),
-      new WaitCommand(SmartDashboard.getNumber("indexFirstShotDurationSec", 0.5)),
+      new WaitCommand(0.25),
       new InstantCommand(indexSubsystem::stopAll, indexSubsystem),
-      new WaitCommand(SmartDashboard.getNumber("indexPauseDurationSec", 0.25)),
+      new WaitCommand(0.4),
       new RunIndexToShootCommand(indexSubsystem)
     );
   }
