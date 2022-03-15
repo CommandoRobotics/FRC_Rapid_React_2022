@@ -15,7 +15,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class AimDrivetrainUsingVisionCommand extends CommandBase {
+public class AutoAimCommand extends CommandBase {
 
   DoubleSupplier x, y, rotation;
   DriveSubsystem driveSubsystem;
@@ -30,7 +30,7 @@ public class AimDrivetrainUsingVisionCommand extends CommandBase {
    * @param driveSubsystem The drive subsystem
    * @param autoAimSubsystem The auto aim subsystem
    */
-  public AimDrivetrainUsingVisionCommand(DoubleSupplier y, DoubleSupplier x, DoubleSupplier rotation, DriveSubsystem driveSubsystem, AutoAimSubsystem autoAimSubsystem) {
+  public AutoAimCommand(DoubleSupplier y, DoubleSupplier x, DoubleSupplier rotation, DriveSubsystem driveSubsystem, AutoAimSubsystem autoAimSubsystem) {
     this.y = y;
     this.x = x;
     this.rotation = rotation;
