@@ -8,6 +8,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ConstantsPorts;
+import frc.robot.Constants.ConstantsValues;
 import frc.robot.Projectile.Range;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -48,12 +50,17 @@ public class RevShooterAtAutoVelocityNoStopCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooterSubsystem.enableLimelightLed();
-    shooterSubsystem.setFlywheelTargetRpm(shooterSubsystem.calculateIdealLaunchVector().velocity);
-    Range range = shooterSubsystem.findRangeGivenDistance(shooterSubsystem.getHorizontalDistanceToHub());
-    if(range != null) {
-      vectorMapRange.setString(range.minValue + " - " + range.maxValue);
+    if(shooterSubsystem.isTargetSeen()) {
+      shooterSubsystem.enableLimelightLed();
+      shooterSubsystem.setFlywheelTargetRpm(shooterSubsystem.calculateIdealLaunchVector().velocity);
+      Range range = shooterSubsystem.findRangeGivenDistance(shooterSubsystem.getHorizontalDistanceToHub());
+      if(range != null) {
+        vectorMapRange.setString(range.minValue + " - " + range.maxValue);
+      } else {
+        vectorMapRange.setString("0.0 - 0.0");
+      }
     } else {
+      shooterSubsystem.setFlywheelTargetRpm(ConstantsValues.noTargetRpm);
       vectorMapRange.setString("0.0 - 0.0");
     }
   }
