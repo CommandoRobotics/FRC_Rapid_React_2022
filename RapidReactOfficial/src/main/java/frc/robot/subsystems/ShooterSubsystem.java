@@ -428,6 +428,9 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
+    // Enable vision processing mode
+    enableLimelightVisionProcessing();
+
     // Update whether the flywheel is at the target velocity
     if((getFlywheelVelocity() > currentTargetRpm-ConstantsValues.flywheelAtVelocityDeadband) && (getFlywheelVelocity() < currentTargetRpm+ConstantsValues.flywheelAtVelocityDeadband)) {
       flywheelAtVelocityIteration++;
