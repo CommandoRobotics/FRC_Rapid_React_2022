@@ -5,121 +5,60 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsPorts;
 
 public class ClimberSubsystem extends SubsystemBase {
 
-  Solenoid traversalClimb;
-  DoubleSolenoid midClimb;
-  CANSparkMax leftWinch, rightWinch;
+  // Motor controllers
+  CANSparkMax winchLeader, winchFollower, tilt;
+
+  // Encoders
+  RelativeEncoder winchEncoder, tiltEncoder;
   
-  DigitalInput toplimitSwitch = new DigitalInput(ConstantsPorts.topLimitSwitchPort);
-  DigitalInput bottomlimitSwitch = new DigitalInput(ConstantsPorts.bottomLimitSwitchPort);
 
-  NetworkTableInstance ntInst;
-  boolean previousMidState = false;
-  boolean previousTraversalState = false;
-
-  /** Creates a new ClimberSubsystem. */
   public ClimberSubsystem() {
 
-    midClimb = new DoubleSolenoid(PneumaticsModuleType.REVPH, ConstantsPorts.midClimberForwardId, ConstantsPorts.midClimberReverseId);
-    //traversalClimb = new Solenoid(PneumaticsModuleType.REVPH, ConstantsPorts.traversalClimberId);
+    // Instantiate motor controllers
+    winchLeader = new CANSparkMax(ConstantsPorts.winchLeaderId, MotorType.kBrushless);
+    winchFollower = new CANSparkMax(ConstantsPorts.winchFollowerId, MotorType.kBrushless);
+    tilt = new CANSparkMax(ConstantsPorts.climberTiltId, MotorType.kBrushless);
 
-    //leftWinch = new CANSparkMax(ConstantsPorts.leftWinchId, MotorType.kBrushless);
-    //rightWinch = new CANSparkMax(ConstantsPorts.rightWinchId, MotorType.kBrushless);
+    // Set motor inversions
+    winchLeader.setInverted(false);
+    tilt.setInverted(false);
+    // Note: Winch follower inversion is done when setting it as a follower below
 
-    ntInst = NetworkTableInstance.getDefault();
-    ntInst.getTable("CommandoDash").getSubTable("SensorData")
-      .getEntry("midSolenoidState").setBoolean(isMidClimbExtended());
-    // ntInst.getTable("CommandoDash").getSubTable("SensorData")
-    //   .getEntry("traversalSolenoidState").setBoolean(traversalClimb.get());
+    // Set the winch follower
+    winchFollower.follow(winchLeader, true);
 
-  }
+    // Instantiate encoders
+    winchEncoder = winchLeader.getEncoder();
+    tiltEncoder = tilt.getEncoder();
 
-  //Extend Middle Solenoid
-  public void midUp() {
-    midClimb.set(Value.kForward);
-  }
-
-  //Retract Middle Solenoid
-  public void midDown() {
-    midClimb.set(Value.kReverse);
-  }
-
-  //Toggle Middle Solenoid 
-  public void toggleMid() {
-    midClimb.toggle();
-  }
-
-  //Extend Traversal Solenoid
-  public void traversalUp() {
-    traversalClimb.set(true);
-  }
-
-  //Retract Traversal Solenoid
-  public void traversalDown() {
-    traversalClimb.set(false);
-  }
-
-  //Toggle Traversal Solenoid
-  public void toggleTraversal() {
-    traversalClimb.toggle();
-  }
-  //Set the Power of the Right Winch
-  public void setPowerRightWinch(double power) {
-    if(power < 0) {
-      if (bottomlimitSwitch.get()) {
-        rightWinch.set(0);
-      } else {
-        rightWinch.set(power);
-      }
-    }
-  }
-  
-  //Set the Power of the Left Winch
-  public void setPowerLeftWinch(double power) {
-    if(power > 0) {
-      if (bottomlimitSwitch.get()) {
-        leftWinch.set(0);
-      } else {
-        leftWinch.set(power);
-      }
-    }
   }
 
   /**
-   * Get whether the mid climb is extended
-   * @return
+   * Set the winch to a certain speed
+   * @param speed
    */
-  public boolean isMidClimbExtended() {
-    return midClimb.get() == Value.kForward;
+  public void setWinchSpeed(double speed) {
+    winchLeader.set(speed);
+  }
+  
+  /**
+   * Set the winch to a certain voltage
+   * @param volts
+   */
+  public void setWinchVoltage(double volts) {
+    winchLeader.setVoltage(volts);
   }
 
   @Override
   public void periodic() {
-    //Update CDD with the mid solenoid state
-    boolean currMidState = isMidClimbExtended();
-    if (previousMidState != currMidState) {
-        ntInst.getTable("CommandoDash").getSubTable("SensorData")
-            .getEntry("midSolenoidState").setBoolean(currMidState);
-    }
-    previousMidState = currMidState;
-
-    //Update CDD with the traversal solenoid state
-    // boolean currTraversalState = traversalClimb.get();
-    // if (previousTraversalState != currTraversalState) {
-    //     ntInst.getTable("CommandoDash").getSubTable("SensorData")
-    //         .getEntry("traversalSolenoidState").setBoolean(currTraversalState);
-    // }
-    // previousTraversalState = currTraversalState;
+    
   }
 }

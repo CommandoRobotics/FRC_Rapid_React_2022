@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -21,19 +20,15 @@ import frc.robot.commands.AutonomousCommands.DoubleShotAutonomous;
 import frc.robot.commands.AutonomousCommands.IdealAutonomous;
 import frc.robot.commands.AutonomousCommands.TaxiAutonomous;
 import frc.robot.commands.DriveCommands.DriveWithFieldCentricToggleCommand;
-import frc.robot.commands.DriveCommands.FollowTrajectoryCommand;
 import frc.robot.commands.IndexCommands.JogIndexRampCommand;
 import frc.robot.commands.IndexCommands.JogIndexRampReverseCommand;
 import frc.robot.commands.IndexCommands.JogIndexVerticalCommand;
 import frc.robot.commands.IndexCommands.JogIndexVerticalReverseCommand;
-import frc.robot.commands.IndexCommands.RunIndexToShootAutoEndCommand;
-import frc.robot.commands.IndexCommands.RunIndexToShootAutoEndCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootWithBreakCommand;
 import frc.robot.commands.IntakeCommands.HoundCargo;
 import frc.robot.commands.IntakeCommands.IntakeCommand;
 import frc.robot.commands.MiscellanousCommands.ExpelAllCommand;
-import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityAutonomousCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtManualVelocityCommand;
 import frc.robot.subsystems.AutoAimSubsystem;
@@ -220,15 +215,8 @@ public class RobotContainer {
     new JoystickButton(operatorController, XboxController.Button.kStart.value)
     .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
 
-    // Dpad up - Climber up
-    new Trigger(() -> operatorController.getPOV() == 0)
-      .whenActive(climberSubsystem::midUp);
+    // 
 
-    // Dpad down - Climber down
-    new Trigger(() -> operatorController.getPOV() == 180)
-    .whenActive(climberSubsystem::midDown);
-
-    
   }
 
   /**
