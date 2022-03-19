@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsField;
 import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
+import frc.robot.utils.LedLiaison;
 
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -47,6 +48,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     //Odometry
     Field2d field;
+
+    // CargoHound
+    boolean targetExistedPreviously = false;
 
     public IntakeSubsystem(DriveSubsystem driveSubsystem) {
         intake = new CANSparkMax(ConstantsPorts.intakeID, MotorType.kBrushless);
@@ -234,23 +238,33 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-    //    // Display Pose2d of the ball to the dash
-    //     if (getHoundData().hasTargets()) {
-    //         field.getObject("SeenCargo").setPose(
-    //             estimateCargoFieldPose2d(
-    //                 getHoundData(), 
-    //                 driveSubsystem.getPose()));
-    //     } 
+       boolean doesTargetExist = getHoundData().hasTargets();
 
-    //     //Update the pipeline of the CargoHound. Default is Blue
-    //     if (previousAlliance != DriverStation.getAlliance()) {
-    //         if (DriverStation.getAlliance() == Alliance.Red) {
-    //             setHoundPipeline(1);
-    //         } else {
-    //             setHoundPipeline(0);
-    //         }
-    //         previousAlliance = DriverStation.getAlliance();
-    //     }
+       // Update LEDs
+       if(doesTargetExist && !targetExistedPreviously) {
+           LedLiaison.setCargoSeen(true);
+       } else if(!doesTargetExist && targetExistedPreviously) {
+           LedLiaison.setCargoSeen(false);
+       }
+       targetExistedPreviously = doesTargetExist;
+
+        // Display Pose2d of the ball to the dash
+        if (doesTargetExist) {
+            field.getObject("SeenCargo").setPose(
+                estimateCargoFieldPose2d(
+                    getHoundData(), 
+                    driveSubsystem.getPose()));
+        }
+
+        //Update the pipeline of the CargoHound. Default is Blue
+        if (previousAlliance != DriverStation.getAlliance()) {
+            if (DriverStation.getAlliance() == Alliance.Red) {
+                setHoundPipeline(1);
+            } else {
+                setHoundPipeline(0);
+            }
+            previousAlliance = DriverStation.getAlliance();
+        }
 
         //Update CDD with the solenoid state
         boolean currLifterState = on;

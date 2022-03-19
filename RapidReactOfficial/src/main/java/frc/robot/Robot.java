@@ -72,8 +72,10 @@ public class Robot extends TimedRobot {
     Alliance currAlliance = DriverStation.getAlliance();
     if (currAlliance == Alliance.Red && previousAlliance != currAlliance) {
       commandoDashNT.getSubTable("AllianceAndModeData").getEntry("alliance").setNumber(1);
+      LedLiaison.setAllianceColor('r');
     } else if (currAlliance == Alliance.Blue && previousAlliance != currAlliance) {
       commandoDashNT.getSubTable("AllianceAndModeData").getEntry("alliance").setNumber(0);
+      LedLiaison.setAllianceColor('b');
     }
     previousAlliance = currAlliance;
 
