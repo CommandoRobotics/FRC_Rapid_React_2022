@@ -25,7 +25,7 @@ public class ConstantsPorts {
     public static final int midClimberReverseId = 7;
     public static final int traversalClimberId = 15;
     public static final int topLimitSwitchPort = 3;
-    public static final int bottomLimitSwitchPort = 2;
+    public static final int bottomLimitSwitchPort = 4;
 
     /**
      * Intake
@@ -42,7 +42,7 @@ public class ConstantsPorts {
     public static final int transferLeaderId = 7;
     public static final int transferFollowerId = 8;
     public static final int verticalSensorPort = 1;
-    public static final int rampSensorPort = 4;
+    public static final int rampSensorPort = 2;
     public static final int entranceSensorPort = 6;
     public static final int shooterSensorPort = 0;
 

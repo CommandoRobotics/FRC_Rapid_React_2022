@@ -136,7 +136,7 @@ public class ConstantsValues {
     /**
      * INTAKE
      */
-    public static final double intakePower = 0.5;
+    public static final double intakePower = 0.8;
     public static final double ejectPower = -0.5;
     public static final int intakeCurrentLimit = 30;
 

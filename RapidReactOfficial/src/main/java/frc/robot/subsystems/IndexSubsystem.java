@@ -390,8 +390,22 @@ public class IndexSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("shooterBB", isShooterSensorTriggered());
+
     updateBlocks();
+
+    // Sensor reads
+    SmartDashboard.putBoolean("beamBreakShooter", isShooterSensorTriggered());
+    SmartDashboard.putBoolean("beamBreakVertical", isVerticalSensorTriggered());
+    SmartDashboard.putBoolean("beamBreakRamp", isRampSensorTriggered());
+    SmartDashboard.putBoolean("beamBreakEntrance", isEntranceSensorTriggered());
+
+    // Blocks
+    SmartDashboard.putBoolean("indblocksRamp", isBallAtRamp());
+    SmartDashboard.putBoolean("indblocksRampToVer", isBallBetweenRampAndVertical());
+    SmartDashboard.putBoolean("indblocksVer", isBallAtVertical());
+    SmartDashboard.putBoolean("indBlocksShooter", isBallInShooter());
+
+
   }
 
   @Override
@@ -399,3 +413,4 @@ public class IndexSubsystem extends SubsystemBase {
     REVPhysicsSim.getInstance().run();
   }
 }
+
