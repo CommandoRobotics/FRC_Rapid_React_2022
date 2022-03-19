@@ -54,5 +54,14 @@ public class ConstantsPorts {
     public static final int panLimitSwitchPort = 7;
     public static final int tiltLimitSwitchPort = 8;
 
+    /**
+     * LEDs
+     */
+    public static final int ledsConnectedPin = 9;
+    public static final int ledsAlliancePin = 10;
+    public static final int ledsCargoSeenPin = 11;
+    public static final int ledsReadyToFirePin = 12;
+
+
 
 }

@@ -26,6 +26,7 @@ import frc.robot.Constants.ConstantsValues;
 import frc.robot.Robot;
 import frc.robot.Projectile.Range;
 import frc.robot.Projectile.Vector;
+import frc.robot.utils.LedLiaison;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -57,11 +58,13 @@ public class ShooterSubsystem extends SubsystemBase {
   // Some variables that are used locally for inter-method logic
   private int flywheelAtVelocityIteration = 0;
   private double currentTargetRpm = 0;
-
   double currentManualVelocity = 0;
+  boolean trackReadiness = false; // Whether the shooter should track if it's ready to fire or not
 
+  // Communication 
   private NetworkTable sensorTable;
 
+  // Flywheel rate limiter
   SlewRateLimiter rateLimiter;
 
 
@@ -411,18 +414,59 @@ public class ShooterSubsystem extends SubsystemBase {
     return currentManualVelocity;
   }
 
+  /**
+   * Get whether the flywheel is currently at its target velocity
+   * @return Whether the flywheel is at its target velocity
+   */
   public boolean isFlywheelAtTargetVelocity() {
     return flywheelAtVelocityIteration >=ConstantsValues.flywheelAtVelocityIterations && currentTargetRpm != 0;
   }
 
   /**
-   * Update the network tables that integrate our shooter with CommandoDash
+   * Start tracking the readiness of the shooter.
+   * This should be ran if the current shooter RPM is being used
+   * to determine if we are ready to fire.
    */
-  private void updateCommandoDash() {
+  public void startTrackingReadiness() {
+    trackReadiness = true;
+  }
+
+  /**
+   * Stop tracking the readiness of the shooter.
+   * This should be ran if the current shooter RPM is not being
+   * used to determine if we are ready to fire.
+   */
+  public void stopTrackingReadiness() {
+    trackReadiness = false;
+  }
+
+  /**
+   * Get whether the shooter is ready to fire
+   * @return Whether the shooter is ready to fire
+   */
+  public boolean isShooterReadyToFire() {
+    if(trackReadiness) {
+      return isFlywheelAtTargetVelocity();
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Update the network tables and pins that integrate our shooter with CommandoDash and LEDs
+   */
+  private void updateCommunications() {
+
+    boolean readyToFire = isShooterReadyToFire(); 
+
+    // Update CommandoDash
     sensorTable.getEntry("manualCycleSpeed").setDouble(getCurrentManualVelocity());
     sensorTable.getEntry("targetRPM").setDouble(currentTargetRpm);
     sensorTable.getEntry("shooterRPM").setDouble(getFlywheelVelocity());
-    sensorTable.getEntry("isAtTargetVelocity").setBoolean(isFlywheelAtTargetVelocity());
+    sensorTable.getEntry("isAtTargetVelocity").setBoolean(readyToFire); // This network table is named incorrectly. It actually checks if the shooter is ready to fire.
+
+    // Update LEDs
+    LedLiaison.setReadyToFire(readyToFire);
   }
 
   @Override
@@ -438,8 +482,8 @@ public class ShooterSubsystem extends SubsystemBase {
       flywheelAtVelocityIteration = 0;
     }
 
-    // Update CommandoDash
-    updateCommandoDash();
+    // Update communications with CommandoDash and LEDs
+    updateCommunications();
 
     // Write to smart dashboard
     SmartDashboard.putNumber("currentTargetVel", currentTargetRpm);

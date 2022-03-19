@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.utils.LedLiaison;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -43,6 +44,9 @@ public class Robot extends TimedRobot {
 
     //Tell CommandoDash we're currently disabled
     commandoDashNT.getSubTable("AllianceAndModeData").getEntry("robotMode").setNumber(32);
+
+    // Set LEDs to show our code is running
+    LedLiaison.setConnected(true);
   }
 
   /**

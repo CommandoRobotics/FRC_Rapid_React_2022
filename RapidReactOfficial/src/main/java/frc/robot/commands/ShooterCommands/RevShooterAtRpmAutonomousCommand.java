@@ -32,12 +32,13 @@ public class RevShooterAtRpmAutonomousCommand extends CommandBase {
   @Override
   public void initialize() {
     shooterSubsystem.setFlywheelTargetRpm(targetRpm);
+    shooterSubsystem.startTrackingReadiness();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    shooterSubsystem.startTrackingReadiness();
   }
 
   // Called once the command ends or is interrupted.
@@ -45,6 +46,7 @@ public class RevShooterAtRpmAutonomousCommand extends CommandBase {
   public void end(boolean interrupted) {
     if(interrupted) {
       shooterSubsystem.stop();
+      shooterSubsystem.stopTrackingReadiness();
     }
   }
 

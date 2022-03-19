@@ -8,7 +8,6 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
 import frc.robot.Projectile.Range;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -22,20 +21,10 @@ public class RevShooterAtAutoVelocityNoStopCommand extends CommandBase {
 
   ShooterSubsystem shooterSubsystem;
   NetworkTableEntry vectorMapRange = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData").getEntry("vectorMapRange");
-  Timer timer;
-  double maxCommandRunTimeSeconds = 2;
 
   /** Creates a new RevShooterAtAutoVelocityAutonomousCommand. */
   public RevShooterAtAutoVelocityNoStopCommand(ShooterSubsystem shooterSubsystem) {
     this.shooterSubsystem = shooterSubsystem;
-    timer = new Timer();
-    addRequirements(shooterSubsystem);
-  }
-
-  public RevShooterAtAutoVelocityNoStopCommand(double maxTimeSeconds, ShooterSubsystem shooterSubsystem) {
-    this.shooterSubsystem = shooterSubsystem;
-    maxCommandRunTimeSeconds = maxTimeSeconds;
-    timer = new Timer();
     addRequirements(shooterSubsystem);
   }
 
@@ -43,14 +32,14 @@ public class RevShooterAtAutoVelocityNoStopCommand extends CommandBase {
   @Override
   public void initialize() {
     shooterSubsystem.enableLimelightLed();
-    timer.reset();
-    timer.start();
+    shooterSubsystem.startTrackingReadiness();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     if(shooterSubsystem.isTargetSeen()) {
+      shooterSubsystem.startTrackingReadiness(); // The RPM is deliberately chosen and therefore we are ready to shoot when that RPM is reached
       shooterSubsystem.enableLimelightLed();
       shooterSubsystem.setFlywheelTargetRpm(shooterSubsystem.calculateIdealLaunchVector().velocity);
       Range range = shooterSubsystem.findRangeGivenDistance(shooterSubsystem.getHorizontalDistanceToHub());
@@ -60,6 +49,7 @@ public class RevShooterAtAutoVelocityNoStopCommand extends CommandBase {
         vectorMapRange.setString("0.0 - 0.0");
       }
     } else {
+      shooterSubsystem.stopTrackingReadiness(); // THe RPM is only chosen because we don't have a target. Therefore, we are not ready to shoot regardless of whether that RPM is reached.
       shooterSubsystem.setFlywheelTargetRpm(ConstantsValues.noTargetRpm);
       vectorMapRange.setString("0.0 - 0.0");
     }
@@ -72,11 +62,8 @@ public class RevShooterAtAutoVelocityNoStopCommand extends CommandBase {
       shooterSubsystem.disableLimelightLed();
       shooterSubsystem.stop();
       vectorMapRange.setString("0.0 - 0.0");
-    } else if(timer.get() > maxCommandRunTimeSeconds) {
-      shooterSubsystem.setFlywheelTargetRpm(2550); //TODO figure out default shooter value
+      shooterSubsystem.stopTrackingReadiness();
     }
-    timer.stop();
-    timer.reset();
   }
 
   // Returns true when the command should end.

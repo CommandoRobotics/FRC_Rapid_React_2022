@@ -41,6 +41,7 @@ public class RevShooterAtAutoVelocityAutonomousCommand extends CommandBase {
   @Override
   public void initialize() {
     shooterSubsystem.enableLimelightLed();
+    shooterSubsystem.startTrackingReadiness();
     timer.reset();
     timer.start();
   }
@@ -65,6 +66,7 @@ public class RevShooterAtAutoVelocityAutonomousCommand extends CommandBase {
       shooterSubsystem.disableLimelightLed();
       shooterSubsystem.stop();
       vectorMapRange.setString("0.0 - 0.0");
+      shooterSubsystem.stopTrackingReadiness();
     } else if(timer.get() > maxCommandRunTimeSeconds) {
       shooterSubsystem.setFlywheelTargetRpm(2550); //TODO figure out default shooter value
     }
@@ -80,6 +82,6 @@ public class RevShooterAtAutoVelocityAutonomousCommand extends CommandBase {
     1. The shooter reports that it has reached its target velocity
     2. The max runtime of this command is overrun
     */
-    return timer.get() > maxCommandRunTimeSeconds || shooterSubsystem.isFlywheelAtTargetVelocity();
+    return timer.get() > maxCommandRunTimeSeconds || shooterSubsystem.isShooterReadyToFire();
   }
 }

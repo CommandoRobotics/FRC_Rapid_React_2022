@@ -29,12 +29,14 @@ public class RevShooterAtAutoVelocityCommand extends CommandBase {
   @Override
   public void initialize() {
     shooterSubsystem.enableLimelightLed();
+    shooterSubsystem.startTrackingReadiness();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     shooterSubsystem.enableLimelightLed();
+    shooterSubsystem.startTrackingReadiness(); // The RPM is deliberately chosen and therefore we are ready to shoot when that RPM is reached
     if(shooterSubsystem.isTargetSeen()) {
       Range range = shooterSubsystem.findRangeGivenDistance(shooterSubsystem.getHorizontalDistanceToHub());
       shooterSubsystem.setFlywheelTargetRpm(shooterSubsystem.calculateIdealLaunchVector().velocity);
@@ -44,6 +46,7 @@ public class RevShooterAtAutoVelocityCommand extends CommandBase {
         vectorMapRange.setString("0.0 - 0.0");
       }
     } else {
+      shooterSubsystem.stopTrackingReadiness(); // THe RPM is only chosen because we don't have a target. Therefore, we are not ready to shoot regardless of whether that RPM is reached.
       vectorMapRange.setString("0.0 - 0.0");
       shooterSubsystem.setFlywheelTargetRpm(ConstantsValues.noTargetRpm);
     }
@@ -54,6 +57,7 @@ public class RevShooterAtAutoVelocityCommand extends CommandBase {
   public void end(boolean interrupted) {
     shooterSubsystem.disableLimelightLed();
     shooterSubsystem.stop();
+    shooterSubsystem.stopTrackingReadiness();
     vectorMapRange.setString("0.0 - 0.0");
   }
 

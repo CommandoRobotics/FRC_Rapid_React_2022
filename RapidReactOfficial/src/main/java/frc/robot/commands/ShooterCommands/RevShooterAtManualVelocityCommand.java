@@ -20,12 +20,13 @@ public class RevShooterAtManualVelocityCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    shooterSubsystem.startTrackingReadiness();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    shooterSubsystem.startTrackingReadiness();
     shooterSubsystem.setFlywheelTargetRpm(shooterSubsystem.getCurrentManualVelocity());
   }
 
@@ -33,6 +34,7 @@ public class RevShooterAtManualVelocityCommand extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     shooterSubsystem.stop();
+    shooterSubsystem.stopTrackingReadiness();
   }
 
   // Returns true when the command should end.
