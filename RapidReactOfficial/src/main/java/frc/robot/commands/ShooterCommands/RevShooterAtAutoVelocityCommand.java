@@ -7,6 +7,7 @@ package frc.robot.commands.ShooterCommands;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ConstantsValues;
 import frc.robot.Projectile.Range;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -34,12 +35,17 @@ public class RevShooterAtAutoVelocityCommand extends CommandBase {
   @Override
   public void execute() {
     shooterSubsystem.enableLimelightLed();
-    Range range = shooterSubsystem.findRangeGivenDistance(shooterSubsystem.getHorizontalDistanceToHub());
-    shooterSubsystem.setFlywheelTargetRpm(shooterSubsystem.calculateIdealLaunchVector().velocity);
-    if(range != null) {
-      vectorMapRange.setString(range.minValue + " - " + range.maxValue);
+    if(shooterSubsystem.isTargetSeen()) {
+      Range range = shooterSubsystem.findRangeGivenDistance(shooterSubsystem.getHorizontalDistanceToHub());
+      shooterSubsystem.setFlywheelTargetRpm(shooterSubsystem.calculateIdealLaunchVector().velocity);
+      if(range != null) {
+        vectorMapRange.setString(range.minValue + " - " + range.maxValue);
+      } else {
+        vectorMapRange.setString("0.0 - 0.0");
+      }
     } else {
       vectorMapRange.setString("0.0 - 0.0");
+      shooterSubsystem.setFlywheelTargetRpm(ConstantsValues.noTargetRpm);
     }
   }
 

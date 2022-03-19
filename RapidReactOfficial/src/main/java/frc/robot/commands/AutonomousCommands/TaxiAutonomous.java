@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.IndexCommands.RunIndexToShootAutonomousCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootAutoEndCommand;
 import frc.robot.commands.IntakeCommands.IntakeCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityAutonomousCommand;
 import frc.robot.subsystems.AutoAimSubsystem;
@@ -61,7 +61,7 @@ public class TaxiAutonomous extends SequentialCommandGroup {
     new InstantCommand(autoAimSubsystem::enableLimelightSnapshot),
 
     // Actually shoot
-    new RunIndexToShootAutonomousCommand(5, 1, indexSubsystem),
+    new RunIndexToShootAutoEndCommand(5, 1, indexSubsystem),
     new PrintCommand("Finished running the index to shoot"),
 
     // Stop shooter and index

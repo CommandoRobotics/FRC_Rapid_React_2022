@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Triggers.TriggerPOV;
 import frc.robot.Triggers.TriggerPOV.POVDirection;
-import frc.robot.commands.AutoAimCommands.AimDrivetrainUsingVisionCommand;
-import frc.robot.commands.AutonomousCommands.DoubleShotTaxiAutonomous;
+import frc.robot.commands.AutoAimCommands.AutoAimCommand;
+import frc.robot.commands.AutonomousCommands.DoubleShotAutonomous;
 import frc.robot.commands.AutonomousCommands.IdealAutonomous;
 import frc.robot.commands.AutonomousCommands.TaxiAutonomous;
 import frc.robot.commands.DriveCommands.DriveWithFieldCentricToggleCommand;
@@ -27,7 +27,7 @@ import frc.robot.commands.IndexCommands.JogIndexRampReverseCommand;
 import frc.robot.commands.IndexCommands.JogIndexVerticalCommand;
 import frc.robot.commands.IndexCommands.JogIndexVerticalReverseCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootAutoEndCommand;
-import frc.robot.commands.IndexCommands.RunIndexToShootAutonomousCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootAutoEndCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootWithBreakCommand;
 import frc.robot.commands.IntakeCommands.HoundCargo;
@@ -122,7 +122,7 @@ public class RobotContainer {
 
     // Right bumper - Enable auto aim (drive based auto aim)
     new JoystickButton(driverController, XboxController.Button.kRightBumper.value)
-    .whileActiveOnce(new AimDrivetrainUsingVisionCommand(
+    .whileActiveOnce(new AutoAimCommand(
       () -> -driverController.getLeftY(), 
       () -> driverController.getLeftX(), 
       () -> driverController.getRightX(), 
@@ -241,7 +241,7 @@ public class RobotContainer {
       case "IdealAuto":
         return new IdealAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem);
       case "DoubleShot":
-        return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem);
+        return new DoubleShotAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem);
       case "Spare":
         return null; //TODO Add "Spare" command
       case "FullSend":
@@ -251,7 +251,7 @@ public class RobotContainer {
       case "DoubleShot - Default":
         return new IdealAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem); //TODO Add "Taxi - Default" command
       default:
-        return new DoubleShotTaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem); //TODO Determine default command (or have null? tho I wouldn't recommend that)
+        return new DoubleShotAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem); //TODO Determine default command (or have null? tho I wouldn't recommend that)
     }
   }
 }

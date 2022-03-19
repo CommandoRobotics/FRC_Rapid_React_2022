@@ -10,25 +10,35 @@ import frc.robot.Constants.ConstantsValues;
 import frc.robot.subsystems.IndexSubsystem;
 
 public class RunIndexToShootAutoEndCommand extends CommandBase {
-
   IndexSubsystem indexSubsystem;
   double maxCommandRunTimeSeconds = 3;
   int timesBeamBroken = 0;
   boolean wasBeamBrokenPrevious = false;
   int timesBeamNeedsToBeBroken = 2;
   Timer timer;
-  /** Creates a new ShootUntilBrokenCommand. */
+
+  /** Creates a new RunVerticalToShootCommand. */
   public RunIndexToShootAutoEndCommand(IndexSubsystem indexSubsystem) {
     this.indexSubsystem = indexSubsystem;
     timer = new Timer();
     addRequirements(indexSubsystem);
   }
 
-  public RunIndexToShootAutoEndCommand(double maxTimeSeconds, IndexSubsystem indexSubsystem) {
+  /** Creates a new RunVerticalToShootCommand. */
+  public RunIndexToShootAutoEndCommand(int numberOfBallsToShoot, IndexSubsystem indexSubsystem) {
     this.indexSubsystem = indexSubsystem;
+    timesBeamNeedsToBeBroken = numberOfBallsToShoot;
+    timer = new Timer();
+    addRequirements(indexSubsystem);
+  }
+
+  /** Creates a new RunVerticalToShootCommand. */
+  public RunIndexToShootAutoEndCommand(double maxTimeSeconds, int numberOfBallsToShoot, IndexSubsystem indexSubsystem) {
+    this.indexSubsystem = indexSubsystem;
+    timesBeamNeedsToBeBroken = numberOfBallsToShoot;
+    addRequirements(indexSubsystem);
     timer = new Timer();
     maxCommandRunTimeSeconds = maxTimeSeconds;
-    addRequirements(indexSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -44,9 +54,6 @@ public class RunIndexToShootAutoEndCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    indexSubsystem.setVerticalVoltage(ConstantsValues.verticalShootVolts);
-    indexSubsystem.setRampVoltage(ConstantsValues.rampJogVolts);
-    indexSubsystem.setTransferVoltage(ConstantsValues.transferJogVolts);
     if(indexSubsystem.isShooterSensorTriggered()) {
       if(!wasBeamBrokenPrevious) {
         timesBeamBroken++;
