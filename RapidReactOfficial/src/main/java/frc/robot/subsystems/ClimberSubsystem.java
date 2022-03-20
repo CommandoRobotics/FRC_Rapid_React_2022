@@ -8,8 +8,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsPorts;
+import frc.robot.Constants.ConstantsValues;
 
 public class ClimberSubsystem extends SubsystemBase {
 
@@ -18,6 +20,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
   // Encoders
   RelativeEncoder winchEncoder, tiltEncoder;
+
+  final double winchMaxSpeed, winchMaxVolts, tiltMaxSpeed, tiltMaxVolts;
   
 
   public ClimberSubsystem() {
@@ -39,22 +43,67 @@ public class ClimberSubsystem extends SubsystemBase {
     winchEncoder = winchLeader.getEncoder();
     tiltEncoder = tilt.getEncoder();
 
+    // Set our local max speeds
+    winchMaxSpeed = ConstantsValues.winchMaxSpeed;
+    winchMaxVolts = ConstantsValues.winchMaxVolts;
+    tiltMaxSpeed = ConstantsValues.climberTiltMaxSpeed;
+    tiltMaxVolts = ConstantsValues.climberTiltMaxVolts;
+
+
   }
 
   /**
-   * Set the winch to a certain speed
+   * Set the winch to a certain speed Note, this speed is clamped by the max value outlined in constants.
    * @param speed
    */
   public void setWinchSpeed(double speed) {
-    winchLeader.set(speed);
+    winchLeader.set(MathUtil.clamp(speed, -winchMaxSpeed, winchMaxSpeed));
   }
   
   /**
-   * Set the winch to a certain voltage
+   * Set the winch to a certain voltage Note, this voltage is clamped by the max value outlined in constants.
    * @param volts
    */
   public void setWinchVoltage(double volts) {
-    winchLeader.setVoltage(volts);
+    winchLeader.setVoltage(MathUtil.clamp(volts, -winchMaxVolts, winchMaxVolts));
+  }
+
+  /**
+   * Set the tilt to a certain speed Note, this speed is clamped by the max value outlined in constants.
+   * @param speed
+   */
+  public void setTiltSpeed(double speed) {
+    tilt.set(MathUtil.clamp(speed, -tiltMaxSpeed, tiltMaxSpeed));
+  }
+
+  /**
+   * Set the tilt to a certain voltage. Note, this voltage is clamped by the max value outlined in constants.
+   * @param volts
+   */
+  public void setTiltVoltage(double volts) {
+    tilt.setVoltage(MathUtil.clamp(volts, -tiltMaxVolts, tiltMaxVolts));
+  }
+
+  /**
+   * Stop the winch motors
+   */
+  public void stopWinch() {
+    winchLeader.stopMotor();
+  }
+
+  /**
+   * Stop the tilt motor
+   */
+  public void stopTilt() {
+    tilt.stopMotor();
+  }
+
+  /**
+   * Stop both the winch and the tilt motors
+   */
+  public void stopAll() {
+    winchLeader.stopMotor();
+    tilt.stopMotor();
   }
 
   @Override

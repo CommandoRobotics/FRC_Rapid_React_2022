@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ConstantsValues;
 import frc.robot.Triggers.TriggerPOV;
 import frc.robot.Triggers.TriggerPOV.POVDirection;
 import frc.robot.commands.AutoAimCommands.AutoAimCommand;
@@ -215,7 +217,15 @@ public class RobotContainer {
     new JoystickButton(operatorController, XboxController.Button.kStart.value)
     .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
 
-    // 
+    // Left Joystick Y - Jog climber winches
+    new Trigger(() -> (Math.abs(MathUtil.applyDeadband(operatorController.getLeftY(), ConstantsValues.climberJoystickDeadband)) > 0))
+    .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setWinchSpeed(operatorController.getLeftY())))
+    .whenInactive(new InstantCommand(climberSubsystem::stopAll));
+
+    // Right Joystick Y - Jog climber tilt
+    new Trigger(() -> (Math.abs(MathUtil.applyDeadband(operatorController.getRightY(), ConstantsValues.climberJoystickDeadband)) > 0))
+    .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltSpeed(operatorController.getRightY())))
+    .whenInactive(new InstantCommand(climberSubsystem::stopAll));
 
   }
 

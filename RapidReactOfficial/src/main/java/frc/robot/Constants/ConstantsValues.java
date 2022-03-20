@@ -213,4 +213,13 @@ public class ConstantsValues {
 
     public static final double noCargoTime = 0.5;
     public static final double minHoundPIDOut = 0.15;
+
+    /**
+     * CLIMBER
+     */
+    public static final double climberJoystickDeadband = 0.1;
+    public static final double winchMaxSpeed = 0.3;
+    public static final double winchMaxVolts = 3.6;
+    public static final double climberTiltMaxSpeed = 0.2;
+    public static final double climberTiltMaxVolts = 2.4;
 }
