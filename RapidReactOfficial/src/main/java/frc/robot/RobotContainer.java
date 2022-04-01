@@ -36,6 +36,7 @@ import frc.robot.commands.MiscellanousCommands.ExpelAllCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityAutonomousCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtManualVelocityCommand;
+import frc.robot.commands.ClimbCommands.*;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -220,16 +221,41 @@ public class RobotContainer {
     new JoystickButton(operatorController, XboxController.Button.kStart.value)
     .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
 
-    // Dpad up - Climber up
+    // Dpad up - Extend climber arms
     new Trigger(() -> operatorController.getPOV() == 0)
-      .whenActive(climberSubsystem::midUp);
+      .whenActive(climberSubsystem::extendArm);
+      .whenInactive(climberSubsystem::stopArmWinch);
 
-    // Dpad down - Climber down
+    // Dpad right - Tilt climber arms up
+    new Trigger(() -> operatorController.getPOV() == 90)
+      .whenActive(climberSubsystem::tiltArmUp);
+      .whenInactive(climberSubsystem::stopArmTilt);
+
+    // Dpad down - Retract climber arms
     new Trigger(() -> operatorController.getPOV() == 180)
-    .whenActive(climberSubsystem::midDown);
+      .whenActive(climberSubsystem::retractArm)
+      .whenInactive(climberSubsystem::stopArmWinch);
 
+    // Dpad left - Tilt climber arms down
+    new Trigger(() -> operatorController.getPOV() == 270)
+      .whenActive(climberSubsystem::tiltArmDown)
+      .whenInactive(climberSubsystem::stopArmTilt);
     
-  }
+    // TODO: Determine climb button bindings.
+    // // X Button - Go back to previous arm position
+    // new Trigger(() -> operatorController.getXButton())
+    // .whenActive(climberSubsystem::backToPreviousClimbPosition);
+
+    // // Y Button - Let the robot climb by itself
+    //   new Trigger(() -> operatorController.getYButton())
+    //   .whileActive(climberSubsystem::justClimb)
+    //   .whenInactive(climberSubsystem::stopMovement);
+    
+    // // B Button - Go to next arm position
+    // new Trigger(() -> operatorController.getBButton())
+    // .whenActive(climberSubsystem::moveToNextClimbPosition);
+
+}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
