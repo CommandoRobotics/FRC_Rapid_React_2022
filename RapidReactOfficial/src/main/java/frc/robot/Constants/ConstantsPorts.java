@@ -19,13 +19,11 @@ public class ConstantsPorts {
     /**
      * Climber
      */
-    public static final int leftWinchId = 13;
-    public static final int rightWinchId = 14;
-    public static final int midClimberForwardId = 6;
-    public static final int midClimberReverseId = 7;
-    public static final int traversalClimberId = 15;
-    public static final int topLimitSwitchPort = 3;
-    public static final int bottomLimitSwitchPort = 4;
+    public static final int winchLeaderId = 13;
+    public static final int winchFollowerId = 14;
+    public static final int climbTiltId = 15;
+    public static final int tiltForwardId = 8;
+    public static final int tiltBackwardId = 9;
 
     /**
      * Intake
@@ -43,7 +41,7 @@ public class ConstantsPorts {
     public static final int transferFollowerId = 8;
     public static final int verticalSensorPort = 1;
     public static final int rampSensorPort = 2;
-    public static final int entranceSensorPort = 6;
+    public static final int entranceSensorPort = 3;
     public static final int shooterSensorPort = 0;
 
     /**
@@ -51,8 +49,6 @@ public class ConstantsPorts {
      */
     public static final int panId = 16;
     public static final int tiltId = 17;
-    public static final int panLimitSwitchPort = 7;
-    public static final int tiltLimitSwitchPort = 8;
 
 
 }

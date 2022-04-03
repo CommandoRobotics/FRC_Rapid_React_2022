@@ -220,13 +220,15 @@ public class RobotContainer {
     new JoystickButton(operatorController, XboxController.Button.kStart.value)
     .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
 
-    // Dpad up - Climber up
-    new Trigger(() -> operatorController.getPOV() == 0)
-      .whenActive(climberSubsystem::midUp);
+    // Left stick y - Winch up and down
+    new Trigger(() -> (Math.abs(operatorController.getLeftY()) > 0))
+      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setWinch(operatorController.getLeftY())))
+      .whenInactive(new InstantCommand(climberSubsystem::stopWinch));
 
-    // Dpad down - Climber down
-    new Trigger(() -> operatorController.getPOV() == 180)
-    .whenActive(climberSubsystem::midDown);
+    // Right stick y - Tilt forward and backward
+    new Trigger(() -> (Math.abs(operatorController.getRightY()) > 0))
+      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltNoLimits(operatorController.getRightY())))
+      .whenInactive(new InstantCommand(climberSubsystem::stopTilt));
 
     
   }

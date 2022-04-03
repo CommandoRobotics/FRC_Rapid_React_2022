@@ -38,10 +38,6 @@ public class TaxiAutonomous extends SequentialCommandGroup {
     new InstantCommand(driveSubsystem::resetGyro),
     new PrintCommand("Finished resetting the gyro"),
 
-    // Retract the climber (just in case)
-    new InstantCommand(climberSubsystem::midDown),
-    new PrintCommand("Finished retracting the climber"),
-
     // Retract the intake (just in case)
     new InstantCommand(intakeSubsystem::retract),
     new PrintCommand("Finished retracting the intake"),

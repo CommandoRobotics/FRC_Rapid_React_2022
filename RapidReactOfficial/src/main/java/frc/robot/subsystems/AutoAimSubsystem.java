@@ -59,8 +59,8 @@ public class AutoAimSubsystem extends SubsystemBase {
     tiltPid.setSetpoint(ConstantsValues.tiltSetPoint);
 
     // Instantiate limit switches
-    panLimit = new DigitalInput(ConstantsPorts.panLimitSwitchPort);
-    tiltLimit = new DigitalInput(ConstantsPorts.tiltLimitSwitchPort);
+    //panLimit = new DigitalInput(ConstantsPorts.panLimitSwitchPort);
+    //tiltLimit = new DigitalInput(ConstantsPorts.tiltLimitSwitchPort);
 
     // Instantiate the limelight
     limelight = NetworkTableInstance.getDefault().getTable("limelight");

@@ -50,10 +50,6 @@ public class IdealAutonomous extends SequentialCommandGroup {
     new InstantCommand(driveSubsystem::resetGyro),
     new PrintCommand("Finished resetting gyro"),
 
-    // Retract climber (just in case)
-    new InstantCommand(climberSubsystem::midDown),
-    new PrintCommand("Finished retracting climb"),
-
     // Extend the intake
     new InstantCommand(intakeSubsystem::extend),
     new PrintCommand("Finished extending Intake"),

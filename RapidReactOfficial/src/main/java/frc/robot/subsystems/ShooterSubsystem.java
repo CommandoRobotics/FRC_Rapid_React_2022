@@ -438,19 +438,28 @@ public class ShooterSubsystem extends SubsystemBase {
       flywheelAtVelocityIteration = 0;
     }
 
+    //TODO REMOVE ME
+    if(SmartDashboard.getNumber("currentTargetRpm", 0) != currentManualVelocity) {
+      currentManualVelocity = SmartDashboard.getNumber("currentTargetRpm", 0);
+    }
+
     // Update CommandoDash
     updateCommandoDash();
 
     // Write to smart dashboard
-    SmartDashboard.putNumber("currentTargetVel", currentTargetRpm);
     currentManualVelocity = SmartDashboard.getNumber("manualTargetVel", currentManualVelocity);
     SmartDashboard.putNumber("horizontalDistanceLL", getHorizontalDistanceToHub());
     ConstantsValues.limelightMountingAngle = SmartDashboard.getNumber("LLAngle", ConstantsValues.limelightMountingAngle);
     ConstantsValues.shooterHeightMeters = SmartDashboard.getNumber("LLHeight", ConstantsValues.shooterHeightMeters);
-    ConstantsValues.flywheelP = SmartDashboard.getNumber("flywheelP", ConstantsValues.flywheelP);
+    flywheelPid.setP(SmartDashboard.getNumber("flywheelP", ConstantsValues.flywheelP));
     ConstantsValues.flywheelI = SmartDashboard.getNumber("flywheelI", ConstantsValues.flywheelI);
-    ConstantsValues.flywheelD = SmartDashboard.getNumber("flywheelD", ConstantsValues.flywheelD);
+    flywheelPid.setD(SmartDashboard.getNumber("flywheelD", ConstantsValues.flywheelD));
     SmartDashboard.putNumber("ActualRPM", getFlywheelVelocity());
+
+    //TODO REMOVE ME
+    SmartDashboard.putNumber("currentTargetRpm", currentManualVelocity);
+
+    
   }
 
   @Override

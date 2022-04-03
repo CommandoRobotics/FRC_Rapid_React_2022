@@ -38,10 +38,6 @@ public class DoubleShotAutonomous extends SequentialCommandGroup {
     new InstantCommand(driveSubsystem::resetGyro),
     new PrintCommand("Finished resetting the gyro"),
 
-    // Retract the climber (just in case)
-    new InstantCommand(climberSubsystem::midDown),
-    new PrintCommand("Finished retracting the climber"),
-
     // Extend the intake
     new InstantCommand(intakeSubsystem::extend),
     new PrintCommand("Finished extending Intake"),

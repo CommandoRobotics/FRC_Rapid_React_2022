@@ -73,7 +73,7 @@ public class ConstantsValues {
      * SHOOTER
      */
     //TODO tune shooter PID values
-    public static double flywheelP = 0.000280;
+    public static double flywheelP = 0.000050;
     public static double flywheelI = 0;
     public static double flywheelD = 0;
     public static double flywheelIZone = 0;
@@ -213,4 +213,10 @@ public class ConstantsValues {
 
     public static final double noCargoTime = 0.5;
     public static final double minHoundPIDOut = 0.15;
+
+    /**
+     * CLIMBER
+     */
+    public static final double climbTiltDeadband = 0.1;
+    public static final double climbWinchDeadband = 0.05;
 }
