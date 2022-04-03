@@ -57,7 +57,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         intakeEncoder = intake.getEncoder();
         // intakeEncoder.setVelocityConversionFactor(0);
-        //CargoHound = new PhotonCamera("CargoHound");
+        CargoHound = new PhotonCamera("CargoHound");
         field = (Field2d) SmartDashboard.getData("Field");
 
         lifter = new DoubleSolenoid(PneumaticsModuleType.REVPH, ConstantsPorts.lifterForwardId, ConstantsPorts.lifterReverseId);

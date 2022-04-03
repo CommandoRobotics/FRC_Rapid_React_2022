@@ -10,6 +10,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,6 +29,7 @@ public class HoundCargo extends CommandBase {
   DriveSubsystem driveSubsystem;
   IntakeSubsystem intakeSubsystem;
   NetworkTableInstance ntInst;
+  NetworkTable PIDTuningNT;
 
   /** Creates a new HoundCargo. THIS COMMAND MUST BE INTERUPTED TO STOP */
   public HoundCargo(IntakeSubsystem intakeSubsystem, DriveSubsystem driveSubsystem, 
@@ -60,6 +62,7 @@ public class HoundCargo extends CommandBase {
 
     //Photon NT networking to use with an at-home simulation
     ntInst = NetworkTableInstance.getDefault();
+    PIDTuningNT = ntInst.getTable("CommandoDash").getSubTable("PIDTuning");
     // if (Robot.isSimulation()) {
     // ntInst.stopServer();
     // ntInst.stopClient();
@@ -126,6 +129,7 @@ public class HoundCargo extends CommandBase {
       //If no ball is found in the time alloted, default to driver control
       driveSubsystem.driveMecanum(y.getAsDouble(), x.getAsDouble(), rotation.getAsDouble(), true);
     }
+    updateFromCommandoDash();
   }
 
   // Called once the command ends or is interrupted.
@@ -142,5 +146,18 @@ public class HoundCargo extends CommandBase {
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  public void updateFromCommandoDash() {
+    xPID.setP(PIDTuningNT.getEntry("houndXP").getDouble(ConstantsValues.houndXP));
+    xPID.setD(PIDTuningNT.getEntry("houndXD").getDouble(ConstantsValues.houndXD));
+    yPID.setP(PIDTuningNT.getEntry("houndYP").getDouble(ConstantsValues.houndYP));
+    yPID.setD(PIDTuningNT.getEntry("houndYD").getDouble(ConstantsValues.houndYD));
+    rotationPID.setP(PIDTuningNT.getEntry("houndRP").getDouble(ConstantsValues.houndRP));
+    rotationPID.setD(PIDTuningNT.getEntry("houndRD").getDouble(ConstantsValues.houndRD));
+
+    PIDTuningNT.getEntry("houndXSetpoint").setDouble(xPID.getSetpoint());
+    PIDTuningNT.getEntry("houndYSetpoint").setDouble(yPID.getSetpoint());
+    PIDTuningNT.getEntry("houndRSetpoint").setDouble(rotationPID.getSetpoint().position);
   }
 }

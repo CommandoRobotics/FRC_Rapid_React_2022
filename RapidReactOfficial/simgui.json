@@ -153,6 +153,9 @@
   },
   "NetworkTables": {
     "CommandoDash": {
+      "PIDTuning": {
+        "open": true
+      },
       "open": true
     },
     "SmartDashboard": {

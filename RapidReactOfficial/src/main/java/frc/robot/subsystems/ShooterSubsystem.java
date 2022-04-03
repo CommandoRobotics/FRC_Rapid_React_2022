@@ -60,7 +60,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   double currentManualVelocity = 0;
 
-  private NetworkTable sensorTable;
+  private NetworkTable sensorTable, PIDTuningNT;
 
   SlewRateLimiter rateLimiter;
 
@@ -141,6 +141,13 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     sensorTable = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData");
+    PIDTuningNT = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("PIDTuning");
+    
+    //Add default values for updateCommandoDash();
+    PIDTuningNT.getEntry("shooterP").setDouble(ConstantsValues.flywheelP);
+    PIDTuningNT.getEntry("shooterD").setDouble(ConstantsValues.flywheelD);
+    PIDTuningNT.getEntry("shooterKs").setDouble(ConstantsValues.flywheelKs);
+    PIDTuningNT.getEntry("shooterKv").setDouble(ConstantsValues.flywheelKv);
 
     // Add values to smart dashboard
     SmartDashboard.putNumber("flywheelP", ConstantsValues.flywheelP);
@@ -423,6 +430,14 @@ public class ShooterSubsystem extends SubsystemBase {
     sensorTable.getEntry("targetRPM").setDouble(currentTargetRpm);
     sensorTable.getEntry("shooterRPM").setDouble(getFlywheelVelocity());
     sensorTable.getEntry("isAtTargetVelocity").setBoolean(isFlywheelAtTargetVelocity());
+    flywheelPid.setP(PIDTuningNT.getEntry("shooterP").getDouble(ConstantsValues.flywheelP));
+    flywheelPid.setD(PIDTuningNT.getEntry("shooterD").getDouble(ConstantsValues.flywheelD));
+    if(flywheelFF.ks !=  PIDTuningNT.getEntry("shooterKs").getDouble(ConstantsValues.flywheelKs) || flywheelFF.kv !=  PIDTuningNT.getEntry("shooterKv").getDouble(ConstantsValues.flywheelKv)) {
+      flywheelFF = new SimpleMotorFeedforward(
+        PIDTuningNT.getEntry("shooterKs").getDouble(ConstantsValues.flywheelKs), 
+        PIDTuningNT.getEntry("shooterKv").getDouble(ConstantsValues.flywheelKv)
+      );
+    }
   }
 
   @Override
