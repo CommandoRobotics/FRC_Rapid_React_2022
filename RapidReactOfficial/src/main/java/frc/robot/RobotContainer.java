@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ConstantsValues;
 import frc.robot.Triggers.TriggerPOV;
 import frc.robot.Triggers.TriggerPOV.POVDirection;
 import frc.robot.commands.AutoAimCommands.AutoAimCommand;
@@ -21,19 +22,15 @@ import frc.robot.commands.AutonomousCommands.DoubleShotAutonomous;
 import frc.robot.commands.AutonomousCommands.IdealAutonomous;
 import frc.robot.commands.AutonomousCommands.TaxiAutonomous;
 import frc.robot.commands.DriveCommands.DriveWithFieldCentricToggleCommand;
-import frc.robot.commands.DriveCommands.FollowTrajectoryCommand;
 import frc.robot.commands.IndexCommands.JogIndexRampCommand;
 import frc.robot.commands.IndexCommands.JogIndexRampReverseCommand;
 import frc.robot.commands.IndexCommands.JogIndexVerticalCommand;
 import frc.robot.commands.IndexCommands.JogIndexVerticalReverseCommand;
-import frc.robot.commands.IndexCommands.RunIndexToShootAutoEndCommand;
-import frc.robot.commands.IndexCommands.RunIndexToShootAutoEndCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootWithBreakCommand;
 import frc.robot.commands.IntakeCommands.HoundCargo;
 import frc.robot.commands.IntakeCommands.IntakeCommand;
 import frc.robot.commands.MiscellanousCommands.ExpelAllCommand;
-import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityAutonomousCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtManualVelocityCommand;
 import frc.robot.subsystems.AutoAimSubsystem;
@@ -220,15 +217,16 @@ public class RobotContainer {
     new JoystickButton(operatorController, XboxController.Button.kStart.value)
     .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
 
-    // Dpad up - Climber up
-    new Trigger(() -> operatorController.getPOV() == 0)
-      .whenActive(climberSubsystem::midUp);
+    // Left Joystick Y - Jog climber winches
+    new Trigger(() -> (Math.abs(MathUtil.applyDeadband(operatorController.getLeftY(), ConstantsValues.climberJoystickDeadband)) > 0))
+    .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setWinchSpeed(operatorController.getLeftY())))
+    .whenInactive(new InstantCommand(climberSubsystem::stopAll));
 
-    // Dpad down - Climber down
-    new Trigger(() -> operatorController.getPOV() == 180)
-    .whenActive(climberSubsystem::midDown);
+    // Right Joystick Y - Jog climber tilt
+    new Trigger(() -> (Math.abs(MathUtil.applyDeadband(operatorController.getRightY(), ConstantsValues.climberJoystickDeadband)) > 0))
+    .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltSpeed(operatorController.getRightY())))
+    .whenInactive(new InstantCommand(climberSubsystem::stopAll));
 
-    
   }
 
   /**
