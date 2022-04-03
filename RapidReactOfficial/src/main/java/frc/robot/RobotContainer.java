@@ -92,7 +92,7 @@ public class RobotContainer {
     () -> driverController.getLeftX(), 
     () -> driverController.getRightX()));
 
-    shooterSubsystem.disableLimelightLed();
+    shooterSubsystem.enableLimelightLed();
 
     configureButtonBindings();
   }
@@ -187,7 +187,7 @@ public class RobotContainer {
     // Right trigger and NOT alt - Run vertical index to effectively shoot
     operatorAlt.negate().and(
     new Trigger(() -> (operatorController.getRightTriggerAxis() > 0.1)))
-    .whileActiveOnce(new RunIndexToShootWithBreakCommand(indexSubsystem))
+    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem))
     .whenInactive(indexSubsystem::stopAll, indexSubsystem);
 
     // Right trigger and alt - Run vertical index to effectively shoot
