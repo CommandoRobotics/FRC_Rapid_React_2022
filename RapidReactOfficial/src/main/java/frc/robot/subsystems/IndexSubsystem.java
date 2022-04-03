@@ -10,6 +10,8 @@ import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,8 +23,10 @@ public class IndexSubsystem extends SubsystemBase {
 
   int[] blocks = {0,0,0,0,0,0};
 
+  private NetworkTable dashTable;
+  
   CANSparkMax ramp, vertical, transferLeader, transferFollower;
-  RelativeEncoder rampEncoder, verticalEncoder;
+  RelativeEncoder rampEncoder, verticalEncoder, transferEncoder;
 
   DigitalInput verticalSensor, rampSensor, entranceSensor, shooterSensor;
 
@@ -55,12 +59,15 @@ public class IndexSubsystem extends SubsystemBase {
     // Instantiate encoders
     rampEncoder = ramp.getEncoder();
     verticalEncoder = vertical.getEncoder();
+    transferEncoder = transferLeader.getEncoder();
 
     // Set encoder conversion factors
     rampEncoder.setPositionConversionFactor(ConstantsValues.rampPositionConversionFactor);
     verticalEncoder.setPositionConversionFactor(ConstantsValues.verticalPositionConversionFactor);
     rampEncoder.setVelocityConversionFactor(ConstantsValues.rampVelocityConversionFactor);
     verticalEncoder.setVelocityConversionFactor(ConstantsValues.verticalVelocityConversionFactor);
+    transferEncoder.setPositionConversionFactor(ConstantsValues.transferPositionConversionFactor);
+    transferEncoder.setVelocityConversionFactor(ConstantsValues.transferVelocityConversionFactor);
 
     // Intantiate sensors
     verticalSensor = new DigitalInput(ConstantsPorts.verticalSensorPort);
@@ -86,6 +93,8 @@ public class IndexSubsystem extends SubsystemBase {
     }
 
     previousBlockUpdateTimeMillis = System.currentTimeMillis();
+
+    dashTable = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData");
 
     // Add motors to the simulation
     if(Robot.isSimulation()) {
@@ -270,13 +279,17 @@ public class IndexSubsystem extends SubsystemBase {
         newBlocks[entranceSensorBlock] = 1;
       }
     } else {
+      newBlocks[entranceSensorBlock] = 0;
       if(entranceSensorTriggeredPrevious) {
         //TODO add motor direction based logic
         // If running forwards, add 1 to the entrance to index block.
         // If running backwards, remove the ball from the index.
-        newBlocks[entranceSensorBlock] = 0;
-        if(rampEncoder.getVelocity() > 0) {
-          newBlocks[entranceToRampBlock] = 1;
+        if(transferEncoder.getVelocity() > 0) {
+          newBlocks[entranceToRampBlock]++;
+        } else if(transferEncoder.getVelocity() < 0) {
+          // Nothing, since we already removed the ball from this block
+        } else {
+          // Nothing, since we alreayd removed the ball from this block
         }
       }
     }    
@@ -286,18 +299,20 @@ public class IndexSubsystem extends SubsystemBase {
       if(!rampSensorTriggeredPrevious) {
         newBlocks[rampSensorBlock] = 1;
         if(getRampVelocity() > 0) {
-          newBlocks[entranceToRampBlock] = 0;
+          newBlocks[entranceToRampBlock]--;
         } else if(getRampVelocity() < 0) {
-          newBlocks[rampToVerticalBlock] = 0;
+          newBlocks[rampToVerticalBlock]--;
+        } else {
+          
         }
       }
     } else {
+      newBlocks[rampSensorBlock] = 0;
       if(rampSensorTriggeredPrevious) {
-        newBlocks[rampSensorBlock] = 0;
         if(getRampVelocity() > 0) {
-          newBlocks[rampToVerticalBlock] = 1;
+          newBlocks[rampToVerticalBlock]++;
         } else if(getRampVelocity() < 0) {
-          newBlocks[entranceToRampBlock] = 1;
+          newBlocks[entranceToRampBlock]++;
         }
       }
     }
@@ -307,16 +322,18 @@ public class IndexSubsystem extends SubsystemBase {
       if(!verticalSensorTriggeredPrevious) {
         newBlocks[verticalSensorBlock] = 1;
         if(getVerticalVelocity() > 0) {
-          newBlocks[rampToVerticalBlock] = 0;
-        } 
+          newBlocks[rampToVerticalBlock]--;
+        } else if(getVerticalVelocity() < 0) {
+          newBlocks[verticalToShooterBlock]--;
+        }
       }
     } else {
+      newBlocks[rampSensorBlock] = 0;
       if(verticalSensorTriggeredPrevious) {
-        newBlocks[rampSensorBlock] = 0;
         if(getVerticalVelocity() > 0) {
-          newBlocks[verticalToShooterBlock] = 1;
+          newBlocks[verticalToShooterBlock]++;
         } else if(getVerticalVelocity() < 0) {
-          newBlocks[rampToVerticalBlock] = 1;
+          newBlocks[rampToVerticalBlock]++;
         }
       }
     }
@@ -325,9 +342,11 @@ public class IndexSubsystem extends SubsystemBase {
     if(shooterTriggered) {
       if(!shooterSensorTriggeredPrevious) {
         if(blocks[verticalToShooterBlock] > 1 && verticalEncoder.getVelocity() > 0) {
-          newBlocks[verticalToShooterBlock] = 0;
+          newBlocks[verticalToShooterBlock]--;
         }
       }
+    } else {
+      newBlocks[verticalToShooterBlock] = 0;
     }
 
     // Update variables for next iteration
@@ -388,24 +407,30 @@ public class IndexSubsystem extends SubsystemBase {
     return blocks[verticalToShooterBlock] > 0;
   }
 
+  /**
+   * Update communications with SmartDashboard and CommandoDash
+   */
+  private void updateCommunications() {
+    // Sensors
+    dashTable.getEntry("entranceSensor").setBoolean(isEntranceSensorTriggered());
+    dashTable.getEntry("rampSensor").setBoolean(isRampSensorTriggered());
+    dashTable.getEntry("verticalSensor").setBoolean(isVerticalSensorTriggered());
+    dashTable.getEntry("shooterSensor").setBoolean(isShooterSensorTriggered());
+    // Blocks
+    dashTable.getEntry("entranceSensorBlock").setBoolean(isBallAtEntrance());
+    dashTable.getEntry("entranceToRampBlock").setBoolean(isBallBetweenEntranceAndRamp());
+    dashTable.getEntry("rampSensorBlock").setBoolean(isBallAtRamp());
+    dashTable.getEntry("rampToVerticalBlock").setBoolean(isBallBetweenRampAndVertical());
+    dashTable.getEntry("verticalSensorBlock").setBoolean(isBallAtVertical());
+    dashTable.getEntry("verticalToShooterBlock").setBoolean(isBallInShooter());
+  }
+
   @Override
   public void periodic() {
 
     updateBlocks();
-
-    // Sensor reads
-    SmartDashboard.putBoolean("beamBreakShooter", isShooterSensorTriggered());
-    SmartDashboard.putBoolean("beamBreakVertical", isVerticalSensorTriggered());
-    SmartDashboard.putBoolean("beamBreakRamp", isRampSensorTriggered());
-    SmartDashboard.putBoolean("beamBreakEntrance", isEntranceSensorTriggered());
-
-    // Blocks
-    SmartDashboard.putBoolean("indblocksRamp", isBallAtRamp());
-    SmartDashboard.putBoolean("indblocksRampToVer", isBallBetweenRampAndVertical());
-    SmartDashboard.putBoolean("indblocksVer", isBallAtVertical());
-    SmartDashboard.putBoolean("indBlocksShooter", isBallInShooter());
-
-
+    updateCommunications();
+    
   }
 
   @Override

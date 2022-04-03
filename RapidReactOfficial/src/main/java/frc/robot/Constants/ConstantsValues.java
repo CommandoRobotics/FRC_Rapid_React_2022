@@ -173,6 +173,8 @@ public class ConstantsValues {
     public static final double verticalPositionConversionFactor = 1;
     public static final double rampVelocityConversionFactor = 1;
     public static final double verticalVelocityConversionFactor = 1;
+    public static final double transferPositionConversionFactor = 1;
+    public static final double transferVelocityConversionFactor = 1;
 
     public static final double transferIntakeVolts = 3.6;
     public static final double rampIntakeVolts = 3.6;
