@@ -120,8 +120,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Add ranges and vectors to the vector treemap
     // Note: Velocities are in RPM, angles are in degrees, and ranges are in meters.
-    // Default map for low distance
-    ConstantsValues.addToVectorMap(0, 2, 2050, defaultShotAngle);
+    ConstantsValues.addToVectorMap(0, 2, 2050, defaultShotAngle); // Default map for short distances
     ConstantsValues.addToVectorMap(2, 2.5, 2050, defaultShotAngle);
     ConstantsValues.addToVectorMap(2.5, 3, 2150, defaultShotAngle);
     ConstantsValues.addToVectorMap(3, 3.5, 2300, defaultShotAngle);
@@ -136,7 +135,7 @@ public class ShooterSubsystem extends SubsystemBase {
     ConstantsValues.addToVectorMap(7, 7.5, 3850, defaultShotAngle);
     ConstantsValues.addToVectorMap(7.5, 8, 4050, defaultShotAngle);
     ConstantsValues.addToVectorMap(8, 8.5, 4250, defaultShotAngle);
-    ConstantsValues.addToVectorMap(8.5, 200, 4250, defaultShotAngle);
+    ConstantsValues.addToVectorMap(8.5, 200, 4250, defaultShotAngle); // Default map for long distances
 
     // Add motors to the simulation
     if(Robot.isSimulation()) {
