@@ -120,19 +120,23 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // Add ranges and vectors to the vector treemap
     // Note: Velocities are in RPM, angles are in degrees, and ranges are in meters.
-    ConstantsValues.addToVectorMap(0, 1.8, 2400, defaultShotAngle); // Not detectable
-    ConstantsValues.addToVectorMap(1.8, 2.3, 2400, defaultShotAngle);
-    ConstantsValues.addToVectorMap(2.3, 2.7, 2600, defaultShotAngle);
-    ConstantsValues.addToVectorMap(2.7, 3.1, 2700, defaultShotAngle);
-    ConstantsValues.addToVectorMap(3.1, 3.8, 2800, defaultShotAngle);
-    ConstantsValues.addToVectorMap(3.8, 4.3, 3050, defaultShotAngle);
-    ConstantsValues.addToVectorMap(4.3, 5, 3250, defaultShotAngle);
-    ConstantsValues.addToVectorMap(5, 5.8, 3450, defaultShotAngle);
-    ConstantsValues.addToVectorMap(5.8, 6.1, 3600, defaultShotAngle);
-    ConstantsValues.addToVectorMap(6.1, 6.4, 3700, defaultShotAngle);
-    // Default shot for long range
-    ConstantsValues.addToVectorMap(6.4, 200, 3700, defaultShotAngle);
-    //TODO adjust the above vectors, as they're just examples
+    // Default map for low distance
+    ConstantsValues.addToVectorMap(0, 2, 2050, defaultShotAngle);
+    ConstantsValues.addToVectorMap(2, 2.5, 2050, defaultShotAngle);
+    ConstantsValues.addToVectorMap(2.5, 3, 2150, defaultShotAngle);
+    ConstantsValues.addToVectorMap(3, 3.5, 2300, defaultShotAngle);
+    ConstantsValues.addToVectorMap(3.5, 4, 2450, defaultShotAngle);
+    ConstantsValues.addToVectorMap(4, 4.5, 2700, defaultShotAngle);
+    ConstantsValues.addToVectorMap(4.5, 5, 2900, defaultShotAngle);
+    ConstantsValues.addToVectorMap(5, 5.5, 3075, defaultShotAngle);
+    ConstantsValues.addToVectorMap(5.5, 6, 3250, defaultShotAngle);
+    ConstantsValues.addToVectorMap(6, 6.25, 3400, defaultShotAngle);
+    ConstantsValues.addToVectorMap(6.25, 6.5, 3450, defaultShotAngle);
+    ConstantsValues.addToVectorMap(6.5, 7, 3650, defaultShotAngle);
+    ConstantsValues.addToVectorMap(7, 7.5, 3850, defaultShotAngle);
+    ConstantsValues.addToVectorMap(7.5, 8, 4050, defaultShotAngle);
+    ConstantsValues.addToVectorMap(8, 8.5, 4250, defaultShotAngle);
+    ConstantsValues.addToVectorMap(8.5, 200, 4250, defaultShotAngle);
 
     // Add motors to the simulation
     if(Robot.isSimulation()) {
@@ -438,19 +442,28 @@ public class ShooterSubsystem extends SubsystemBase {
       flywheelAtVelocityIteration = 0;
     }
 
+    //TODO REMOVE ME
+    if(SmartDashboard.getNumber("currentTargetRpm", 0) != currentManualVelocity) {
+      currentManualVelocity = SmartDashboard.getNumber("currentTargetRpm", 0);
+    }
+
     // Update CommandoDash
     updateCommandoDash();
 
     // Write to smart dashboard
-    SmartDashboard.putNumber("currentTargetVel", currentTargetRpm);
     currentManualVelocity = SmartDashboard.getNumber("manualTargetVel", currentManualVelocity);
     SmartDashboard.putNumber("horizontalDistanceLL", getHorizontalDistanceToHub());
     ConstantsValues.limelightMountingAngle = SmartDashboard.getNumber("LLAngle", ConstantsValues.limelightMountingAngle);
     ConstantsValues.shooterHeightMeters = SmartDashboard.getNumber("LLHeight", ConstantsValues.shooterHeightMeters);
-    ConstantsValues.flywheelP = SmartDashboard.getNumber("flywheelP", ConstantsValues.flywheelP);
+    flywheelPid.setP(SmartDashboard.getNumber("flywheelP", ConstantsValues.flywheelP));
     ConstantsValues.flywheelI = SmartDashboard.getNumber("flywheelI", ConstantsValues.flywheelI);
-    ConstantsValues.flywheelD = SmartDashboard.getNumber("flywheelD", ConstantsValues.flywheelD);
+    flywheelPid.setD(SmartDashboard.getNumber("flywheelD", ConstantsValues.flywheelD));
     SmartDashboard.putNumber("ActualRPM", getFlywheelVelocity());
+
+    //TODO REMOVE ME
+    SmartDashboard.putNumber("currentTargetRpm", currentManualVelocity);
+
+    
   }
 
   @Override

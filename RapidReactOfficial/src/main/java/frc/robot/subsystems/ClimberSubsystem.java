@@ -9,79 +9,75 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
 
 public class ClimberSubsystem extends SubsystemBase {
 
-  // Motor controllers
   CANSparkMax winchLeader, winchFollower, tilt;
-
-  // Encoders
   RelativeEncoder winchEncoder, tiltEncoder;
-
-  final double winchMaxSpeed, winchMaxVolts, tiltMaxSpeed, tiltMaxVolts;
   
+  DigitalInput tiltForward, tiltBackward;
+
+  NetworkTableInstance ntInst;
 
   public ClimberSubsystem() {
 
-    // Instantiate motor controllers
+    // Instantiate motors controllers
     winchLeader = new CANSparkMax(ConstantsPorts.winchLeaderId, MotorType.kBrushless);
     winchFollower = new CANSparkMax(ConstantsPorts.winchFollowerId, MotorType.kBrushless);
-    tilt = new CANSparkMax(ConstantsPorts.climberTiltId, MotorType.kBrushless);
+    tilt = new CANSparkMax(ConstantsPorts.climbTiltId, MotorType.kBrushless);
 
-    // Set motor inversions
-    winchLeader.setInverted(false);
-    tilt.setInverted(false);
-    // Note: Winch follower inversion is done when setting it as a follower below
-
-    // Set the winch follower
-    winchFollower.follow(winchLeader, true);
+    winchFollower.follow(winchLeader, false);
 
     // Instantiate encoders
     winchEncoder = winchLeader.getEncoder();
     tiltEncoder = tilt.getEncoder();
 
-    // Set our local max speeds
-    winchMaxSpeed = ConstantsValues.winchMaxSpeed;
-    winchMaxVolts = ConstantsValues.winchMaxVolts;
-    tiltMaxSpeed = ConstantsValues.climberTiltMaxSpeed;
-    tiltMaxVolts = ConstantsValues.climberTiltMaxVolts;
-
+    // Instantiate limit switches
+    tiltForward = new DigitalInput(ConstantsPorts.tiltForwardId);
+    tiltBackward = new DigitalInput(ConstantsPorts.tiltBackwardId);
 
   }
 
   /**
-   * Set the winch to a certain speed Note, this speed is clamped by the max value outlined in constants.
-   * @param speed
+   * Set the power of the winch
+   * @param power 
    */
-  public void setWinchSpeed(double speed) {
-    winchLeader.set(MathUtil.clamp(speed, -winchMaxSpeed, winchMaxSpeed));
-  }
-  
-  /**
-   * Set the winch to a certain voltage Note, this voltage is clamped by the max value outlined in constants.
-   * @param volts
-   */
-  public void setWinchVoltage(double volts) {
-    winchLeader.setVoltage(MathUtil.clamp(volts, -winchMaxVolts, winchMaxVolts));
+  public void setWinch(double power) {
+    winchLeader.set(MathUtil.applyDeadband(power, ConstantsValues.climbWinchDeadband));
   }
 
   /**
-   * Set the tilt to a certain speed Note, this speed is clamped by the max value outlined in constants.
-   * @param speed
+   * Set the power of the tilt motor
+   * @param power
    */
-  public void setTiltSpeed(double speed) {
-    tilt.set(MathUtil.clamp(speed, -tiltMaxSpeed, tiltMaxSpeed));
+  public void setTilt(double power) {
+    power = MathUtil.applyDeadband(power, ConstantsValues.climbTiltDeadband);
+    if(power > 0) {
+      if(tiltForward.get()) {
+        tilt.set(0);
+      } else {
+        tilt.set(power);
+      }
+    } else {
+      if(tiltBackward.get()) {
+        tilt.set(0);
+      } else {
+        tilt.set(power);
+      }
+    }
   }
 
   /**
-   * Set the tilt to a certain voltage. Note, this voltage is clamped by the max value outlined in constants.
-   * @param volts
+   * Set the power of the tilt motor WITHOUT using limit switches to limit position
+   * @param power
    */
-  public void setTiltVoltage(double volts) {
-    tilt.setVoltage(MathUtil.clamp(volts, -tiltMaxVolts, tiltMaxVolts));
+  public void setTiltNoLimits(double power) {
+    tilt.set(MathUtil.applyDeadband(power, ConstantsValues.climbTiltDeadband));
   }
 
   /**
@@ -98,16 +94,7 @@ public class ClimberSubsystem extends SubsystemBase {
     tilt.stopMotor();
   }
 
-  /**
-   * Stop both the winch and the tilt motors
-   */
-  public void stopAll() {
-    winchLeader.stopMotor();
-    tilt.stopMotor();
-  }
-
   @Override
   public void periodic() {
-    
   }
 }

@@ -89,7 +89,7 @@ public class RobotContainer {
     () -> driverController.getLeftX(), 
     () -> driverController.getRightX()));
 
-    shooterSubsystem.disableLimelightLed();
+    shooterSubsystem.enableLimelightLed();
 
     configureButtonBindings();
   }
@@ -184,7 +184,7 @@ public class RobotContainer {
     // Right trigger and NOT alt - Run vertical index to effectively shoot
     operatorAlt.negate().and(
     new Trigger(() -> (operatorController.getRightTriggerAxis() > 0.1)))
-    .whileActiveOnce(new RunIndexToShootWithBreakCommand(indexSubsystem))
+    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem))
     .whenInactive(indexSubsystem::stopAll, indexSubsystem);
 
     // Right trigger and alt - Run vertical index to effectively shoot
@@ -217,15 +217,15 @@ public class RobotContainer {
     new JoystickButton(operatorController, XboxController.Button.kStart.value)
     .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
 
-    // Left Joystick Y - Jog climber winches
-    new Trigger(() -> (Math.abs(MathUtil.applyDeadband(operatorController.getLeftY(), ConstantsValues.climberJoystickDeadband)) > 0))
-    .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setWinchSpeed(operatorController.getLeftY())))
-    .whenInactive(new InstantCommand(climberSubsystem::stopAll));
+    // Left stick y - Winch up and down
+    new Trigger(() -> (Math.abs(operatorController.getLeftY()) > 0))
+      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setWinch(operatorController.getLeftY())))
+      .whenInactive(new InstantCommand(climberSubsystem::stopWinch));
 
-    // Right Joystick Y - Jog climber tilt
-    new Trigger(() -> (Math.abs(MathUtil.applyDeadband(operatorController.getRightY(), ConstantsValues.climberJoystickDeadband)) > 0))
-    .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltSpeed(operatorController.getRightY())))
-    .whenInactive(new InstantCommand(climberSubsystem::stopAll));
+    // Right stick y - Tilt forward and backward
+    new Trigger(() -> (Math.abs(operatorController.getRightY()) > 0))
+      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltNoLimits(operatorController.getRightY())))
+      .whenInactive(new InstantCommand(climberSubsystem::stopTilt));
 
   }
 

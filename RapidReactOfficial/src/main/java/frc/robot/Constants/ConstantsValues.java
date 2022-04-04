@@ -73,7 +73,7 @@ public class ConstantsValues {
      * SHOOTER
      */
     //TODO tune shooter PID values
-    public static double flywheelP = 0.000280;
+    public static double flywheelP = 0.000050;
     public static double flywheelI = 0;
     public static double flywheelD = 0;
     public static double flywheelIZone = 0;
@@ -101,8 +101,8 @@ public class ConstantsValues {
     public static final double flywheelAtVelocityIterations = 12;
 
     // Limelight values
-    public static double limelightMountingAngle = 35; // The angle at which the Limelight is mounted above the horizon in degrees.
-    public static double shooterHeightMeters = Units.inchesToMeters(29.75);
+    public static double limelightMountingAngle = 27.3; // The angle at which the Limelight is mounted above the horizon in degrees.
+    public static double shooterHeightMeters = Units.inchesToMeters(33);
 
 
     public static final double flywheelExpelVolts = 2;
@@ -164,7 +164,7 @@ public class ConstantsValues {
 
     public static final double manualPanDeadband = 0.05;
 
-    public static final double limelightPanOffset = -1;
+    public static final double limelightPanOffset = 0;
 
     /**
      * INDEX
@@ -219,9 +219,6 @@ public class ConstantsValues {
     /**
      * CLIMBER
      */
-    public static final double climberJoystickDeadband = 0.1;
-    public static final double winchMaxSpeed = 0.3;
-    public static final double winchMaxVolts = 3.6;
-    public static final double climberTiltMaxSpeed = 0.2;
-    public static final double climberTiltMaxVolts = 2.4;
+    public static final double climbTiltDeadband = 0.1;
+    public static final double climbWinchDeadband = 0.05;
 }
