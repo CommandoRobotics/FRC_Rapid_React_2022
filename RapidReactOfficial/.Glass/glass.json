@@ -6,6 +6,9 @@
       }
     },
     "SmartDashboard": {
+      "X PID Controller": {
+        "open": true
+      },
       "open": true
     },
     "photonvision": {

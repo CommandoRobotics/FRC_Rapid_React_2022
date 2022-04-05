@@ -80,6 +80,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     //Tell CommandoDash we're currently disabled
     commandoDashNT.getSubTable("AllianceAndModeData").getEntry("robotMode").setNumber(32);
+    m_robotContainer.disableDriverRumble();
   }
 
   @Override
@@ -123,7 +124,14 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    if(commandoDashNT.getSubTable("SensorData").getEntry("isRobotAimed").getBoolean(false) && 
+    commandoDashNT.getSubTable("SensorData").getEntry("isAtTargetVelocity").getBoolean(false)) {
+      m_robotContainer.enableDriverRumble();
+    } else {
+      m_robotContainer.disableDriverRumble();
+    }
+  }
 
   @Override
   public void testInit() {

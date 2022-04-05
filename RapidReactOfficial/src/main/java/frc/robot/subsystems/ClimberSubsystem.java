@@ -6,11 +6,13 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
@@ -37,6 +39,16 @@ public class ClimberSubsystem extends SubsystemBase {
     winchEncoder = winchLeader.getEncoder();
     tiltEncoder = tilt.getEncoder();
 
+    // Set conversion factors
+    winchEncoder.setPositionConversionFactor(ConstantsValues.climbWinchConversionFactor);
+    tiltEncoder.setPositionConversionFactor(ConstantsValues.climbTiltConversionFactor);
+
+    // Set soft limits
+    winchLeader.setSoftLimit(SoftLimitDirection.kForward, ConstantsValues.climbWinchSoftLimit);
+    
+    // Enable soft limits
+    enableWinchSoftLimits();
+
     // Instantiate limit switches
     tiltForward = new DigitalInput(ConstantsPorts.tiltForwardId);
     tiltBackward = new DigitalInput(ConstantsPorts.tiltBackwardId);
@@ -45,29 +57,29 @@ public class ClimberSubsystem extends SubsystemBase {
 
   /**
    * Set the power of the winch
-   * @param power 
+   * @param input 
    */
-  public void setWinch(double power) {
-    winchLeader.set(MathUtil.clamp(MathUtil.applyDeadband(power, ConstantsValues.climbWinchDeadband), -ConstantsValues.climbWinchMaxSpeed, ConstantsValues.climbWinchMaxSpeed));
+  public void setWinchVoltageFromController(double input) {
+    input = MathUtil.applyDeadband(input, ConstantsValues.climbWinchDeadband)*ConstantsValues.climbWinchMaxVolts;
   }
 
   /**
    * Set the power of the tilt motor
-   * @param power
+   * @param input
    */
-  public void setTilt(double power) {
-    power = MathUtil.clamp(MathUtil.applyDeadband(power, ConstantsValues.climbTiltDeadband), -ConstantsValues.climbTiltMaxSpeed, ConstantsValues.climbTiltMaxSpeed);
-    if(power > 0) {
+  public void setTiltVoltageFromController(double input) {
+    input = MathUtil.applyDeadband(input, ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts;
+    if(input > 0) {
       if(tiltForward.get()) {
-        tilt.set(0);
+        tilt.setVoltage(0);
       } else {
-        tilt.set(power);
+        tilt.setVoltage(input);
       }
     } else {
       if(tiltBackward.get()) {
-        tilt.set(0);
+        tilt.setVoltage(0);
       } else {
-        tilt.set(power);
+        tilt.setVoltage(input);
       }
     }
   }
@@ -76,8 +88,24 @@ public class ClimberSubsystem extends SubsystemBase {
    * Set the power of the tilt motor WITHOUT using limit switches to limit position
    * @param power
    */
-  public void setTiltNoLimits(double power) {
-    tilt.set(MathUtil.clamp(MathUtil.applyDeadband(power, ConstantsValues.climbTiltDeadband), -ConstantsValues.climbTiltMaxSpeed, ConstantsValues.climbTiltMaxSpeed));
+  public void setTiltNoLimitsFromController(double input) {
+    tilt.setVoltage(MathUtil.applyDeadband(input, ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts);
+  }
+
+  /**
+   * Get the position of the tilt motor in rotations
+   * @return
+   */
+  public double getTiltPosition() {
+    return tiltEncoder.getPosition();
+  }
+
+  /**
+   * Get the position of the winch motor in rotations
+   * @return
+   */
+  public double getWinchPosition() {
+    return winchEncoder.getPosition();
   }
 
   /**
@@ -94,7 +122,37 @@ public class ClimberSubsystem extends SubsystemBase {
     tilt.stopMotor();
   }
 
+  /**
+   * Reset the tilt encoder
+   */
+  public void resetTiltEncoder() {
+    tiltEncoder.setPosition(0);
+  }
+
+  /**
+   * Reset the winch encoder
+   */
+  public void resetWinchEncoder() {
+    winchEncoder.setPosition(0);
+  }
+
+  /**
+   * Disable the winch soft limits
+   */
+  public void disableWinchSoftLimit() {
+    winchFollower.enableSoftLimit(SoftLimitDirection.kForward, false);
+  }
+
+  /**
+   * Disable the winch soft limits
+   */
+  public void enableWinchSoftLimits() {
+    winchFollower.enableSoftLimit(SoftLimitDirection.kForward, true);
+  }
+
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("climbTiltEnc", getTiltPosition());
+    SmartDashboard.putNumber("climbWinchEnc", getWinchPosition());
   }
 }

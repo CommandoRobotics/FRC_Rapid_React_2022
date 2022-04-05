@@ -10,6 +10,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -90,7 +91,7 @@ public class RobotContainer {
     () -> driverController.getLeftX(), 
     () -> driverController.getRightX()));
 
-    shooterSubsystem.enableLimelightLed();
+    shooterSubsystem.disableLimelightLed();
 
     configureButtonBindings();
   }
@@ -230,14 +231,30 @@ public class RobotContainer {
 
     // Left stick y - Winch up and down
     new Trigger(() -> (Math.abs(operatorController.getLeftY()) > 0))
-      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setWinch(operatorController.getLeftY())))
+      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setWinchVoltageFromController(operatorController.getLeftY())))
       .whenInactive(new InstantCommand(climberSubsystem::stopWinch));
 
     // Right stick y - Tilt forward and backward
     new Trigger(() -> (Math.abs(operatorController.getRightY()) > 0))
-      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltNoLimits(operatorController.getRightY())))
+      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltNoLimitsFromController(operatorController.getRightY())))
       .whenInactive(new InstantCommand(climberSubsystem::stopTilt));
 
+  }
+
+  /**
+   * Disable the driver rumble
+   */
+  public void disableDriverRumble() {
+    driverController.setRumble(RumbleType.kLeftRumble, 0);
+    driverController.setRumble(RumbleType.kRightRumble, 0);
+  }
+
+  /**
+   * Enable the driver rumble
+   */
+  public void enableDriverRumble() {
+    driverController.setRumble(RumbleType.kLeftRumble, 1);
+    driverController.setRumble(RumbleType.kRightRumble, 1);
   }
 
   /**
