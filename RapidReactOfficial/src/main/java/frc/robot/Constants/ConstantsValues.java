@@ -220,5 +220,7 @@ public class ConstantsValues {
      * CLIMBER
      */
     public static final double climbTiltDeadband = 0.1;
+    public static final double climbTiltMaxSpeed = 0.2;
     public static final double climbWinchDeadband = 0.05;
+    public static final double climbWinchMaxSpeed = 1;
 }

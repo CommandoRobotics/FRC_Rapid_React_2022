@@ -48,7 +48,7 @@ public class ClimberSubsystem extends SubsystemBase {
    * @param power 
    */
   public void setWinch(double power) {
-    winchLeader.set(MathUtil.applyDeadband(power, ConstantsValues.climbWinchDeadband));
+    winchLeader.set(MathUtil.clamp(MathUtil.applyDeadband(power, ConstantsValues.climbWinchDeadband), -ConstantsValues.climbWinchMaxSpeed, ConstantsValues.climbWinchMaxSpeed));
   }
 
   /**
@@ -56,7 +56,7 @@ public class ClimberSubsystem extends SubsystemBase {
    * @param power
    */
   public void setTilt(double power) {
-    power = MathUtil.applyDeadband(power, ConstantsValues.climbTiltDeadband);
+    power = MathUtil.clamp(MathUtil.applyDeadband(power, ConstantsValues.climbTiltDeadband), -ConstantsValues.climbTiltMaxSpeed, ConstantsValues.climbTiltMaxSpeed);
     if(power > 0) {
       if(tiltForward.get()) {
         tilt.set(0);
@@ -77,7 +77,7 @@ public class ClimberSubsystem extends SubsystemBase {
    * @param power
    */
   public void setTiltNoLimits(double power) {
-    tilt.set(MathUtil.applyDeadband(power, ConstantsValues.climbTiltDeadband));
+    tilt.set(MathUtil.clamp(MathUtil.applyDeadband(power, ConstantsValues.climbTiltDeadband), -ConstantsValues.climbTiltMaxSpeed, ConstantsValues.climbTiltMaxSpeed));
   }
 
   /**
