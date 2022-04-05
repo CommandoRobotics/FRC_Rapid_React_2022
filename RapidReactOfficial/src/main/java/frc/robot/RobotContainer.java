@@ -59,6 +59,7 @@ public class RobotContainer {
   XboxController operatorController = new XboxController(1);
 
   // Define alt triggers
+  Trigger driverAlt = new TriggerPOV(driverController, POVDirection.kDown);
   Trigger operatorAlt = new TriggerPOV(operatorController, POVDirection.kLeft);
 
   // Define subsystems
@@ -69,8 +70,6 @@ public class RobotContainer {
   IndexSubsystem indexSubsystem = new IndexSubsystem();
   AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem();
   PowerSubsystem powerSubsystem = new PowerSubsystem();
-
-  boolean shooterConstantRunEnabled;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer(NetworkTableInstance networkTableInst) {
@@ -93,8 +92,6 @@ public class RobotContainer {
 
     shooterSubsystem.enableLimelightLed();
 
-    shooterConstantRunEnabled = false;
-
     configureButtonBindings();
   }
   
@@ -116,54 +113,69 @@ public class RobotContainer {
     .whenInactive(intakeSubsystem::stop, intakeSubsystem)
     .whenInactive(indexSubsystem::stopAll, intakeSubsystem);
 
-    // Left trigger - Eject
+    // Left trigger - Eject (intake)
     new Trigger(() -> driverController.getLeftTriggerAxis() > 0.1)
     .whileActiveContinuous(intakeSubsystem::intakeOut)
     .whenInactive(intakeSubsystem::stop);
-
-    // Right bumper - Enable auto aim (drive based auto aim)
-    new JoystickButton(driverController, XboxController.Button.kRightBumper.value)
-    .whileActiveOnce(new AutoAimCommand(
-      () -> -driverController.getLeftY(), 
-      () -> driverController.getLeftX(), 
-      () -> driverController.getRightX(), 
-      driveSubsystem, 
-      autoAimSubsystem)
-      );
 
     // Left bumper - Toggle intake lifter
     new JoystickButton(driverController, XboxController.Button.kLeftBumper.value)
     .whenActive(intakeSubsystem::toggleExtend);
 
-    // A - Hound cargo
-    new JoystickButton(driverController, XboxController.Button.kA.value)
+    // Right bumper - Run index to effectively shoot
+    new JoystickButton(driverController, XboxController.Button.kRightBumper.value)
+    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem))
+    .whenInactive(indexSubsystem::stopAll, indexSubsystem);
+
+    // A and NOT alt - Auto aim and rev at auto velocity
+    driverAlt.negate().and(
+    new JoystickButton(driverController, XboxController.Button.kA.value))
+      .whileActiveOnce(
+        new AutoAimCommand(
+        () -> -driverController.getLeftY(), 
+        () -> driverController.getLeftX(), 
+        () -> driverController.getRightX(), 
+        driveSubsystem, 
+        autoAimSubsystem)
+        .alongWith(new RevShooterAtAutoVelocityCommand(shooterSubsystem))
+      );
+
+    // A and alt - Auto aim and rev at manual velocity
+    driverAlt.and(
+    new JoystickButton(driverController, XboxController.Button.kA.value))
+        .whileActiveOnce(
+          new AutoAimCommand(
+         () -> -driverController.getLeftY(), 
+         () -> driverController.getLeftX(), 
+         () -> driverController.getRightX(), 
+         driveSubsystem, 
+        autoAimSubsystem)
+        .alongWith(new RevShooterAtManualVelocityCommand(shooterSubsystem))
+    );
+
+    // B - Hound cargo
+    new JoystickButton(driverController, XboxController.Button.kB.value)
       .whileActiveOnce(new HoundCargo(intakeSubsystem, driveSubsystem,       
                       () -> -driverController.getLeftY(), 
                       () -> driverController.getLeftX(), 
                       () -> driverController.getRightX()));
 
-    // Y - Toggle reving the shooter
-    // If shooter is already enabled...
-    new JoystickButton(driverController, XboxController.Button.kY.value)
-      .and(new Trigger(() -> isShooterConstantRunEnabled()))
-      .whenActive(
-        new InstantCommand(shooterSubsystem::stop)
-        .alongWith(new InstantCommand(() -> disableShooterConstantRunVar()))
-      );
+    // Y and NOT alt - Enable constant shooter reving
+    driverAlt.negate().and(new JoystickButton(driverController, XboxController.Button.kY.value))
+      .whenActive(new InstantCommand(() -> shooterSubsystem.setDefaultCommand(new RevShooterAtManualVelocityCommand(shooterSubsystem))));
 
-    // If shooter is disabled...
-    new JoystickButton(driverController, XboxController.Button.kY.value)
-      .and(new Trigger(() -> !isShooterConstantRunEnabled()))
-      .whenActive(
-        new RevShooterAtAutoVelocityCommand(shooterSubsystem)
-        .alongWith(new InstantCommand(()-> enableShooterConstantRunVar()))
-      );
+    // Y and alt - Disable constant shooter reving
+    driverAlt.and(new JoystickButton(driverController, XboxController.Button.kY.value)
+      .whenActive(new InstantCommand(() -> shooterSubsystem.setDefaultCommand(new InstantCommand(shooterSubsystem::stop).perpetually()))));
 
-    // X - Run index to effectively shoot
+    // X and NOT alt - Run shooter at manual velocity
     new JoystickButton(driverController, XboxController.Button.kX.value)
-    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem))
-    .whenInactive(indexSubsystem::stopAll, indexSubsystem);
-    
+      .whileActiveOnce(new RevShooterAtManualVelocityCommand(shooterSubsystem));
+
+    // X and alt - Cycle manual shooter velocity
+    new JoystickButton(driverController, XboxController.Button.kX.value).and(driverAlt)
+    .whenActive(shooterSubsystem::cycleManualVelocity);
+
     // Back button - Expell all
     new JoystickButton(driverController, XboxController.Button.kBack.value)
     .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
@@ -192,33 +204,6 @@ public class RobotContainer {
     /*
       OPERATOR CONTROLLER
     */
-    // Left trigger and a - Set shootervelocity to manually selected velocity
-    new Trigger(() -> operatorController.getAButton())
-    .and(new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.1))
-    .whileActiveOnce(new RevShooterAtManualVelocityCommand(shooterSubsystem).alongWith(new InstantCommand(() -> disableShooterConstantRunVar())));
-
-    // Left trigger and NOT a - Set shooter velocity automatically based on Limelight
-    new Trigger(() -> operatorController.getAButton())
-    .negate()
-    .and(new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.1))
-    .whileActiveOnce(new RevShooterAtAutoVelocityCommand(shooterSubsystem).alongWith(new InstantCommand(() -> disableShooterConstantRunVar())));
-
-    // Right bumper - Cycle manual shooter velocity
-    new JoystickButton(operatorController, XboxController.Button.kRightBumper.value)
-    .whenActive(shooterSubsystem::cycleManualVelocity);
-
-    // Right trigger and NOT alt - Run vertical index to effectively shoot
-    operatorAlt.negate().and(
-    new Trigger(() -> (operatorController.getRightTriggerAxis() > 0.1)))
-    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem))
-    .whenInactive(indexSubsystem::stopAll, indexSubsystem);
-
-    // Right trigger and alt - Run vertical index to effectively shoot
-    operatorAlt.and(
-    new Trigger(() -> (operatorController.getRightTriggerAxis() > 0.1)))
-    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem))
-    .whenInactive(indexSubsystem::stopAll, indexSubsystem);
-
     // Y and not alt - Jog index vertical
     operatorAlt.negate()
     .and(new JoystickButton(operatorController, XboxController.Button.kY.value))
@@ -253,28 +238,6 @@ public class RobotContainer {
       .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltNoLimits(operatorController.getRightY())))
       .whenInactive(new InstantCommand(climberSubsystem::stopTilt));
 
-  }
-
-  /**
-   * Get whether the shooter constant run mode is enabled
-   * @return
-   */
-  public boolean isShooterConstantRunEnabled() {
-    return shooterConstantRunEnabled;
-  }
-
-  /**
-   * Enable the var that signifies whether the shooter is currently in constant run mode
-   */
-  public void enableShooterConstantRunVar() {
-    shooterConstantRunEnabled = true;
-  }
-
-  /**
-   * Disable the var that signifies whether the shooter is currently in constant run mode
-   */
-  public void disableShooterConstantRunVar() {
-    shooterConstantRunEnabled = false;
   }
 
   /**
