@@ -112,6 +112,9 @@ public class Robot extends TimedRobot {
     //Tell CommandoDash we're in teleop
     commandoDashNT.getSubTable("AllianceAndModeData").getEntry("robotMode").setNumber(33);
 
+    // Disable the constant run shooter variable
+    m_robotContainer.disableShooterConstantRunVar();
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

@@ -87,7 +87,7 @@ public class ConstantsValues {
     public static double flywheelKa = 0.0081225;
 
     public static final double shooterVelocityConversionFactor = 1;
-    public static final double noTargetRpm = 3000;
+    public static final double noTargetRpm = 2500;
 
     // Vector tree map
     public static final TreeMap<Range, Vector> vectorMap = new TreeMap<Range, Vector>();

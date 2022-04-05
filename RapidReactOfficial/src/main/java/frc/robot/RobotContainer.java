@@ -70,6 +70,8 @@ public class RobotContainer {
   AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem();
   PowerSubsystem powerSubsystem = new PowerSubsystem();
 
+  boolean shooterConstantRunEnabled;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer(NetworkTableInstance networkTableInst) {
 
@@ -90,6 +92,8 @@ public class RobotContainer {
     () -> driverController.getRightX()));
 
     shooterSubsystem.enableLimelightLed();
+
+    shooterConstantRunEnabled = false;
 
     configureButtonBindings();
   }
@@ -138,6 +142,28 @@ public class RobotContainer {
                       () -> driverController.getLeftX(), 
                       () -> driverController.getRightX()));
 
+    // Y - Toggle reving the shooter
+    // If shooter is already enabled...
+    new JoystickButton(driverController, XboxController.Button.kY.value)
+      .and(new Trigger(() -> isShooterConstantRunEnabled()))
+      .whenActive(
+        new InstantCommand(shooterSubsystem::stop)
+        .alongWith(new InstantCommand(() -> disableShooterConstantRunVar()))
+      );
+
+    // If shooter is disabled...
+    new JoystickButton(driverController, XboxController.Button.kY.value)
+      .and(new Trigger(() -> !isShooterConstantRunEnabled()))
+      .whenActive(
+        new RevShooterAtAutoVelocityCommand(shooterSubsystem)
+        .alongWith(new InstantCommand(()-> enableShooterConstantRunVar()))
+      );
+
+    // X - Run index to effectively shoot
+    new JoystickButton(driverController, XboxController.Button.kX.value)
+    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem))
+    .whenInactive(indexSubsystem::stopAll, indexSubsystem);
+    
     // Back button - Expell all
     new JoystickButton(driverController, XboxController.Button.kBack.value)
     .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
@@ -151,12 +177,12 @@ public class RobotContainer {
       .whenActive(driveSubsystem::toggleFieldCentric);
 
     // X - Start running the difficult test path
-    new JoystickButton(driverController, XboxController.Button.kX.value)
-    .whileActiveOnce(driveSubsystem.newCommandFromTrajectory(
-      PathFetcher.fetchDifficultTestPath(0),
-      true,
-      true
-    ));
+    // new JoystickButton(driverController, XboxController.Button.kX.value)
+    // .whileActiveOnce(driveSubsystem.newCommandFromTrajectory(
+    //   PathFetcher.fetchDifficultTestPath(0),
+    //   true,
+    //   true
+    // ));
 
     // Y - Run drivetrain at a set speed
     new JoystickButton(driverController, XboxController.Button.kY.value)
@@ -169,13 +195,13 @@ public class RobotContainer {
     // Left trigger and a - Set shootervelocity to manually selected velocity
     new Trigger(() -> operatorController.getAButton())
     .and(new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.1))
-    .whileActiveOnce(new RevShooterAtManualVelocityCommand(shooterSubsystem));
+    .whileActiveOnce(new RevShooterAtManualVelocityCommand(shooterSubsystem).alongWith(new InstantCommand(() -> disableShooterConstantRunVar())));
 
     // Left trigger and NOT a - Set shooter velocity automatically based on Limelight
     new Trigger(() -> operatorController.getAButton())
     .negate()
     .and(new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.1))
-    .whileActiveOnce(new RevShooterAtAutoVelocityCommand(shooterSubsystem));
+    .whileActiveOnce(new RevShooterAtAutoVelocityCommand(shooterSubsystem).alongWith(new InstantCommand(() -> disableShooterConstantRunVar())));
 
     // Right bumper - Cycle manual shooter velocity
     new JoystickButton(operatorController, XboxController.Button.kRightBumper.value)
@@ -227,6 +253,28 @@ public class RobotContainer {
       .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltNoLimits(operatorController.getRightY())))
       .whenInactive(new InstantCommand(climberSubsystem::stopTilt));
 
+  }
+
+  /**
+   * Get whether the shooter constant run mode is enabled
+   * @return
+   */
+  public boolean isShooterConstantRunEnabled() {
+    return shooterConstantRunEnabled;
+  }
+
+  /**
+   * Enable the var that signifies whether the shooter is currently in constant run mode
+   */
+  public void enableShooterConstantRunVar() {
+    shooterConstantRunEnabled = true;
+  }
+
+  /**
+   * Disable the var that signifies whether the shooter is currently in constant run mode
+   */
+  public void disableShooterConstantRunVar() {
+    shooterConstantRunEnabled = false;
   }
 
   /**
