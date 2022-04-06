@@ -5,15 +5,18 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
 
@@ -53,6 +56,12 @@ public class ClimberSubsystem extends SubsystemBase {
     tiltForward = new DigitalInput(ConstantsPorts.tiltForwardId);
     tiltBackward = new DigitalInput(ConstantsPorts.tiltBackwardId);
 
+    if(Robot.isSimulation()) {
+      REVPhysicsSim.getInstance().addSparkMax(winchFollower, DCMotor.getNEO(1));
+      REVPhysicsSim.getInstance().addSparkMax(winchLeader, DCMotor.getNEO(1));
+      REVPhysicsSim.getInstance().addSparkMax(tilt, DCMotor.getNEO(1));
+    }
+
   }
 
   /**
@@ -61,6 +70,7 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public void setWinchVoltageFromController(double input) {
     input = MathUtil.applyDeadband(input, ConstantsValues.climbWinchDeadband)*ConstantsValues.climbWinchMaxVolts;
+    winchLeader.setVoltage(input);
   }
 
   /**
@@ -154,5 +164,8 @@ public class ClimberSubsystem extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("climbTiltEnc", getTiltPosition());
     SmartDashboard.putNumber("climbWinchEnc", getWinchPosition());
+    if(Robot.isSimulation()) {
+      REVPhysicsSim.getInstance().run();
+    }
   }
 }
