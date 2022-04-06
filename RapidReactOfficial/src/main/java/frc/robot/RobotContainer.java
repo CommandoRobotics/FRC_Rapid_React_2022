@@ -34,6 +34,7 @@ import frc.robot.commands.IntakeCommands.IntakeCommand;
 import frc.robot.commands.MiscellanousCommands.ExpelAllCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtManualVelocityCommand;
+import frc.robot.commands.ShooterCommands.RevShooterAtRpmAutonomousCommand;
 import frc.robot.subsystems.AutoAimSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -171,11 +172,12 @@ public class RobotContainer {
 
     // X and NOT alt - Run shooter at manual velocity
     new JoystickButton(driverController, XboxController.Button.kX.value)
-      .whileActiveOnce(new RevShooterAtManualVelocityCommand(shooterSubsystem));
+    .whenActive(new RevShooterAtRpmAutonomousCommand(5000, shooterSubsystem))
+    .whenInactive(new InstantCommand(shooterSubsystem::stop));
 
-    // X and alt - Cycle manual shooter velocity
-    new JoystickButton(driverController, XboxController.Button.kX.value).and(driverAlt)
-    .whenActive(shooterSubsystem::cycleManualVelocity);
+    // // X and alt - Cycle manual shooter velocity
+    // new JoystickButton(driverController, XboxController.Button.kX.value).and(driverAlt)
+    // .whenActive(new InstantCommand(shooterSubsystem::cycleManualVelocity));
 
     // Back button - Expell all
     new JoystickButton(driverController, XboxController.Button.kBack.value)
