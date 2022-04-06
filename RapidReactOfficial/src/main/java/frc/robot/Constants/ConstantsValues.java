@@ -220,13 +220,13 @@ public class ConstantsValues {
      * CLIMBER
      */
     public static final double climbTiltDeadband = 0.1;
-    public static final double climbWinchDeadband = 0.05;
+    public static final double climbWinchDeadband = 0.1;
     public static final double climbTiltMaxVolts = 4.8;
     public static final double climbWinchMaxVolts = 6;
 
     // Encoder stuff
     public static final double climbWinchConversionFactor = 1/378;
-    public static final double climbTiltConversionFactor = 1/8.75;
+    public static final double climbTiltConversionFactor = 1/75;
     public static float climbWinchSoftLimit = 10;
     public static float climbTiltReverseSoftLimit = -10;
     public static float climbTiltForwardSoftLimit = 0;
