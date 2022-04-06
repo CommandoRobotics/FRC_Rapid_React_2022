@@ -191,30 +191,30 @@ public class ConstantsValues {
 
     //Camera translation relative to robot
     //TODO figure out CargoHound translation relative to robot
-    private static final double houndXOffsetMeters = Units.inchesToMeters(0);
+    private static final double houndXOffsetMeters = Units.inchesToMeters(-9);
     private static final double houndYOffsetMeters = Units.inchesToMeters(0);
     public static final Translation2d houndToRobotTranslation2d = 
         new Translation2d(houndXOffsetMeters, houndYOffsetMeters);
 
     //CargoHound PID values
-    public static final double houndXP = 0.09;
+    public static final double houndXP = 0.01;
     public static final double houndXI = 0;
     public static final double houndXD = 0;
 
-    public static final double houndYP = 0.01;
+    public static final double houndYP = 0.09;
     public static final double houndYI = 0;
     public static final double houndYD = 0;
 
     public static final double houndMaxRVel = 3;
     public static final double houndMaxRAcc = 0.5;
-    public static final double houndRP = 0.01;
+    public static final double houndRP = 0.00;
     public static final double houndRI = 0;
     public static final double houndRD = 0;
     public static final TrapezoidProfile.Constraints houndRConstraints =
         new TrapezoidProfile.Constraints(houndMaxRVel, houndMaxRAcc);
 
     public static final double noCargoTime = 0.5;
-    public static final double minHoundPIDOut = 0.15;
+    public static final double minHoundPIDOut = 0;
 
     /**
      * CLIMBER

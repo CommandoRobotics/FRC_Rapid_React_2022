@@ -54,9 +54,9 @@ public class HoundCargo extends CommandBase {
     xPID.setSetpoint(0);
     yPID.setSetpoint(0);
     rotationPID.setGoal(0);
-    SmartDashboard.putData(xPID);
-    SmartDashboard.putData(yPID);
-    SmartDashboard.putData(rotationPID);
+    SmartDashboard.putData("houndXPID", xPID);
+    SmartDashboard.putData("houndYPID", yPID);
+    SmartDashboard.putData("houndRPID", rotationPID);
 
     //Photon NT networking to use with an at-home simulation
     ntInst = NetworkTableInstance.getDefault();
@@ -96,8 +96,8 @@ public class HoundCargo extends CommandBase {
             //TODO Not sure if this needs to be negative or not
             yPID.calculate(-intakeSubsystem.getDistanceToCargo(houndResult)), 
             ConstantsValues.minHoundPIDOut), 
-          -IntakeSubsystem.scaleAroundZero(
-            xPID.calculate(-houndResult.getBestTarget().getYaw()),
+          IntakeSubsystem.scaleAroundZero(
+            xPID.calculate(houndResult.getBestTarget().getYaw()),
             ConstantsValues.minHoundPIDOut),
           IntakeSubsystem.scaleAroundZero(
             rotationPID.calculate(-houndResult.getBestTarget().getYaw()),
@@ -115,8 +115,8 @@ public class HoundCargo extends CommandBase {
           //TODO Not sure if this needs to be negative or not
           yPID.calculate(-intakeSubsystem.getDistanceToCargo(previousResult)), 
           ConstantsValues.minHoundPIDOut), 
-        -IntakeSubsystem.scaleAroundZero(
-          xPID.calculate(-previousResult.getBestTarget().getYaw()),
+        IntakeSubsystem.scaleAroundZero(
+          xPID.calculate(previousResult.getBestTarget().getYaw()),
           ConstantsValues.minHoundPIDOut),
         IntakeSubsystem.scaleAroundZero(
           rotationPID.calculate(-previousResult.getBestTarget().getYaw()),

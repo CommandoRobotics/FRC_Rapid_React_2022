@@ -57,7 +57,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         intakeEncoder = intake.getEncoder();
         // intakeEncoder.setVelocityConversionFactor(0);
-        //CargoHound = new PhotonCamera("CargoHound");
+        CargoHound = new PhotonCamera("CargoHound");
         field = (Field2d) SmartDashboard.getData("Field");
 
         lifter = new DoubleSolenoid(PneumaticsModuleType.REVPH, ConstantsPorts.lifterForwardId, ConstantsPorts.lifterReverseId);
@@ -216,7 +216,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public Translation2d estimateRobotToCargoTransformation(PhotonPipelineResult result) {
         if (result.hasTargets()) {
             //TODO Verify Yaw needs to be reversed
-            return PhotonUtils.estimateCameraToTargetTranslation(-getDistanceToCargo(result), Rotation2d.fromDegrees(result.getBestTarget().getYaw()))
+            return PhotonUtils.estimateCameraToTargetTranslation(-getDistanceToCargo(result), Rotation2d.fromDegrees(-result.getBestTarget().getYaw()))
                 .plus(ConstantsValues.houndToRobotTranslation2d);
         } else {
             System.out.println("estimateRobotToCargoTransformation() was not able to find a target and therefore returned (0,0)");
@@ -234,23 +234,23 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-    //    // Display Pose2d of the ball to the dash
-    //     if (getHoundData().hasTargets()) {
-    //         field.getObject("SeenCargo").setPose(
-    //             estimateCargoFieldPose2d(
-    //                 getHoundData(), 
-    //                 driveSubsystem.getPose()));
-    //     } 
+       // Display Pose2d of the ball to the dash
+        if (getHoundData().hasTargets()) {
+            field.getObject("SeenCargo").setPose(
+                estimateCargoFieldPose2d(
+                    getHoundData(), 
+                    driveSubsystem.getPose()));
+        } 
 
-    //     //Update the pipeline of the CargoHound. Default is Blue
-    //     if (previousAlliance != DriverStation.getAlliance()) {
-    //         if (DriverStation.getAlliance() == Alliance.Red) {
-    //             setHoundPipeline(1);
-    //         } else {
-    //             setHoundPipeline(0);
-    //         }
-    //         previousAlliance = DriverStation.getAlliance();
-    //     }
+        //Update the pipeline of the CargoHound. Default is Blue
+        if (previousAlliance != DriverStation.getAlliance()) {
+            if (DriverStation.getAlliance() == Alliance.Red) {
+                setHoundPipeline(1);
+            } else {
+                setHoundPipeline(0);
+            }
+            previousAlliance = DriverStation.getAlliance();
+        }
 
         //Update CDD with the solenoid state
         boolean currLifterState = on;

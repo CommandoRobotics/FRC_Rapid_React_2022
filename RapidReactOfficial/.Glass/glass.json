@@ -6,7 +6,22 @@
       }
     },
     "SmartDashboard": {
+      "Rotation PID Controller": {
+        "open": true
+      },
       "X PID Controller": {
+        "open": true
+      },
+      "Y PID Controller": {
+        "open": true
+      },
+      "houndRPID": {
+        "open": true
+      },
+      "houndXPID": {
+        "open": true
+      },
+      "houndYPID": {
         "open": true
       },
       "open": true
@@ -18,6 +33,7 @@
     },
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/AutoAimSubsystem": "Subsystem",
       "/LiveWindow/ClimberSubsystem": "Subsystem",
       "/LiveWindow/DriveSubsystem": "Subsystem",
       "/LiveWindow/IndexSubsystem": "Subsystem",
@@ -94,7 +110,9 @@
       "/SmartDashboard/X PID Controller": "PIDController",
       "/SmartDashboard/X PID Controller NeverEnding": "PIDController",
       "/SmartDashboard/Y PID Controller": "PIDController",
-      "/SmartDashboard/Y PID Controller NeverEnding": "PIDController"
+      "/SmartDashboard/Y PID Controller NeverEnding": "PIDController",
+      "/SmartDashboard/houndXPID": "PIDController",
+      "/SmartDashboard/houndYPID": "PIDController"
     },
     "windows": {
       "/LiveWindow/Ungrouped/MecanumDrive[1]": {
@@ -108,7 +126,6 @@
         }
       },
       "/SmartDashboard/Field": {
-        "image": "C:\\Users\\robotics\\Downloads\\Screenshot 2022-03-06 141234.png",
         "window": {
           "visible": true
         }
