@@ -38,6 +38,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
     winchFollower.follow(winchLeader, false);
 
+    tilt.setInverted(true);
+
     // Instantiate encoders
     winchEncoder = winchLeader.getEncoder();
     tiltEncoder = tilt.getEncoder();
