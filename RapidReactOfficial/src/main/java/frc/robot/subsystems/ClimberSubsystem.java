@@ -48,19 +48,10 @@ public class ClimberSubsystem extends SubsystemBase {
     winchEncoder.setPositionConversionFactor(ConstantsValues.climbWinchConversionFactor);
     tiltEncoder.setPositionConversionFactor(ConstantsValues.climbTiltConversionFactor);
 
-    // Set soft limits
-    winchLeader.setSoftLimit(SoftLimitDirection.kForward, ConstantsValues.climbWinchSoftLimit);
-    tilt.setSoftLimit(SoftLimitDirection.kForward, ConstantsValues.climbTiltForwardSoftLimit);
-    tilt.setSoftLimit(SoftLimitDirection.kReverse, ConstantsValues.climbTiltReverseSoftLimit);
-
     // Put soft limits on dashboard
     SmartDashboard.putNumber("climbWinchLimit", ConstantsValues.climbWinchSoftLimit);
     SmartDashboard.putNumber("climbTiltForwardLimit", ConstantsValues.climbTiltForwardSoftLimit);
     SmartDashboard.putNumber("climbTiltReverseLimit", ConstantsValues.climbTiltReverseSoftLimit);
-    
-    // Enable soft limits
-    enableWinchSoftLimits();
-    enableTiltSoftLimits();
 
     // Instantiate limit switches
     tiltForward = new DigitalInput(ConstantsPorts.tiltForwardId);
@@ -75,21 +66,27 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   /**
-   * Set the power of the winch
+   * Set the power of the winch with limits
    * @param input 
    */
   public void setWinchVoltageFromController(double input) {
-    enableWinchSoftLimits();
     input = MathUtil.applyDeadband(input, ConstantsValues.climbWinchDeadband)*ConstantsValues.climbWinchMaxVolts;
-    winchLeader.setVoltage(input);
+    if(input > 0) {
+      if(getWinchPosition() >= ConstantsValues.climbWinchSoftLimit) {
+        winchLeader.setVoltage(0);
+      } else {
+        winchLeader.setVoltage(input);
+      }
+    } else {
+      winchLeader.setVoltage(input);
+    }
   }
 
   /**
-   * Set the power of the winch
+   * Set the power of the winch with no limits
    * @param input 
    */
   public void setWinchVoltageFromControllerNoLimits(double input) {
-    disableWinchSoftLimit();
     input = MathUtil.applyDeadband(input, ConstantsValues.climbWinchDeadband)*ConstantsValues.climbWinchMaxVolts;
     winchLeader.setVoltage(input);
   }
@@ -120,16 +117,27 @@ public class ClimberSubsystem extends SubsystemBase {
    * @param input
    */
   public void setTiltVoltageFromControllerSoftLimits(double input) {
-    enableTiltSoftLimits();
-    tilt.setVoltage(MathUtil.applyDeadband(input, ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts);
+    input = MathUtil.applyDeadband(input, ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts;
+    if(input > 0) {
+      if(getTiltPosition() >= ConstantsValues.climbTiltForwardSoftLimit) {
+        tilt.setVoltage(0);
+      } else {
+        tilt.setVoltage(input);
+      }
+    } else {
+      if(getTiltPosition() <= ConstantsValues.climbTiltReverseSoftLimit) {
+        tilt.setVoltage(0);
+      } else {
+        tilt.setVoltage(input);
+      }
+    }
   }
 
   /**
-   * Set the power of the tilt motor WITHOUT using limit switches to limit position
+   * Set the power of the tilt motor WITHOUT limits
    * @param power
    */
   public void setTiltVoltageFromControllerNoLimits(double input) {
-    disableTiltSoftLimits();
     tilt.setVoltage(MathUtil.applyDeadband(input, ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts);
   }
 
@@ -176,37 +184,6 @@ public class ClimberSubsystem extends SubsystemBase {
   public void resetWinchEncoder() {
     winchEncoder.setPosition(0);
   }
-
-  /**
-   * Disable the winch soft limits
-   */
-  public void enableWinchSoftLimits() {
-    winchFollower.enableSoftLimit(SoftLimitDirection.kForward, true);
-  }
-
-  /**
-   * Disable the winch soft limits
-   */
-  public void disableWinchSoftLimit() {
-    winchFollower.enableSoftLimit(SoftLimitDirection.kForward, false);
-  }
-
-  /**
-   * Enable the tilt soft limits
-   */
-  public void enableTiltSoftLimits() {
-    tilt.enableSoftLimit(SoftLimitDirection.kForward, true);
-    tilt.enableSoftLimit(SoftLimitDirection.kReverse, true);
-  }
-
-  /**
-   * Disable the tilt soft limits
-   */
-  public void disableTiltSoftLimits() {
-    tilt.enableSoftLimit(SoftLimitDirection.kForward, false);
-    tilt.enableSoftLimit(SoftLimitDirection.kReverse, false);
-  }
-
 
   @Override
   public void periodic() {
