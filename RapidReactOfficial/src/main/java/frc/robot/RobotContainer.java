@@ -229,15 +229,37 @@ public class RobotContainer {
     new JoystickButton(operatorController, XboxController.Button.kStart.value)
     .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
 
-    // Left stick y - Winch up and down
-    new Trigger(() -> (Math.abs(operatorController.getLeftY()) > 0))
+    // Left stick y and NOT right bumper - Winch up and down with limits
+    new JoystickButton(operatorController, XboxController.Button.kRightBumper.value).negate().and(
+    new Trigger(() -> (Math.abs(operatorController.getLeftY()) > 0)))
       .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setWinchVoltageFromController(operatorController.getLeftY())))
       .whenInactive(new InstantCommand(climberSubsystem::stopWinch));
 
-    // Right stick y - Tilt forward and backward
-    new Trigger(() -> (Math.abs(operatorController.getRightY()) > 0))
-      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltNoLimitsFromController(operatorController.getRightY())))
+    // Right stick y and NOT right bumper - Tilt forward and backward with limits
+    new JoystickButton(operatorController, XboxController.Button.kRightBumper.value).negate().and(
+    new Trigger(() -> (Math.abs(operatorController.getRightY()) > 0)))
+      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltVoltageFromControllerSoftLimits(operatorController.getRightY())))
       .whenInactive(new InstantCommand(climberSubsystem::stopTilt));
+
+    // Left stick y and right bumper - Winch up and down without limits
+    new JoystickButton(operatorController, XboxController.Button.kRightBumper.value).and(
+    new Trigger(() -> (Math.abs(operatorController.getLeftY()) > 0)))
+      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setWinchVoltageFromControllerNoLimits(operatorController.getLeftY())))
+      .whenInactive(new InstantCommand(climberSubsystem::stopWinch));
+
+    // Right stick y and right bumper - Tilt forward and backward with limits
+    new JoystickButton(operatorController, XboxController.Button.kRightBumper.value).and(
+      new Trigger(() -> (Math.abs(operatorController.getRightY()) > 0)))
+        .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltVoltageFromControllerNoLimits(operatorController.getRightY())))
+        .whenInactive(new InstantCommand(climberSubsystem::stopTilt));
+
+    // Dpad up - Reset winch encoder
+    new TriggerPOV(operatorController, POVDirection.kUp)
+    .whenActive(new InstantCommand(climberSubsystem::resetWinchEncoder));
+    
+    // Dpad down - Reset tilt encoder
+    new TriggerPOV(operatorController, POVDirection.kDown)
+    .whenActive(new InstantCommand(climberSubsystem::resetTiltEncoder));
 
   }
 

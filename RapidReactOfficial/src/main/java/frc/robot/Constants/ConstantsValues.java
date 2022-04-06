@@ -227,5 +227,7 @@ public class ConstantsValues {
     // Encoder stuff
     public static final double climbWinchConversionFactor = 1/378;
     public static final double climbTiltConversionFactor = 1/3150;
-    public static final float climbWinchSoftLimit = 500;
+    public static float climbWinchSoftLimit = 500;
+    public static float climbTiltReverseSoftLimit = 0;
+    public static float climbTiltForwardSoftLimit = 1000;
 }

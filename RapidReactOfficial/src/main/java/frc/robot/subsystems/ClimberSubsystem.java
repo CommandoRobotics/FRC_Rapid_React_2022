@@ -48,9 +48,17 @@ public class ClimberSubsystem extends SubsystemBase {
 
     // Set soft limits
     winchLeader.setSoftLimit(SoftLimitDirection.kForward, ConstantsValues.climbWinchSoftLimit);
+    tilt.setSoftLimit(SoftLimitDirection.kForward, ConstantsValues.climbTiltForwardSoftLimit);
+    tilt.setSoftLimit(SoftLimitDirection.kReverse, ConstantsValues.climbTiltReverseSoftLimit);
+
+    // Put soft limits on dashboard
+    SmartDashboard.putNumber("climbWinchLimit", ConstantsValues.climbWinchSoftLimit);
+    SmartDashboard.putNumber("climbTiltForwardLimit", ConstantsValues.climbTiltForwardSoftLimit);
+    SmartDashboard.putNumber("climbTiltReverseLimit", ConstantsValues.climbTiltReverseSoftLimit);
     
     // Enable soft limits
     enableWinchSoftLimits();
+    enableTiltSoftLimits();
 
     // Instantiate limit switches
     tiltForward = new DigitalInput(ConstantsPorts.tiltForwardId);
@@ -69,15 +77,26 @@ public class ClimberSubsystem extends SubsystemBase {
    * @param input 
    */
   public void setWinchVoltageFromController(double input) {
+    enableWinchSoftLimits();
     input = MathUtil.applyDeadband(input, ConstantsValues.climbWinchDeadband)*ConstantsValues.climbWinchMaxVolts;
     winchLeader.setVoltage(input);
   }
 
   /**
-   * Set the power of the tilt motor
+   * Set the power of the winch
+   * @param input 
+   */
+  public void setWinchVoltageFromControllerNoLimits(double input) {
+    disableWinchSoftLimit();
+    input = MathUtil.applyDeadband(input, ConstantsValues.climbWinchDeadband)*ConstantsValues.climbWinchMaxVolts;
+    winchLeader.setVoltage(input);
+  }
+
+  /**
+   * Set the power of the tilt motor but with physical limits
    * @param input
    */
-  public void setTiltVoltageFromController(double input) {
+  public void setTiltVoltageFromControllerPhysicalLimits(double input) {
     input = MathUtil.applyDeadband(input, ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts;
     if(input > 0) {
       if(tiltForward.get()) {
@@ -95,10 +114,20 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   /**
+   * Set the power of the tilt motor but with soft limits
+   * @param input
+   */
+  public void setTiltVoltageFromControllerSoftLimits(double input) {
+    enableTiltSoftLimits();
+    tilt.setVoltage(MathUtil.applyDeadband(input, ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts);
+  }
+
+  /**
    * Set the power of the tilt motor WITHOUT using limit switches to limit position
    * @param power
    */
-  public void setTiltNoLimitsFromController(double input) {
+  public void setTiltVoltageFromControllerNoLimits(double input) {
+    disableTiltSoftLimits();
     tilt.setVoltage(MathUtil.applyDeadband(input, ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts);
   }
 
@@ -149,21 +178,42 @@ public class ClimberSubsystem extends SubsystemBase {
   /**
    * Disable the winch soft limits
    */
-  public void disableWinchSoftLimit() {
-    winchFollower.enableSoftLimit(SoftLimitDirection.kForward, false);
+  public void enableWinchSoftLimits() {
+    winchFollower.enableSoftLimit(SoftLimitDirection.kForward, true);
   }
 
   /**
    * Disable the winch soft limits
    */
-  public void enableWinchSoftLimits() {
-    winchFollower.enableSoftLimit(SoftLimitDirection.kForward, true);
+  public void disableWinchSoftLimit() {
+    winchFollower.enableSoftLimit(SoftLimitDirection.kForward, false);
   }
+
+  /**
+   * Enable the tilt soft limits
+   */
+  public void enableTiltSoftLimits() {
+    tilt.enableSoftLimit(SoftLimitDirection.kForward, true);
+    tilt.enableSoftLimit(SoftLimitDirection.kReverse, true);
+  }
+
+  /**
+   * Disable the tilt soft limits
+   */
+  public void disableTiltSoftLimits() {
+    tilt.enableSoftLimit(SoftLimitDirection.kForward, false);
+    tilt.enableSoftLimit(SoftLimitDirection.kReverse, false);
+  }
+
 
   @Override
   public void periodic() {
     SmartDashboard.putNumber("climbTiltEnc", getTiltPosition());
     SmartDashboard.putNumber("climbWinchEnc", getWinchPosition());
+    SmartDashboard.getNumber("climbWinchLimit", ConstantsValues.climbWinchSoftLimit);
+    SmartDashboard.getNumber("climbTiltForwardLimit", ConstantsValues.climbTiltForwardSoftLimit);
+    SmartDashboard.getNumber("climbTiltReverseLimit", ConstantsValues.climbTiltReverseSoftLimit);
+
     if(Robot.isSimulation()) {
       REVPhysicsSim.getInstance().run();
     }
