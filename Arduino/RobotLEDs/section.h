@@ -8,12 +8,20 @@ enum class section_names {
   no_section, // For satisfying compiler issues
   left_bumper,
   right_bumper,
-  left_front,
-  left_top,
-  left_back,
-  right_back,
-  right_top,
-  right_front
+  left_vertical,
+  left_rear_bottom_stripe,
+  left_rear_top_stripe,
+  left_gear,
+  left_front_top_stripe,
+  left_front_bottom_stripe,
+  left_void,
+  right_void,
+  right_front_bottom_stripe,
+  right_front_top_stripe,
+  right_gear,
+  right_rear_top_stripe,
+  right_rear_bottom_stripe,
+  right_vertical
 };
 
 struct section_pointer {

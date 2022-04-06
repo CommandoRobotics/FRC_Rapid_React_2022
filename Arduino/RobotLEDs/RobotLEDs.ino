@@ -8,7 +8,7 @@ led_controller the_controller;
 communications robo_rio;
 
 void setup() {
-
+  Serial.begin(9600);
 }
 
 void loop() {

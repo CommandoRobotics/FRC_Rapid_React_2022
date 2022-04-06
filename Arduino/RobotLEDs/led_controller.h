@@ -6,9 +6,7 @@
 #include <Vector.h>
 
 #include "communications.h"
-#include "fire2012.h"
 #include "section.h"
-#include "waves.h"
 
 class led_controller {
 public:
@@ -33,11 +31,6 @@ private:
   match_state match;
   shooter_state shooter;
   cargo_hound_state cargo_hound;
-
-  waves wave_effect;
-  // Use seperate fire effects for each section, so flames are the correct length
-  fire2012 tower_fire_effect;
-  fire2012 bumper_fire_effect;
 
   // Returns the count of all LEDs in all sections
   size_t count_all_leds();
@@ -81,9 +74,15 @@ private:
   // Set all lights to the passed color.
   void set_solid_color(CRGB color);
 
-  void blue_waves();
+  // Display each section in a different color so we can verify we've counted LEDs correctly.
+  void calibrate();
 
-  void fire();
+  // Display our team logo colors.
+  void team_livery();
+
+  void blue_animation();
+
+  void red_animation();
 
 };
 

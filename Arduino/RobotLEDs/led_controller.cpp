@@ -8,9 +8,7 @@ led_controller::led_controller() :
     alliance(alliance_color::blue),
     match(match_state::not_active),
     shooter(shooter_state::not_ready_to_fire),
-    cargo_hound(cargo_hound_state::not_acquired),
-    tower_fire_effect(20),
-    bumper_fire_effect(32)    
+    cargo_hound(cargo_hound_state::not_acquired)
 {
     // Bumpers Sections
     // Shooter is front, intake is back
@@ -23,13 +21,15 @@ led_controller::led_controller() :
     //    |   Intake   |  T
     //    -----    -----
     //        BACK
-    sections.push_back(section(section_names::left_bumper, 32)); // Section under left bumper
-    sections.push_back(section(section_names::right_bumper, 32)); // Section under right bumper
+    sections.push_back(section(section_names::left_bumper, 2)); // Section under left bumper
+    sections.push_back(section(section_names::right_bumper, 2)); // Section under right bumper
+//    sections.push_back(section(section_names::left_bumper, 32)); // Section under left bumper
+//    sections.push_back(section(section_names::right_bumper, 32)); // Section under right bumper
     // Tower Sections
     //         ______
     //        /      |
     //       /       |
-    //      /        |
+    //      /== C == |
     //     /         |
     //    |     top  |  (top of tower points up toward shooter)
     //    ============
@@ -38,17 +38,25 @@ led_controller::led_controller() :
     // O  |          | C
     // N  |          | K
     // T  |          |
-    sections.push_back(section(section_names::left_back, 19));
-    sections.push_back(section(section_names::left_top, 14));
-    sections.push_back(section(section_names::left_front, 19));
-    sections.push_back(section(section_names::right_back, 19));
-    sections.push_back(section(section_names::right_top, 14));
-    sections.push_back(section(section_names::right_front, 19));
+    sections.push_back(section(section_names::left_vertical, 5));
+    sections.push_back(section(section_names::left_rear_bottom_stripe, 2));
+    sections.push_back(section(section_names::left_rear_top_stripe, 2));
+    sections.push_back(section(section_names::left_gear, 11));
+    sections.push_back(section(section_names::left_front_top_stripe, 2));
+    sections.push_back(section(section_names::left_front_bottom_stripe, 2));
+    sections.push_back(section(section_names::left_void, 2));
+    sections.push_back(section(section_names::right_void, 2));
+    sections.push_back(section(section_names::right_front_bottom_stripe, 2));
+    sections.push_back(section(section_names::right_front_top_stripe, 2));
+    sections.push_back(section(section_names::right_gear, 11));
+    sections.push_back(section(section_names::right_rear_top_stripe, 2));
+    sections.push_back(section(section_names::right_rear_bottom_stripe, 2));
+    sections.push_back(section(section_names::right_vertical, 5));
 
     total_leds = count_all_leds();
     leds = new CRGB[total_leds];
     
-    FastLED.addLeds<WS2811, led_pin>(leds, total_leds);
+    FastLED.addLeds<WS2811, led_pin, GRB>(leds, total_leds);
     FastLED.setBrightness(100); // Turn the LEDs on
   }
 
@@ -118,18 +126,20 @@ void led_controller::apply_base_pattern() {
   if (connected == connection_state::no_connection) {
     // No Rio, so maybe power just turned on, or we are displaying for judging/outreach
     // Just look pretty
-    set_solid_color(CRGB::Blue);
+    team_livery();
+    return;
   }
+  
   // Before the match, show a pretty effect. During the match, just use the alliance color.
   if (alliance == alliance_color::blue) {
     if (match == match_state::not_active) {
-      blue_waves();
+      blue_animation();
     } else {
       set_solid_color(CRGB::Blue);
     }
   } else {
     if (match == match_state::not_active) {
-      fire();
+      red_animation();
     } else {
       set_solid_color(CRGB::Red);
     }
@@ -173,11 +183,12 @@ void led_controller::cargo_hound_overlay(bool acquired) {
   CRGB overlay_color = CRGB::White; // Default to not acquired
   if (acquired) {
     overlay_color = CRGB::Purple;
-    return; // Leave the animation colors as they are
   }
 
-  overlay_by_name(CRGB::White, section_names::left_top, 4, 0);
-  overlay_by_name(CRGB::White, section_names::right_top, 4, 0);
+  set_section_color(section_names::left_rear_bottom_stripe, overlay_color);
+  set_section_color(section_names::left_rear_top_stripe, overlay_color);
+  set_section_color(section_names::right_rear_bottom_stripe, overlay_color);
+  set_section_color(section_names::right_rear_top_stripe, overlay_color);
 }
 
 void led_controller::shooter_overlay(bool ready) {
@@ -186,8 +197,8 @@ void led_controller::shooter_overlay(bool ready) {
     overlay_color = CRGB::Green;
   }
 
-  overlay_by_name(overlay_color, section_names::left_top, 4, 2);
-  overlay_by_name(overlay_color, section_names::right_top, 4, 2);
+  set_section_color(section_names::left_gear, overlay_color);
+  set_section_color(section_names::right_gear, overlay_color);
 }
 
 
@@ -205,57 +216,53 @@ void led_controller::set_solid_color(CRGB color) {
   }
 }
 
-void led_controller::blue_waves() {
-  wave_effect.loop();
-  // Bottom of the robot
-  auto right_bottom = get_section_pointer(section_names::right_bumper);
-  wave_effect.apply(right_bottom);
-  auto left_bottom = get_section_pointer(section_names::left_bumper); 
-  // Symmetrically copy to the left side (so they mirror from the center of the "front")
-  reverse_copy(left_bottom, right_bottom);
-
-  // Tower - All vertical strings will be the same
-  auto left_front = get_section_pointer(section_names::left_front);
-  wave_effect.apply(left_front);
-  // Copy to the left side
-  auto right_front = get_section_pointer(section_names::right_front);
-  copy(left_front, right_front);
-  // The back strings should be in reverse order of the front ones
-  auto left_back = get_section_pointer(section_names::left_back);
-  reverse_copy(left_back, left_front);
-  auto right_back = get_section_pointer(section_names::right_back);
-  reverse_copy(right_back, right_front);
-  
-  // Shooter
-  auto left_top = get_section_pointer(section_names::left_top);
-  wave_effect.apply(left_top);
-  auto right_top = get_section_pointer(section_names::right_top);
-  reverse_copy(right_top, left_top);
+void led_controller::calibrate() {
+  set_section_color(section_names::left_bumper, CRGB::White);
+  set_section_color(section_names::right_bumper, CRGB::Red);
+  set_section_color(section_names::left_vertical, CRGB::Orange);
+  set_section_color(section_names::left_rear_bottom_stripe, CRGB::Yellow);
+  set_section_color(section_names::left_rear_top_stripe, CRGB::Green);
+  set_section_color(section_names::left_gear, CRGB::Blue);
+  set_section_color(section_names::left_front_top_stripe, CRGB::Indigo);
+  set_section_color(section_names::left_front_bottom_stripe, CRGB::Purple);
+  set_section_color(section_names::left_void, CRGB::White);
+  set_section_color(section_names::right_void, CRGB::Red);
+  set_section_color(section_names::right_front_bottom_stripe, CRGB::Orange);
+  set_section_color(section_names::right_front_top_stripe, CRGB::Yellow);
+  set_section_color(section_names::right_gear, CRGB::Green);
+  set_section_color(section_names::right_rear_top_stripe, CRGB::Blue);
+  set_section_color(section_names::right_rear_bottom_stripe, CRGB::Indigo);
+  set_section_color(section_names::right_vertical, CRGB::Purple);
 }
 
-void led_controller::fire() {
-  // Bottom of the robot
-  bumper_fire_effect.loop();
-  auto right_bottom = get_section_pointer(section_names::right_bumper);
-  bumper_fire_effect.apply(right_bottom);
-  auto left_bottom = get_section_pointer(section_names::left_bumper); 
-  // Symmetrically copy to the left side (so they mirror from the center of the "front")
-  reverse_copy(left_bottom, right_bottom);
+void led_controller::team_livery() {
+  // Gear is white, stripes are red, and everything else blue.
+  set_section_color(section_names::left_bumper, CRGB::Navy);
+  set_section_color(section_names::right_bumper, CRGB::Navy);
+  set_section_color(section_names::left_vertical, CRGB::Navy);
+  set_section_color(section_names::left_rear_bottom_stripe, CRGB::Red);
+  set_section_color(section_names::left_rear_top_stripe, CRGB::Red);
+  set_section_color(section_names::left_gear, CRGB::White);
+  set_section_color(section_names::left_front_top_stripe, CRGB::Red);
+  set_section_color(section_names::left_front_bottom_stripe, CRGB::Red);
+  set_section_color(section_names::left_void, CRGB::Navy);
+  set_section_color(section_names::right_void, CRGB::Navy);
+  set_section_color(section_names::right_front_bottom_stripe, CRGB::Red);
+  set_section_color(section_names::right_front_top_stripe, CRGB::Red);
+  set_section_color(section_names::right_gear, CRGB::White);
+  set_section_color(section_names::right_rear_top_stripe, CRGB::Red);
+  set_section_color(section_names::right_rear_bottom_stripe, CRGB::Red);
+  set_section_color(section_names::right_vertical, CRGB::Navy);
+}
 
-  // Tower - All vertical strings will be the same
-  tower_fire_effect.loop();
-  auto left_front = get_section_pointer(section_names::left_front);
-  tower_fire_effect.apply(left_front);
-  // Copy to the left side
-  auto right_front = get_section_pointer(section_names::right_front);
-  copy(left_front, right_front);
-  // The back strings should be in reverse order of the front ones
-  auto left_back = get_section_pointer(section_names::left_back);
-  reverse_copy(left_back, left_front);
-  auto right_back = get_section_pointer(section_names::right_back);
-  reverse_copy(right_back, right_front);
+void led_controller::blue_animation() {
+  for (size_t i = 0; i < count_all_leds(); ++i) {
+    leds[i] = CRGB::Blue;
+  }
+}
 
-  // Shooter - Horizontal flames here look weird, just make it red.
-  set_section_color(section_names::left_top, CRGB::Red);
-  set_section_color(section_names::right_top, CRGB::Red);
+void led_controller::red_animation() {
+  for (size_t i = 0; i < count_all_leds(); ++i) {
+    leds[i] = CRGB::Red;
+  }
 }
