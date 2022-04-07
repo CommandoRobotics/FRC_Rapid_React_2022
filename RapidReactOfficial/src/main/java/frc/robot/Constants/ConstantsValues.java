@@ -197,11 +197,11 @@ public class ConstantsValues {
         new Translation2d(houndXOffsetMeters, houndYOffsetMeters);
 
     //CargoHound PID values
-    public static final double houndXP = 0.01;
+    public static final double houndXP = 0.125;
     public static final double houndXI = 0;
     public static final double houndXD = 0;
 
-    public static final double houndYP = 0.09;
+    public static final double houndYP = 0.0125;
     public static final double houndYI = 0;
     public static final double houndYD = 0;
 
@@ -225,9 +225,9 @@ public class ConstantsValues {
     public static final double climbWinchMaxVolts = 6;
 
     // Encoder stuff
-    public static final double climbWinchConversionFactor = 1/378;
-    public static final double climbTiltConversionFactor = 1/75;
-    public static float climbWinchSoftLimit = 10;
-    public static float climbTiltReverseSoftLimit = -10;
-    public static float climbTiltForwardSoftLimit = 0;
+    public static final double climbWinchConversionFactor = 1/378; //TODO Test this (might be 1/9) - this is ouput shaft rotations
+    public static final double climbTiltConversionFactor = 360/3150; //TODO Test this (might be 360/75) - this is degrees
+    public static double winchHeightLimitRotations = 10;
+    public static double tiltReverseLimit = -10;
+    public static double tiltForwardLimit = 0; //TODO I would allow this to go forward a bit
 }

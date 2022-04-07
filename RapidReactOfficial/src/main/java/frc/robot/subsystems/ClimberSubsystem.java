@@ -49,9 +49,9 @@ public class ClimberSubsystem extends SubsystemBase {
     tiltEncoder.setPositionConversionFactor(ConstantsValues.climbTiltConversionFactor);
 
     // Put soft limits on dashboard
-    SmartDashboard.putNumber("climbWinchLimit", ConstantsValues.climbWinchSoftLimit);
-    SmartDashboard.putNumber("climbTiltForwardLimit", ConstantsValues.climbTiltForwardSoftLimit);
-    SmartDashboard.putNumber("climbTiltReverseLimit", ConstantsValues.climbTiltReverseSoftLimit);
+    SmartDashboard.putNumber("climbWinchLimit", ConstantsValues.winchHeightLimitRotations);
+    SmartDashboard.putNumber("tiltForwardLimit", ConstantsValues.tiltForwardLimit);
+    SmartDashboard.putNumber("tiltReverseLimit", ConstantsValues.tiltReverseLimit);
 
     // Instantiate limit switches
     tiltForward = new DigitalInput(ConstantsPorts.tiltForwardId);
@@ -65,117 +65,154 @@ public class ClimberSubsystem extends SubsystemBase {
 
   }
 
-  /**
-   * Set the power of the winch with limits
-   * @param input 
-   */
-  public void setWinchVoltageFromController(double input) {
-    input = MathUtil.applyDeadband(input, ConstantsValues.climbWinchDeadband)*ConstantsValues.climbWinchMaxVolts;
-    if(input > 0) {
-      if(getWinchPosition() >= ConstantsValues.climbWinchSoftLimit) {
-        winchLeader.setVoltage(0);
+  //CLIMB METHODS
+
+  //Winch
+  //setSpeed
+  public void setWinchSpeed(double speed) {
+    winchLeader.set(speed);
+  }
+
+  //setVoltage
+  public void setWinchVoltage(double volts) {
+    winchLeader.setVoltage(volts);
+  }
+
+  //stopWinch
+  public void stopWinch() {
+    winchLeader.stopMotor();
+    winchLeader.setVoltage(0);
+  }
+
+  //setVoltsLimits soft limits
+  public void setWinchSpeedWithLimits(double speed) {
+    if (speed > 0) {
+      if (getWinchRotations() >= ConstantsValues.winchHeightLimitRotations) {
+        setWinchSpeed(0);
+        return;
       } else {
-        winchLeader.setVoltage(input);
+        setWinchSpeed(speed);
       }
     } else {
-      winchLeader.setVoltage(input);
+      setWinchSpeed(speed);
     }
   }
 
-  /**
-   * Set the power of the winch with no limits
-   * @param input 
-   */
-  public void setWinchVoltageFromControllerNoLimits(double input) {
-    input = MathUtil.applyDeadband(input, ConstantsValues.climbWinchDeadband)*ConstantsValues.climbWinchMaxVolts;
-    winchLeader.setVoltage(input);
-  }
-
-  /**
-   * Set the power of the tilt motor but with physical limits
-   * @param input
-   */
-  public void setTiltVoltageFromControllerPhysicalLimits(double input) {
-    input = MathUtil.applyDeadband(input, ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts;
-    if(input > 0) {
-      if(tiltForward.get()) {
-        tilt.setVoltage(0);
+  //setVoltsLimits soft limits
+  public void setWinchVoltageWithLimits(double volts) {
+    if (volts > 0) {
+      if (getWinchRotations() >= ConstantsValues.winchHeightLimitRotations) {
+        setWinchVoltage(0);
+        return;
       } else {
-        tilt.setVoltage(input);
+        setWinchVoltage(volts);
       }
     } else {
-      if(tiltBackward.get()) {
-        tilt.setVoltage(0);
+      setWinchVoltage(volts);
+    }
+  }
+
+  //Tilt
+  //setSpeed
+  public void setTiltSpeed(double speed) {
+    tilt.set(speed);
+  }
+
+  //setVoltage
+  public void setTiltVoltage(double volts) {
+    tilt.setVoltage(volts);
+  }
+
+  //stopTilt
+  public void stopTilt() {
+    tilt.stopMotor();
+    tilt.setVoltage(0);
+  }
+
+  //setVoltageLimits
+  //TODO FORWARD MUST BE TOWARDS THE FRONT OF THE ROBOT
+  public void setTiltVoltageWithLimits(double volts, boolean useLimitSwitches) {
+    if(useLimitSwitches) {
+      if (volts > 0) {
+        if (tiltForward.get()) {
+          setTiltVoltage(0);
+          return;
+        } else {
+          setTiltVoltage(volts);
+        }
       } else {
-        tilt.setVoltage(input);
+        if (tiltBackward.get()) {
+          setTiltVoltage(0);
+          return;
+        } else {
+          setTiltVoltage(volts);
+        }
+      }
+    } else {
+      if (volts > 0) {
+        if (getTiltAngle() >= ConstantsValues.tiltForwardLimit) {
+          setTiltVoltage(0);
+          return;
+        } else {
+          setTiltVoltage(volts);
+        }
+      } else {
+        if (getTiltAngle() <= ConstantsValues.tiltReverseLimit) {
+          setTiltVoltage(0);
+          return;
+        } else {
+          setTiltVoltage(volts);
+        }
       }
     }
   }
 
-  /**
-   * Set the power of the tilt motor but with soft limits
-   * @param input
-   */
-  public void setTiltVoltageFromControllerSoftLimits(double input) {
-    input = MathUtil.applyDeadband(input, ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts;
-    if(input > 0) {
-      if(getTiltPosition() >= ConstantsValues.climbTiltForwardSoftLimit) {
-        tilt.setVoltage(0);
+  //setSpeedLimits
+  public void setTiltSpeedWithLimits(double speed, boolean useLimitSwitches) {
+    if(useLimitSwitches) {
+      if (speed > 0) {
+        if (tiltForward.get()) {
+          setTiltSpeed(0);
+          return;
+        } else {
+          setTiltSpeed(speed);
+        }
       } else {
-        tilt.setVoltage(input);
+        if (tiltBackward.get()) {
+          setTiltSpeed(0);
+          return;
+        } else {
+          setTiltSpeed(speed);
+        }
       }
     } else {
-      if(getTiltPosition() <= ConstantsValues.climbTiltReverseSoftLimit) {
-        tilt.setVoltage(0);
+      if (speed > 0) {
+        if (getTiltAngle() >= ConstantsValues.tiltForwardLimit) {
+          setTiltSpeed(0);
+          return;
+        } else {
+          setTiltSpeed(speed);
+        }
       } else {
-        tilt.setVoltage(input);
+        if (getTiltAngle() <= ConstantsValues.tiltReverseLimit) {
+          setTiltSpeed(0);
+          return;
+        } else {
+          setTiltSpeed(speed);
+        }
       }
     }
   }
 
-  /**
-   * Set the power of the tilt motor WITHOUT limits
-   * @param power
-   */
-  public void setTiltVoltageFromControllerNoLimits(double input) {
-    tilt.setVoltage(MathUtil.applyDeadband(input, ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts);
-  }
-
-  /**
-   * Get the position of the tilt motor in rotations
-   * @return
-   */
-  public double getTiltPosition() {
-    return tiltEncoder.getPosition();
-  }
-
-  /**
-   * Get the position of the winch motor in rotations
-   * @return
-   */
-  public double getWinchPosition() {
+  //Sensors
+  //getWinchHeight
+  public double getWinchRotations() {
     return winchEncoder.getPosition();
   }
 
-  /**
-   * Stop the winch motors
-   */
-  public void stopWinch() {
-    winchLeader.stopMotor();
-  }
-
-  /**
-   * Stop the tilt motor
-   */
-  public void stopTilt() {
-    tilt.stopMotor();
-  }
-
-  /**
-   * Reset the tilt encoder
-   */
-  public void resetTiltEncoder() {
-    tiltEncoder.setPosition(0);
+  //getTiltAngle
+  public double getTiltAngle() {
+    return tiltEncoder.getPosition();
   }
 
   /**
@@ -185,16 +222,48 @@ public class ClimberSubsystem extends SubsystemBase {
     winchEncoder.setPosition(0);
   }
 
+  /**
+   * Reset the tilt encoder
+   */
+  public void resetTiltEncoder() {
+    tiltEncoder.setPosition(0);
+  }
+
+
+
+  //Periodic
+  //Upate whether we need to reset encoders
+
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("climbTiltEnc", getTiltPosition());
-    SmartDashboard.putNumber("climbWinchEnc", getWinchPosition());
-    SmartDashboard.getNumber("climbWinchLimit", ConstantsValues.climbWinchSoftLimit);
-    SmartDashboard.getNumber("climbTiltForwardLimit", ConstantsValues.climbTiltForwardSoftLimit);
-    SmartDashboard.getNumber("climbTiltReverseLimit", ConstantsValues.climbTiltReverseSoftLimit);
+    //Update Encoder values to SmartDash
+    SmartDashboard.putNumber("climbTiltEnc", getTiltAngle());
+    SmartDashboard.putNumber("climbWinchEnc", getWinchRotations());
 
-    if(Robot.isSimulation()) {
-      REVPhysicsSim.getInstance().run();
+    //Check if there are new Limit values from the SmartDash
+    double currWinchLimit = SmartDashboard.getNumber("climbWinchLimit", ConstantsValues.winchHeightLimitRotations);
+    if (currWinchLimit != ConstantsValues.winchHeightLimitRotations) {
+      ConstantsValues.winchHeightLimitRotations = currWinchLimit;
     }
+    double currTiltReverseLimit = SmartDashboard.getNumber("tiltReverseLimit", ConstantsValues.tiltReverseLimit);
+    if (currTiltReverseLimit != ConstantsValues.tiltReverseLimit) {
+      ConstantsValues.tiltReverseLimit = currTiltReverseLimit;
+    }
+    double currTiltForwardLimit = SmartDashboard.getNumber("tiltForwardLimit", ConstantsValues.tiltForwardLimit);
+    if (currTiltForwardLimit != ConstantsValues.tiltForwardLimit) {
+      ConstantsValues.tiltForwardLimit = currTiltForwardLimit;
+    }
+
+    //TODO if we have limit switch, uncomment this for auto encoder resetting 
+    //MAY NOT DO THIS BC THE CLIMBER SHAKES
+    // //Reset Tilt encoders if limit switches are active
+    // if (tiltForward.get()) {
+    //   resetTiltEncoder();
+    // }
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    REVPhysicsSim.getInstance().run();
   }
 }

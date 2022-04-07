@@ -63,6 +63,7 @@ public class RobotContainer {
   // Define alt triggers
   Trigger driverAlt = new TriggerPOV(driverController, POVDirection.kDown);
   Trigger operatorAlt = new TriggerPOV(operatorController, POVDirection.kLeft);
+  JoystickButton operatorClimbAlt = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
 
   // Define subsystems
   ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
@@ -231,29 +232,35 @@ public class RobotContainer {
     new JoystickButton(operatorController, XboxController.Button.kStart.value)
     .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
 
+    //TODO Y is always reversed
+
     // Left stick y and NOT right bumper - Winch up and down with limits
-    new JoystickButton(operatorController, XboxController.Button.kRightBumper.value).negate().and(
-    new Trigger(() -> (Math.abs(operatorController.getLeftY()) > 0)))
-      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setWinchVoltageFromController(operatorController.getLeftY())))
+    operatorClimbAlt.negate().and(
+    new Trigger(() -> (Math.abs(operatorController.getLeftY()) > ConstantsValues.climbWinchDeadband)))
+      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setWinchVoltageWithLimits(
+        MathUtil.applyDeadband(-operatorController.getLeftY(), ConstantsValues.climbWinchDeadband)*ConstantsValues.climbWinchMaxVolts)))
       .whenInactive(new InstantCommand(climberSubsystem::stopWinch));
 
     // Right stick y and NOT right bumper - Tilt forward and backward with limits
-    new JoystickButton(operatorController, XboxController.Button.kRightBumper.value).negate().and(
-    new Trigger(() -> (Math.abs(operatorController.getRightY()) > 0)))
-      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltVoltageFromControllerSoftLimits(operatorController.getRightY())))
+    operatorClimbAlt.negate().and(
+    new Trigger(() -> (Math.abs(operatorController.getRightY()) > ConstantsValues.climbTiltDeadband)))
+      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltVoltageWithLimits(
+        MathUtil.applyDeadband(-operatorController.getRightY(), ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts, false)))
       .whenInactive(new InstantCommand(climberSubsystem::stopTilt));
 
     // Left stick y and right bumper - Winch up and down without limits
-    new JoystickButton(operatorController, XboxController.Button.kRightBumper.value).and(
-    new Trigger(() -> (Math.abs(operatorController.getLeftY()) > 0)))
-      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setWinchVoltageFromControllerNoLimits(operatorController.getLeftY())))
+    operatorClimbAlt.and(
+    new Trigger(() -> (Math.abs(operatorController.getLeftY()) > ConstantsValues.climbWinchDeadband)))
+      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setWinchVoltage(
+        MathUtil.applyDeadband(-operatorController.getLeftY(), ConstantsValues.climbWinchDeadband)*ConstantsValues.climbWinchMaxVolts)))
       .whenInactive(new InstantCommand(climberSubsystem::stopWinch));
 
     // Right stick y and right bumper - Tilt forward and backward with limits
-    new JoystickButton(operatorController, XboxController.Button.kRightBumper.value).and(
-      new Trigger(() -> (Math.abs(operatorController.getRightY()) > 0)))
-        .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltVoltageFromControllerNoLimits(operatorController.getRightY())))
-        .whenInactive(new InstantCommand(climberSubsystem::stopTilt));
+    operatorClimbAlt.and(
+    new Trigger(() -> (Math.abs(operatorController.getRightY()) > ConstantsValues.climbTiltDeadband)))
+      .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltVoltage(
+        MathUtil.applyDeadband(-operatorController.getRightY(), ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts)))
+      .whenInactive(new InstantCommand(climberSubsystem::stopTilt));
 
     // Dpad up - Reset winch encoder
     new TriggerPOV(operatorController, POVDirection.kUp)

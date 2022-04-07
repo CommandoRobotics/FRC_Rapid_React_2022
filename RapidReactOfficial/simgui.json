@@ -6,17 +6,12 @@
           "open": true
         }
       },
-      "SPARK MAX [11]": {
-        "header": {
-          "open": true
-        }
-      },
-      "SPARK MAX [12]": {
-        "header": {
-          "open": true
-        }
-      },
       "SPARK MAX [13]": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK MAX [14]": {
         "header": {
           "open": true
         }
@@ -27,26 +22,6 @@
         }
       },
       "SPARK MAX [1]": {
-        "header": {
-          "open": true
-        }
-      },
-      "SPARK MAX [2]": {
-        "header": {
-          "open": true
-        }
-      },
-      "SPARK MAX [3]": {
-        "header": {
-          "open": true
-        }
-      },
-      "SPARK MAX [4]": {
-        "header": {
-          "open": true
-        }
-      },
-      "SPARK MAX [5]": {
         "header": {
           "open": true
         }
@@ -159,7 +134,9 @@
       "/SmartDashboard/Rear Left Trajectory PID": "PIDController",
       "/SmartDashboard/Rear Right Trajectory PID": "PIDController",
       "/SmartDashboard/X PID Controller": "PIDController",
-      "/SmartDashboard/Y PID Controller": "PIDController"
+      "/SmartDashboard/Y PID Controller": "PIDController",
+      "/SmartDashboard/houndXPID": "PIDController",
+      "/SmartDashboard/houndYPID": "PIDController"
     },
     "windows": {
       "/LiveWindow/Ungrouped/MecanumDrive[1]": {
@@ -194,9 +171,6 @@
   },
   "NetworkTables": {
     "CommandoDash": {
-      "SensorData": {
-        "open": true
-      },
       "open": true
     },
     "SmartDashboard": {
