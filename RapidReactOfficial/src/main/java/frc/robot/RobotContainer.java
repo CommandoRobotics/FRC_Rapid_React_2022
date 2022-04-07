@@ -10,6 +10,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -79,6 +80,8 @@ public class RobotContainer {
     // Network Tables Instantiation
     ntInst = networkTableInst;
     commandoDashNT = ntInst.getTable("CommandoDash");
+    SmartDashboard.putNumber("leftRumble", 1);
+    SmartDashboard.putNumber("rightRumble", 1);
 
     DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -273,16 +276,18 @@ public class RobotContainer {
    * Disable the driver rumble
    */
   public void disableDriverRumble() {
-    driverController.setRumble(RumbleType.kLeftRumble, 0);
-    driverController.setRumble(RumbleType.kRightRumble, 0);
+    driverController.setRumble(RumbleType.kLeftRumble, 0.0);
+    driverController.setRumble(RumbleType.kRightRumble, 0.0);
+    System.out.println("Set the rumble to 0");
   }
 
   /**
    * Enable the driver rumble
    */
   public void enableDriverRumble() {
-    driverController.setRumble(RumbleType.kLeftRumble, 1);
-    driverController.setRumble(RumbleType.kRightRumble, 1);
+    driverController.setRumble(RumbleType.kLeftRumble, SmartDashboard.getNumber("leftRumble", 1));
+    driverController.setRumble(RumbleType.kRightRumble, SmartDashboard.getNumber("rightRumble", 1));
+    System.out.println("Set the rumble to 1"); //TODO figure out rumble values
   }
 
   /**
