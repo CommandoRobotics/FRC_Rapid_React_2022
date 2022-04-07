@@ -82,9 +82,7 @@ public class RevShooterAtAutoVelocityNoStopCommand extends CommandBase {
   @Override
   public boolean isFinished() {
     /*
-    This command should be considered finished in two scenarios:
-    1. The shooter reports that it has reached its target velocity
-    2. The max runtime of this command is overrun
+    This command should never be considered finished, and should be interupted
     */
     return false;
   }

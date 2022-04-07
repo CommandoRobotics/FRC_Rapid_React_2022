@@ -123,13 +123,13 @@ public class RobotContainer {
     .whileActiveContinuous(intakeSubsystem::intakeOut)
     .whenInactive(intakeSubsystem::stop);
 
-    // Left bumper - Toggle intake lifter
+    // Left bumper - Toggle intake
     new JoystickButton(driverController, XboxController.Button.kLeftBumper.value)
     .whenActive(intakeSubsystem::toggleExtend);
 
     // Right bumper - Run index to effectively shoot
     new JoystickButton(driverController, XboxController.Button.kRightBumper.value)
-    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem))
+    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem)) //TODO Change to an auto ball spacing command
     .whenInactive(indexSubsystem::stopAll, indexSubsystem);
 
     // A and NOT alt - Auto aim and rev at auto velocity
@@ -202,10 +202,10 @@ public class RobotContainer {
     //   true
     // ));
 
-    // Y - Run drivetrain at a set speed
-    new JoystickButton(driverController, XboxController.Button.kY.value)
-    .whileActiveOnce(new InstantCommand(() -> driveSubsystem.driveMecanum(0.3, 0, 0)))
-    .whenInactive(new InstantCommand(driveSubsystem::stop));
+    // // Y - Run drivetrain at a set speed
+    // new JoystickButton(driverController, XboxController.Button.kY.value)
+    // .whileActiveOnce(new InstantCommand(() -> driveSubsystem.driveMecanum(0.3, 0, 0)))
+    // .whenInactive(new InstantCommand(driveSubsystem::stop));
 
     /*
       OPERATOR CONTROLLER
@@ -278,7 +278,6 @@ public class RobotContainer {
   public void disableDriverRumble() {
     driverController.setRumble(RumbleType.kLeftRumble, 0.0);
     driverController.setRumble(RumbleType.kRightRumble, 0.0);
-    System.out.println("Set the rumble to 0");
   }
 
   /**
@@ -287,7 +286,7 @@ public class RobotContainer {
   public void enableDriverRumble() {
     driverController.setRumble(RumbleType.kLeftRumble, SmartDashboard.getNumber("leftRumble", 1));
     driverController.setRumble(RumbleType.kRightRumble, SmartDashboard.getNumber("rightRumble", 1));
-    System.out.println("Set the rumble to 1"); //TODO figure out rumble values
+    //TODO figure out rumble values
   }
 
   /**

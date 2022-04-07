@@ -63,26 +63,38 @@ public class ClimberSubsystem extends SubsystemBase {
 
   }
 
-  //CLIMB METHODS
 
   //Winch
-  //setSpeed
+
+
+  /**
+   * Sets the speed of the winch motors in a range of 0 to 1
+   */
   public void setWinchSpeed(double speed) {
     winchLeader.set(speed);
   }
 
-  //setVoltage
+  /**
+   * Sets the voltage for the winch motors
+   * @param volts
+   */
   public void setWinchVoltage(double volts) {
     winchLeader.setVoltage(volts);
   }
 
-  //stopWinch
+  /**
+   * Stops the winch motors
+   */
   public void stopWinch() {
-    winchLeader.stopMotor();
     winchLeader.setVoltage(0);
+    winchLeader.stopMotor();
   }
 
-  //setVoltsLimits soft limits
+  /**
+   * Sets the speed of the winch motors but will stop the motors using encoder values 
+   * if they try to go too far. This method has an upper limit but not a lower limit
+   * @param speed
+   */
   public void setWinchSpeedWithLimits(double speed) {
     if (speed > 0) {
       if (getWinchRotations() >= ConstantsValues.winchHeightLimitRotations) {
@@ -96,7 +108,11 @@ public class ClimberSubsystem extends SubsystemBase {
     }
   }
 
-  //setVoltsLimits soft limits
+  /**
+   * Sets the voltage of the winch motors but will stop the motors using encoder values 
+   * if they try to go too far. This method has an upper limit but not a lower limit
+   * @param volts
+   */
   public void setWinchVoltageWithLimits(double volts) {
     if (volts > 0) {
       if (getWinchRotations() >= ConstantsValues.winchHeightLimitRotations) {
@@ -110,24 +126,42 @@ public class ClimberSubsystem extends SubsystemBase {
     }
   }
 
+
   //Tilt
-  //setSpeed
+
+
+  /**
+   * Sets the speed of the tilt motor from 0 to 1
+   * @param speed
+   */
   public void setTiltSpeed(double speed) {
     tilt.set(speed);
   }
 
-  //setVoltage
+  /**
+   * Sets the voltage of the tilt motor
+   * @param volts
+   */
   public void setTiltVoltage(double volts) {
     tilt.setVoltage(volts);
   }
 
-  //stopTilt
+  /**
+   * Stops the tilt motor
+   */
   public void stopTilt() {
-    tilt.stopMotor();
     tilt.setVoltage(0);
+    tilt.stopMotor();
   }
 
-  //setVoltageLimits
+  /**
+   * Sets the voltage of the tilt motor but uses software (encoder) or limit switches
+   * to limit how far the motor goes. If the motor is trying to past a limit, this method will 
+   * instead stop powering the motor. The tilt has both forward and backward limits.
+   * @param volts
+   * @param useLimitSwitches whether to use limit switches as the limits. If this is false, it will
+   *                         default to encoder values as the limits
+   */
   //TODO FORWARD MUST BE TOWARDS THE FRONT OF THE ROBOT
   public void setTiltVoltageWithLimits(double volts, boolean useLimitSwitches) {
     if(useLimitSwitches) {
@@ -165,7 +199,14 @@ public class ClimberSubsystem extends SubsystemBase {
     }
   }
 
-  //setSpeedLimits
+  /**
+   * Sets the speed of the tilt motor but uses software (encoder) or limit switches
+   * to limit how far the motor goes. If the motor is trying to past a limit, this method will 
+   * instead stop powering the motor. The tilt has both forward and backward limits.
+   * @param speed
+   * @param useLimitSwitches whether to use limit switches as the limits. If this is false, it will
+   *                         default to encoder values as the limits
+   */
   public void setTiltSpeedWithLimits(double speed, boolean useLimitSwitches) {
     if(useLimitSwitches) {
       if (speed > 0) {
@@ -202,13 +243,74 @@ public class ClimberSubsystem extends SubsystemBase {
     }
   }
 
+  /**
+   * Uses a mix of limit switches and encoder values to limit the speed of the tilt motor. This uses
+   * a limit switch as the forward limit for the tilt and encoder values as the reverse limit 
+   * 
+   * </p>It would be useful to also have a way to reset the the tilt encoder when the limit switch is hit.
+   * Or you could implement it into this method later
+   * @param speed
+   */
+  public void setTiltSpeedWithLimitsMixed(double speed) {
+    if (speed > 0) {
+      if (tiltForward.get()) {
+        setTiltSpeed(0);
+        return;
+      } else {
+        setTiltSpeed(speed);
+      }
+    } else {
+      if (getTiltAngle() <= ConstantsValues.tiltReverseLimit) {
+        setTiltSpeed(0);
+        return;
+      } else {
+        setTiltSpeed(speed);
+      }
+    }
+  }
+
+  /**
+   * Uses a mix of limit switches and encoder values to limit the voltage of the tilt motor. This uses
+   * a limit switch as the forward limit for the tilt and encoder values as the reverse limit<p>
+   * 
+   * </p>It would be useful to also have a way to reset the the tilt encoder when the limit switch is hit.
+   * Or you could implement it into this method later
+   * @param volts
+   */
+  public void setTiltVolatgeWithLimitsMixed(double volts) {
+    if (volts > 0) {
+      if (tiltForward.get()) {
+        setTiltVoltage(0);
+        return;
+      } else {
+        setTiltVoltage(volts);
+      }
+    } else {
+      if (getTiltAngle() <= ConstantsValues.tiltReverseLimit) {
+        setTiltVoltage(0);
+        return;
+      } else {
+        setTiltVoltage(volts);
+      }
+    }
+  }
+
+
   //Sensors
-  //getWinchHeight
+
+
+  /**
+   * Gets the current number of rotations of the winch motor
+   * @return
+   */
   public double getWinchRotations() {
     return winchEncoder.getPosition();
   }
 
-  //getTiltAngle
+  /**
+   * Gets the current angle of the tilt motor in degrees
+   * @return
+   */
   public double getTiltAngle() {
     return tiltEncoder.getPosition();
   }
@@ -227,10 +329,6 @@ public class ClimberSubsystem extends SubsystemBase {
     tiltEncoder.setPosition(0);
   }
 
-
-
-  //Periodic
-  //Upate whether we need to reset encoders
 
   @Override
   public void periodic() {
