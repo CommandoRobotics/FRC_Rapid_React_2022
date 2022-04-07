@@ -15,7 +15,15 @@
       "Y PID Controller": {
         "open": true
       },
-      "open": true
+      "houndRPID": {
+        "open": true
+      },
+      "houndXPID": {
+        "open": true
+      },
+      "houndYPID": {
+        "open": true
+      }
     },
     "photonvision": {
       "CargoHound": {
