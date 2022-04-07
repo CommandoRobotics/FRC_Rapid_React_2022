@@ -195,11 +195,11 @@ public class ConstantsValues {
         new Translation2d(houndXOffsetMeters, houndYOffsetMeters);
 
     //CargoHound PID values
-    public static final double houndXP = 0.125;
+    public static final double houndXP = 0.0125;
     public static final double houndXI = 0;
     public static final double houndXD = 0;
 
-    public static final double houndYP = 0.0125;
+    public static final double houndYP = 0.3;
     public static final double houndYI = 0;
     public static final double houndYD = 0;
 
