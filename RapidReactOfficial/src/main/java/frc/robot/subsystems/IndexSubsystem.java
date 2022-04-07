@@ -13,6 +13,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.Constants.ConstantsPorts;
@@ -281,14 +282,8 @@ public class IndexSubsystem extends SubsystemBase {
       newBlocks[entranceSensorBlock] = 0;
       if(entranceSensorTriggeredPrevious) {
         //TODO add motor direction based logic
-        // If running forwards, add 1 to the entrance to index block.
-        // If running backwards, remove the ball from the index.
-        if(transferEncoder.getVelocity() > 0) {
+        if(getRampVelocity() > 0) {
           newBlocks[entranceToRampBlock]++;
-        } else if(transferEncoder.getVelocity() < 0) {
-          // Nothing, since we already removed the ball from this block
-        } else {
-          // Nothing, since we alreayd removed the ball from this block
         }
       }
     }    
@@ -430,6 +425,9 @@ public class IndexSubsystem extends SubsystemBase {
     updateBlocks();
     updateCommunications();
     
+    SmartDashboard.putNumber("rampVel", getRampVelocity());
+    SmartDashboard.putNumber("verticalVel", getVerticalVelocity());
+
   }
 
   @Override

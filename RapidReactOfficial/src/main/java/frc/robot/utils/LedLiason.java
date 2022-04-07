@@ -14,7 +14,7 @@ public class LedLiason {
      */
     public static void setAlliance(char alliance) {
         // Set the alliance pin. This is high if "r" and low if "b" or anything else.
-        alliancePin.set(alliance == 'r');
+        alliancePin.set(!(alliance == 'r'));
     }
 
     /**
