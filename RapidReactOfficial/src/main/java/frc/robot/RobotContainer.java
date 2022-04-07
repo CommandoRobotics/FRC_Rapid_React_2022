@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import org.opencv.features2d.FastFeatureDetector;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;

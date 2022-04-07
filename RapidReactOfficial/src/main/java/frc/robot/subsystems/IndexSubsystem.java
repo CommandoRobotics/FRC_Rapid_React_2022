@@ -93,7 +93,7 @@ public class IndexSubsystem extends SubsystemBase {
 
     previousBlockUpdateTimeMillis = System.currentTimeMillis();
 
-    dashTable = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData");
+    dashTable = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("IndexStatus");
 
     // Add motors to the simulation
     if(Robot.isSimulation()) {

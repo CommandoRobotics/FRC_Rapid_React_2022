@@ -350,6 +350,9 @@ public class ClimberSubsystem extends SubsystemBase {
       ConstantsValues.tiltForwardLimit = currTiltForwardLimit;
     }
 
+    //Update CommandoDash
+    NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData").getEntry("tiltAngle").setDouble(getTiltAngle());
+
     //TODO if we have limit switch, uncomment this for auto encoder resetting 
     //MAY NOT DO THIS BC THE CLIMBER SHAKES
     // //Reset Tilt encoders if limit switches are active
