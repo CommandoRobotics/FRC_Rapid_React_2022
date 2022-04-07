@@ -18,12 +18,13 @@ public class RevShooterAtAutoVelocityWithToggleCommand extends CommandBase {
 
   ShooterSubsystem shooterSubsystem;
   NetworkTableEntry vectorMapRange = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData").getEntry("vectorMapRange");
-  boolean isEnabled = true;
+  boolean isEnabled;
 
   /** Creates a new RevShooterAtAutoVelocityCommand. */
   public RevShooterAtAutoVelocityWithToggleCommand(ShooterSubsystem shooterSubsystem) {
     this.shooterSubsystem = shooterSubsystem;
     addRequirements(shooterSubsystem);
+    isEnabled = true;
   }
 
   // Called when the command is initially scheduled.
@@ -52,6 +53,7 @@ public class RevShooterAtAutoVelocityWithToggleCommand extends CommandBase {
       }
     } else {
       shooterSubsystem.setFlywheelTargetRpm(0);
+      shooterSubsystem.stop();
     }
   }
 

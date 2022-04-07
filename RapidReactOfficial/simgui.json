@@ -170,13 +170,7 @@
     }
   },
   "NetworkTables": {
-    "CommandoDash": {
-      "SensorData": {
-        "open": true
-      },
-      "open": true
-    },
-    "LiveWindow": {
+    "SmartDashboard": {
       "open": true
     },
     "photonvision": {

@@ -101,12 +101,13 @@ public class RobotContainer {
     () -> driverController.getLeftX(), 
     () -> driverController.getRightX()));
 
-    shooterSubsystem.setDefaultCommand(new RevShooterAtAutoVelocityCommand(shooterSubsystem));
+    defaultRevCommand = new RevShooterAtAutoVelocityWithToggleCommand(shooterSubsystem);
 
-    shooterSubsystem.enableLimelightLed();
+    shooterSubsystem.setDefaultCommand(defaultRevCommand);
+
+    shooterSubsystem.disableLimelightLed();
 
     // Set the default rev command
-    defaultRevCommand = new RevShooterAtAutoVelocityWithToggleCommand(shooterSubsystem);
 
     configureButtonBindings();
 
@@ -180,7 +181,7 @@ public class RobotContainer {
 
     // Y - Toggle constant shooter reving
     new JoystickButton(driverController, XboxController.Button.kY.value)
-      .whenActive(defaultRevCommand::toggleEnabled);
+      .whenActive(new InstantCommand(defaultRevCommand::toggleEnabled));
 
     // X and NOT alt - Run shooter at manual velocity
     driverAlt.negate().and(

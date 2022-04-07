@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.Constants.ConstantsField;
 import frc.robot.Constants.ConstantsPorts;
 import frc.robot.Constants.ConstantsValues;
@@ -234,22 +235,25 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-       // Display Pose2d of the ball to the dash
-        if (getHoundData().hasTargets()) {
-            field.getObject("SeenCargo").setPose(
-                estimateCargoFieldPose2d(
-                    getHoundData(), 
-                    driveSubsystem.getPose()));
-        } 
-    
-        //Update the pipeline of the CargoHound. Default is Blue
-        if (previousAlliance != DriverStation.getAlliance()) {
-            if (DriverStation.getAlliance() == Alliance.Red) {
-                setHoundPipeline(1);
-            } else {
-                setHoundPipeline(0);
+
+        if(Robot.isReal()) {
+        // Display Pose2d of the ball to the dash
+            if (getHoundData().hasTargets()) {
+                field.getObject("SeenCargo").setPose(
+                    estimateCargoFieldPose2d(
+                        getHoundData(), 
+                        driveSubsystem.getPose()));
+            } 
+        
+            //Update the pipeline of the CargoHound. Default is Blue
+            if (previousAlliance != DriverStation.getAlliance()) {
+                if (DriverStation.getAlliance() == Alliance.Red) {
+                    setHoundPipeline(1);
+                } else {
+                    setHoundPipeline(0);
+                }
+                previousAlliance = DriverStation.getAlliance();
             }
-            previousAlliance = DriverStation.getAlliance();
         }
 
         //Update CDD with the solenoid state

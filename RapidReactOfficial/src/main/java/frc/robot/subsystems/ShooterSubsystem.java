@@ -122,7 +122,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // Note: Velocities are in RPM, angles are in degrees, and ranges are in meters.
     ConstantsValues.addToVectorMap(0, 2, 2050, defaultShotAngle); // Default map for short distances
     ConstantsValues.addToVectorMap(2, 2.5, 2050, defaultShotAngle);
-    ConstantsValues.addToVectorMap(2.5, 3, 2150, defaultShotAngle);
+    ConstantsValues.addToVectorMap(2.5, 3, 2200, defaultShotAngle);
     ConstantsValues.addToVectorMap(3, 3.5, 2300, defaultShotAngle);
     ConstantsValues.addToVectorMap(3.5, 4, 2450, defaultShotAngle);
     ConstantsValues.addToVectorMap(4, 4.5, 2700, defaultShotAngle);
