@@ -231,8 +231,6 @@ public class RobotContainer {
     new JoystickButton(operatorController, XboxController.Button.kStart.value)
     .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
 
-    //TODO Y is always reversed
-
     // Left stick y and NOT right bumper - Winch up and down with limits
     operatorClimbAlt.negate().and(
     new Trigger(() -> (Math.abs(operatorController.getLeftY()) > ConstantsValues.climbWinchDeadband)))
@@ -299,15 +297,15 @@ public class RobotContainer {
       case "DoubleShot":
         return new DoubleShotAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem);
       case "Spare":
-        return null; //TODO Add "Spare" command
+        return new TaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem); //TODO Add "Spare" command
       case "FullSend":
-        return null; //TODO Add "FullSend" command
+        return new TaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem); //TODO Add "FullSend" command
       case "Taxi":
         return new TaxiAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem);
       case "DoubleShot - Default":
-        return new IdealAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem); //TODO Add "Taxi - Default" command
+        return new IdealAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem);
       default:
-        return new DoubleShotAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem); //TODO Determine default command (or have null? tho I wouldn't recommend that)
+        return new DoubleShotAutonomous(driveSubsystem, shooterSubsystem, autoAimSubsystem, indexSubsystem, intakeSubsystem, climberSubsystem);
     }
   }
 }

@@ -72,7 +72,6 @@ public class ConstantsValues {
     /**
      * SHOOTER
      */
-    //TODO tune shooter PID values
     public static double flywheelP = 0.000050;
     public static double flywheelI = 0;
     public static double flywheelD = 0;
@@ -190,7 +189,6 @@ public class ConstantsValues {
 
 
     //Camera translation relative to robot
-    //TODO figure out CargoHound translation relative to robot
     private static final double houndXOffsetMeters = Units.inchesToMeters(-9);
     private static final double houndYOffsetMeters = Units.inchesToMeters(0);
     public static final Translation2d houndToRobotTranslation2d = 

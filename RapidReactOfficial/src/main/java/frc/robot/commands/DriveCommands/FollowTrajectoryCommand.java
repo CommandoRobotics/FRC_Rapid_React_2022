@@ -99,7 +99,6 @@ public class FollowTrajectoryCommand extends CommandBase {
     SmartDashboard.putData("Front Right Trajectory PID", m_frontRightController);
     SmartDashboard.putData("Rear Left Trajectory PID", m_rearLeftController);
     SmartDashboard.putData("Rear Right Trajectory PID", m_rearRightController);
-    //TODO add your specific subsystem type
     addRequirements(driveSubsystem);
   }
 
@@ -151,7 +150,6 @@ public class FollowTrajectoryCommand extends CommandBase {
       SmartDashboard.putData("Front Right Trajectory PID", m_frontRightController);
       SmartDashboard.putData("Rear Left Trajectory PID", m_rearLeftController);
       SmartDashboard.putData("Rear Right Trajectory PID", m_rearRightController);
-      //TODO add your specific subsystem type
       addRequirements(driveSubsystem);
   }
 
@@ -217,7 +215,6 @@ public class FollowTrajectoryCommand extends CommandBase {
     SmartDashboard.putData("X PID Controller", xController);
     SmartDashboard.putData("Y PID Controller", yController);
     SmartDashboard.putData("Rotation PID Controller", rProfiledPIDController);
-    //TODO add your specific subsystem type
     addRequirements(driveSubsystem);
   }
 
@@ -283,7 +280,6 @@ public class FollowTrajectoryCommand extends CommandBase {
       SmartDashboard.putData("X PID Controller", xController);
       SmartDashboard.putData("Y PID Controller", yController);
       SmartDashboard.putData("Rotation PID Controller", rProfiledPIDController);
-      //TODO add your specific subsystem type
       addRequirements(driveSubsystem);
   }
 

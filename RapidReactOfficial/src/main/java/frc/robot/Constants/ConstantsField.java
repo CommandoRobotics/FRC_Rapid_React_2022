@@ -6,7 +6,6 @@ public class ConstantsField {
 
     public static final double highHubRimHeightMeters = Units.inchesToMeters(103);
 
-    //TODO find CargoHound offsets for calibrating ball finding
     public static final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(24);
     public static final double TARGET_HEIGHT_METERS = Units.inchesToMeters(4.5);
     public static final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(-37);
