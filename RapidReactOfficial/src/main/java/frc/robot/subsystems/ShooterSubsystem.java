@@ -314,6 +314,7 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public void stop() {
     flywheelLeader.set(0);
+    currentTargetRpm = 0;
   }
   
   /**
@@ -390,6 +391,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * Cycle the current manual velocity
    */
   public void cycleManualVelocity() {
+    System.out.println("Getting to cycle manual velocity");
     if(currentManualVelocity == 0) {
       currentManualVelocity = 1000;
     } else if(currentManualVelocity == 1000) {
@@ -443,11 +445,6 @@ public class ShooterSubsystem extends SubsystemBase {
       flywheelAtVelocityIteration = 0;
     }
 
-    //TODO REMOVE ME
-    if(SmartDashboard.getNumber("currentTargetRpm", 0) != currentManualVelocity) {
-      currentManualVelocity = SmartDashboard.getNumber("currentTargetRpm", 0);
-    }
-
     // Update CommandoDash
     updateCommandoDash();
 
@@ -460,10 +457,6 @@ public class ShooterSubsystem extends SubsystemBase {
     ConstantsValues.flywheelI = SmartDashboard.getNumber("flywheelI", ConstantsValues.flywheelI);
     flywheelPid.setD(SmartDashboard.getNumber("flywheelD", ConstantsValues.flywheelD));
     SmartDashboard.putNumber("ActualRPM", getFlywheelVelocity());
-
-    //TODO REMOVE ME
-    SmartDashboard.putNumber("currentTargetRpm", currentManualVelocity);
-
     
   }
 

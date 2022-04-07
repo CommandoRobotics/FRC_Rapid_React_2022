@@ -15,15 +15,6 @@
       "Y PID Controller": {
         "open": true
       },
-      "houndRPID": {
-        "open": true
-      },
-      "houndXPID": {
-        "open": true
-      },
-      "houndYPID": {
-        "open": true
-      },
       "open": true
     },
     "photonvision": {

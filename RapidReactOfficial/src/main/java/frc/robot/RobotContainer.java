@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ConstantsValues;
@@ -35,6 +36,7 @@ import frc.robot.commands.IntakeCommands.HoundCargo;
 import frc.robot.commands.IntakeCommands.IntakeCommand;
 import frc.robot.commands.MiscellanousCommands.ExpelAllCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityCommand;
+import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityWithToggleCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtManualVelocityCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtRpmAutonomousCommand;
 import frc.robot.subsystems.AutoAimSubsystem;
@@ -76,6 +78,8 @@ public class RobotContainer {
   AutoAimSubsystem autoAimSubsystem = new AutoAimSubsystem();
   PowerSubsystem powerSubsystem = new PowerSubsystem();
 
+  RevShooterAtAutoVelocityWithToggleCommand defaultRevCommand;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer(NetworkTableInstance networkTableInst) {
 
@@ -97,9 +101,16 @@ public class RobotContainer {
     () -> driverController.getLeftX(), 
     () -> driverController.getRightX()));
 
-    shooterSubsystem.disableLimelightLed();
+    shooterSubsystem.setDefaultCommand(new RevShooterAtAutoVelocityCommand(shooterSubsystem));
+
+    shooterSubsystem.enableLimelightLed();
+
+    // Set the default rev command
+    defaultRevCommand = new RevShooterAtAutoVelocityWithToggleCommand(shooterSubsystem);
 
     configureButtonBindings();
+
+
   }
   
   /**
@@ -167,26 +178,23 @@ public class RobotContainer {
                       () -> driverController.getLeftX(), 
                       () -> driverController.getRightX()));
 
-    // Y and NOT alt - Enable constant shooter reving
-    driverAlt.negate().and(new JoystickButton(driverController, XboxController.Button.kY.value))
-      .whenActive(new InstantCommand(() -> shooterSubsystem.setDefaultCommand(new RevShooterAtManualVelocityCommand(shooterSubsystem))));
-
-    // Y and alt - Disable constant shooter reving
-    driverAlt.and(new JoystickButton(driverController, XboxController.Button.kY.value)
-      .whenActive(new InstantCommand(() -> shooterSubsystem.setDefaultCommand(new InstantCommand(shooterSubsystem::stop).perpetually()))));
+    // Y - Toggle constant shooter reving
+    new JoystickButton(driverController, XboxController.Button.kY.value)
+      .whenActive(defaultRevCommand::toggleEnabled);
 
     // X and NOT alt - Run shooter at manual velocity
-    new JoystickButton(driverController, XboxController.Button.kX.value)
-    .whenActive(new RevShooterAtRpmAutonomousCommand(5000, shooterSubsystem))
-    .whenInactive(new InstantCommand(shooterSubsystem::stop));
+    driverAlt.negate().and(
+    new JoystickButton(driverController, XboxController.Button.kX.value))
+    .whenActive(new RevShooterAtManualVelocityCommand(shooterSubsystem))
+    .whenInactive(new InstantCommand(shooterSubsystem::stop, shooterSubsystem));
 
-    // // X and alt - Cycle manual shooter velocity
-    // new JoystickButton(driverController, XboxController.Button.kX.value).and(driverAlt)
-    // .whenActive(new InstantCommand(shooterSubsystem::cycleManualVelocity));
+    // X and alt - Cycle manual shooter velocity
+    driverAlt.and(new JoystickButton(driverController, XboxController.Button.kX.value))
+      .whenActive(new InstantCommand(shooterSubsystem::cycleManualVelocity));
 
     // Back button - Expell all
     new JoystickButton(driverController, XboxController.Button.kBack.value)
-    .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
+      .whileActiveOnce(new ExpelAllCommand(intakeSubsystem, indexSubsystem, shooterSubsystem));
 
     // Start - Reset field centric driving
     new JoystickButton(driverController, XboxController.Button.kStart.value)

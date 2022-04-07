@@ -100,7 +100,7 @@ public class ConstantsValues {
     public static final double flywheelAtVelocityIterations = 12;
 
     // Limelight values
-    public static double limelightMountingAngle = 27.3; // The angle at which the Limelight is mounted above the horizon in degrees.
+    public static double limelightMountingAngle = 30.2; // The angle at which the Limelight is mounted above the horizon in degrees.
     public static double shooterHeightMeters = Units.inchesToMeters(33);
 
 
