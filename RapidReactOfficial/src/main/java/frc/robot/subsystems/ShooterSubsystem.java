@@ -32,7 +32,7 @@ public class ShooterSubsystem extends SubsystemBase {
   // Declare different Limelight modes
   private final int LED_MODE_DEFAULT = 0;
   private final int LED_MODE_OFF = 1;
-  private final int LED_MODE_BLINK = 2;
+  //private final int LED_MODE_BLINK = 2;
   private final int LED_MODE_ON = 3;
   private final int CAM_MODE_VISION_PROCESSOR = 0;
   private final int CAM_MODE_DRIVER_CAMERA = 1;

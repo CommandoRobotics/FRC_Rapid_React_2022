@@ -7,8 +7,6 @@ package frc.robot.commands.ShooterCommands;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.ConstantsValues;
 import frc.robot.Projectile.Range;
 import frc.robot.subsystems.ShooterSubsystem;
