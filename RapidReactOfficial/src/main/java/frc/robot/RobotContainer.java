@@ -68,6 +68,7 @@ public class RobotContainer {
   Trigger driverAlt = new TriggerPOV(driverController, POVDirection.kDown);
   Trigger operatorAlt = new TriggerPOV(operatorController, POVDirection.kLeft);
   JoystickButton operatorClimbAlt = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
+  JoystickButton operatorClimbPowerAlt =  new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value);
 
   // Define subsystems
   ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
@@ -142,13 +143,13 @@ public class RobotContainer {
     .whenActive(intakeSubsystem::toggleExtend);
 
     // Right bumper - Run index to effectively shoot
-    new JoystickButton(driverController, XboxController.Button.kRightBumper.value)
+    new JoystickButton(driverController, XboxController.Button.kA.value)
     .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem)) //TODO Change to an auto ball spacing command
     .whenInactive(indexSubsystem::stopAll, indexSubsystem);
 
     // A and NOT alt - Auto aim and rev at auto velocity
     driverAlt.negate().and(
-    new JoystickButton(driverController, XboxController.Button.kA.value))
+    new JoystickButton(driverController, XboxController.Button.kRightBumper.value))
       .whileActiveOnce(
         new AutoAimCommand(
         () -> -driverController.getLeftY(), 
@@ -161,7 +162,7 @@ public class RobotContainer {
 
     // A and alt - Auto aim and rev at manual velocity
     driverAlt.and(
-    new JoystickButton(driverController, XboxController.Button.kA.value))
+    new JoystickButton(driverController, XboxController.Button.kRightBumper.value))
         .whileActiveOnce(
           new AutoAimCommand(
          () -> -driverController.getLeftY(), 
@@ -252,12 +253,21 @@ public class RobotContainer {
         MathUtil.applyDeadband(-operatorController.getLeftY(), ConstantsValues.climbWinchDeadband)*ConstantsValues.climbWinchMaxVolts)))
       .whenInactive(new InstantCommand(climberSubsystem::stopWinch));
 
-    // Right stick y and NOT right bumper - Tilt forward and backward with limits
+    // Right stick y and NOT right bumper and NOT left bumper - Tilt forward and backward with limits low power
     operatorClimbAlt.negate().and(
-    new Trigger(() -> (Math.abs(operatorController.getRightY()) > ConstantsValues.climbTiltDeadband)))
+    operatorClimbPowerAlt.negate().and(
+    new Trigger(() -> (Math.abs(operatorController.getRightY()) > ConstantsValues.climbTiltDeadband))))
       .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltVoltageWithLimits(
-        MathUtil.applyDeadband(-operatorController.getRightY(), ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts, false)))
+        MathUtil.applyDeadband(-operatorController.getRightY(), ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltLowPowerMaxVolts, false)))
       .whenInactive(new InstantCommand(climberSubsystem::stopTilt));
+
+      // Right stick y and NOT right bumper and YES left bumper - Tilt forward and backward with limits high power
+    operatorClimbAlt.negate().and(
+      operatorClimbPowerAlt.and(
+      new Trigger(() -> (Math.abs(operatorController.getRightY()) > ConstantsValues.climbTiltDeadband))))
+        .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltVoltageWithLimits(
+          MathUtil.applyDeadband(-operatorController.getRightY(), ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltHighPowerMaxVolts, false)))
+        .whenInactive(new InstantCommand(climberSubsystem::stopTilt));
 
     // Left stick y and right bumper - Winch up and down without limits
     operatorClimbAlt.and(
@@ -266,12 +276,21 @@ public class RobotContainer {
         MathUtil.applyDeadband(-operatorController.getLeftY(), ConstantsValues.climbWinchDeadband)*ConstantsValues.climbWinchMaxVolts)))
       .whenInactive(new InstantCommand(climberSubsystem::stopWinch));
 
-    // Right stick y and right bumper - Tilt forward and backward with limits
+    // Right stick y and right bumper - Tilt forward and backward without limits low power
+    operatorClimbPowerAlt.negate().and(
     operatorClimbAlt.and(
-    new Trigger(() -> (Math.abs(operatorController.getRightY()) > ConstantsValues.climbTiltDeadband)))
+    new Trigger(() -> (Math.abs(operatorController.getRightY()) > ConstantsValues.climbTiltDeadband))))
       .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltVoltage(
-        MathUtil.applyDeadband(-operatorController.getRightY(), ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltMaxVolts)))
+        MathUtil.applyDeadband(-operatorController.getRightY(), ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltLowPowerMaxVolts)))
       .whenInactive(new InstantCommand(climberSubsystem::stopTilt));
+
+    // Right stick y and right bumper - Tilt forward and backward without limits high power
+    operatorClimbPowerAlt.and(
+      operatorClimbAlt.and(
+      new Trigger(() -> (Math.abs(operatorController.getRightY()) > ConstantsValues.climbTiltDeadband))))
+        .whileActiveContinuous(new InstantCommand(() -> climberSubsystem.setTiltVoltage(
+          MathUtil.applyDeadband(-operatorController.getRightY(), ConstantsValues.climbTiltDeadband)*ConstantsValues.climbTiltHighPowerMaxVolts)))
+        .whenInactive(new InstantCommand(climberSubsystem::stopTilt));
 
     // Dpad up - Reset winch encoder
     new TriggerPOV(operatorController, POVDirection.kUp)

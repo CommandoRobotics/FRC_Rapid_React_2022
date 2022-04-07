@@ -219,12 +219,13 @@ public class ConstantsValues {
      */
     public static final double climbTiltDeadband = 0.1;
     public static final double climbWinchDeadband = 0.1;
-    public static final double climbTiltMaxVolts = 4.8;
+    public static final double climbTiltLowPowerMaxVolts = 2;
+    public static final double climbTiltHighPowerMaxVolts = 5.5;
     public static final double climbWinchMaxVolts = 6;
 
     // Encoder stuff
     public static final double climbWinchConversionFactor = 1/378; //TODO Test this (might be 1/9) - this is ouput shaft rotations
-    public static final double climbTiltConversionFactor = 360/3150; //TODO Test this (might be 360/75) - this is degrees
+    public static final double climbTiltConversionFactor = 360/5250; //TODO Test this (might be 360/75) - this is degrees
     public static double winchHeightLimitRotations = 10;
     public static double tiltReverseLimit = -10;
     public static double tiltForwardLimit = 0; //TODO I would allow this to go forward a bit

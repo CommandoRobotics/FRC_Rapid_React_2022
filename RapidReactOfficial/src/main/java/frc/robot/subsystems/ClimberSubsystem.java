@@ -34,9 +34,11 @@ public class ClimberSubsystem extends SubsystemBase {
     winchFollower = new CANSparkMax(ConstantsPorts.winchFollowerId, MotorType.kBrushless);
     tilt = new CANSparkMax(ConstantsPorts.climbTiltId, MotorType.kBrushless);
 
+    winchLeader.setInverted(true);
+    tilt.setInverted(false);
+
     winchFollower.follow(winchLeader, false);
 
-    tilt.setInverted(true);
 
     // Instantiate encoders
     winchEncoder = winchLeader.getEncoder();

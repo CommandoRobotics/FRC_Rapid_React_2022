@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.AutoAimCommands.AutoAimAutonomousCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootAutoEndCommand;
 import frc.robot.commands.IntakeCommands.IntakeCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityAutonomousCommand;
@@ -57,14 +58,16 @@ public class DoubleShotAutonomous extends SequentialCommandGroup {
     ),
     new PrintCommand("Finished DoubleShot Path 1"),
 
+    new AutoAimAutonomousCommand(driveSubsystem, autoAimSubsystem),
+
     // Rev the shooter
-    new RevShooterAtAutoVelocityAutonomousCommand(shooterSubsystem),
+    new RevShooterAtAutoVelocityAutonomousCommand(5, shooterSubsystem),
     new PrintCommand("Finished reving shooter"),
 
     new InstantCommand(autoAimSubsystem::enableLimelightSnapshot),
 
     // Actually shoot
-    new RunIndexToShootAutoEndCommand(1.75, 2, indexSubsystem),
+    new RunIndexToShootAutoEndCommand(4, 2, indexSubsystem),
     new PrintCommand("Finished running the index to shoot"),
 
     // Stop shooter and index
