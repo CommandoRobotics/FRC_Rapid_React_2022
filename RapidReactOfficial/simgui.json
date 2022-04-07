@@ -171,7 +171,7 @@
   },
   "NetworkTables": {
     "CommandoDash": {
-      "IndexStatus": {
+      "SensorData": {
         "open": true
       },
       "open": true

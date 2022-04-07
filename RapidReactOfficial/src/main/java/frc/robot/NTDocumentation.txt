@@ -1,0 +1,55 @@
+```
+CommandoDash
+    PowerUsage (Done)
+    AllianceAndModeData (Done)
+    SensorData
+        "isRobotAimed" - boolean
+        "isAtTargetVelocity" - boolean
+        "manualCycleSpeed" - double
+        "shooterRPM" - double
+        "isCentric" - boolean
+        "isAutoAiming" - boolean
+        "isHounding" - boolean (seeing targets is pulled from the sensor NTs)
+        "gyroAngle" - double
+	"tiltAngle" - double
+     IndexStatus
+        //Blocks
+        "entranceSensorBlock" - boolean
+        "entranceToRampBlock" - boolean
+        "rampSensorBlock" - boolean
+        "rampToVerticalBlock" - boolean
+        "verticalSensorBlock" - boolean
+        "verticalToShooterBlock" - boolean
+        //Sensors
+        "entranceSensor" - boolean
+        "rampSensor" - boolean
+        "verticalSensor" - boolean
+        "shooterSensor" - boolean
+    PIDTuning
+        //Shooter PID
+        "shooterP" - double
+        "shooterD" - double
+        "shooterKs" - double
+        "shooterKv" - double
+        "shooterOutput" - double
+        "shooterSetpoint" - double
+        "updateShooterPID" - boolean
+        //Hound Y PID
+        "houndYP" - double
+        "houndYD" - double
+        "updateHoundYPID" - boolean
+        "houndYOutput" - double
+        "houndYSetpoint" - double
+        //Hound X PID
+        "houndXP" - double
+        "houndXD" - double
+        "updateHoundXPID" - boolean
+        "houndXOutput" - double
+        "houndXSetpoint" - double
+        //Hound R PID
+        "houndRP" - double
+        "houndRD" - double
+        "updateHoundRPID" - boolean
+        "houndROutput" - double
+        "houndRSetpoint" - double
+```
