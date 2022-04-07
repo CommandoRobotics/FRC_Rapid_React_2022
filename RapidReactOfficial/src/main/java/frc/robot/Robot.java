@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.utils.LedLiason;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -68,8 +69,10 @@ public class Robot extends TimedRobot {
     Alliance currAlliance = DriverStation.getAlliance();
     if (currAlliance == Alliance.Red && previousAlliance != currAlliance) {
       commandoDashNT.getSubTable("AllianceAndModeData").getEntry("alliance").setNumber(1);
+      LedLiason.setAlliance('r');
     } else if (currAlliance == Alliance.Blue && previousAlliance != currAlliance) {
       commandoDashNT.getSubTable("AllianceAndModeData").getEntry("alliance").setNumber(0);
+      LedLiason.setAlliance('b');
     }
     previousAlliance = currAlliance;
 
@@ -128,7 +131,9 @@ public class Robot extends TimedRobot {
     if(commandoDashNT.getSubTable("SensorData").getEntry("isRobotAimed").getBoolean(false) && 
     commandoDashNT.getSubTable("SensorData").getEntry("isAtTargetVelocity").getBoolean(false)) {
       m_robotContainer.enableDriverRumble();
+      LedLiason.setReadyToFire(true);
     } else {
+      LedLiason.setReadyToFire(false);
       m_robotContainer.disableDriverRumble();
     }
   }

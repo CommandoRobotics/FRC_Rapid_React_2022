@@ -50,5 +50,11 @@ public class ConstantsPorts {
     public static final int panId = 16;
     public static final int tiltId = 17;
 
+    /**
+     * LEDS
+     */
+    public static final int ledAlliancePin = 4;
+    public static final int ledReadyToFirePin = 5;
+
 
 }
