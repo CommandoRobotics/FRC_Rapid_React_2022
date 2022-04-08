@@ -172,7 +172,10 @@
     }
   },
   "NetworkTables": {
-    "SmartDashboard": {
+    "CommandoDash": {
+      "VectorMap": {
+        "open": true
+      },
       "open": true
     },
     "photonvision": {
