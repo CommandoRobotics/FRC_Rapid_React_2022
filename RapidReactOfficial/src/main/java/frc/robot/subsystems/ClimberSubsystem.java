@@ -27,6 +27,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
   NetworkTableInstance ntInst;
 
+  double currentWinchHeightLimitRotations;
+
   public ClimberSubsystem() {
 
     // Instantiate motors controllers
@@ -49,7 +51,8 @@ public class ClimberSubsystem extends SubsystemBase {
     tiltEncoder.setPositionConversionFactor(ConstantsValues.climbTiltConversionFactor);
 
     // Put soft limits on dashboard
-    SmartDashboard.putNumber("climbWinchLimit", ConstantsValues.winchHeightLimitRotations);
+    SmartDashboard.putNumber("climbWinchMidLimit", ConstantsValues.winchMidHeightLimitRotations);
+    SmartDashboard.putNumber("climbWinchHighLimit", ConstantsValues.winchHighHeightLimitRotations);
     SmartDashboard.putNumber("tiltForwardLimit", ConstantsValues.tiltForwardLimit);
     SmartDashboard.putNumber("tiltReverseLimit", ConstantsValues.tiltReverseLimit);
 
@@ -57,6 +60,9 @@ public class ClimberSubsystem extends SubsystemBase {
     tiltForward = new DigitalInput(ConstantsPorts.tiltForwardId);
     tiltBackward = new DigitalInput(ConstantsPorts.tiltBackwardId);
 
+    // Set the current limit to be the mid bar
+    setWinchLimit(ConstantsValues.winchMidHeightLimitRotations);
+    
     if(Robot.isSimulation()) {
       REVPhysicsSim.getInstance().addSparkMax(winchFollower, DCMotor.getNEO(1));
       REVPhysicsSim.getInstance().addSparkMax(winchLeader, DCMotor.getNEO(1));
@@ -93,13 +99,21 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   /**
+   * Set the limit of the winch motor
+   * @param limit The limit in rotations
+   */
+  public void setWinchLimit(double limit) {
+    currentWinchHeightLimitRotations = limit;
+  }
+
+  /**
    * Sets the speed of the winch motors but will stop the motors using encoder values 
    * if they try to go too far. This method has an upper limit but not a lower limit
    * @param speed
    */
   public void setWinchSpeedWithLimits(double speed) {
     if (speed > 0) {
-      if (getWinchRotations() >= ConstantsValues.winchHeightLimitRotations) {
+      if (getWinchRotations() >= currentWinchHeightLimitRotations) {
         setWinchSpeed(0);
         return;
       } else {
@@ -117,7 +131,7 @@ public class ClimberSubsystem extends SubsystemBase {
    */
   public void setWinchVoltageWithLimits(double volts) {
     if (volts > 0) {
-      if (getWinchRotations() >= ConstantsValues.winchHeightLimitRotations) {
+      if (getWinchRotations() >= currentWinchHeightLimitRotations) {
         setWinchVoltage(0);
         return;
       } else {
@@ -337,20 +351,6 @@ public class ClimberSubsystem extends SubsystemBase {
     //Update Encoder values to SmartDash
     SmartDashboard.putNumber("climbTiltEnc", getTiltAngle());
     SmartDashboard.putNumber("climbWinchEnc", getWinchRotations());
-
-    //Check if there are new Limit values from the SmartDash
-    double currWinchLimit = SmartDashboard.getNumber("climbWinchLimit", ConstantsValues.winchHeightLimitRotations);
-    if (currWinchLimit != ConstantsValues.winchHeightLimitRotations) {
-      ConstantsValues.winchHeightLimitRotations = currWinchLimit;
-    }
-    double currTiltReverseLimit = SmartDashboard.getNumber("tiltReverseLimit", ConstantsValues.tiltReverseLimit);
-    if (currTiltReverseLimit != ConstantsValues.tiltReverseLimit) {
-      ConstantsValues.tiltReverseLimit = currTiltReverseLimit;
-    }
-    double currTiltForwardLimit = SmartDashboard.getNumber("tiltForwardLimit", ConstantsValues.tiltForwardLimit);
-    if (currTiltForwardLimit != ConstantsValues.tiltForwardLimit) {
-      ConstantsValues.tiltForwardLimit = currTiltForwardLimit;
-    }
 
     //Update CommandoDash
     NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData").getEntry("tiltAngle").setDouble(getTiltAngle());

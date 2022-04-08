@@ -300,6 +300,14 @@ public class RobotContainer {
     new TriggerPOV(operatorController, POVDirection.kDown)
     .whenActive(new InstantCommand(climberSubsystem::resetTiltEncoder));
 
+    // Y - Set winch limit to high
+    new JoystickButton(operatorController, XboxController.Button.kY.value)
+    .whenActive(new InstantCommand(() -> climberSubsystem.setWinchLimit(ConstantsValues.winchHighHeightLimitRotations)));
+
+    // A - Set winch limit to mid
+    new JoystickButton(operatorController, XboxController.Button.kA.value)
+    .whenActive(new InstantCommand(() -> climberSubsystem.setWinchLimit(ConstantsValues.winchMidHeightLimitRotations)));
+
   }
 
   /**

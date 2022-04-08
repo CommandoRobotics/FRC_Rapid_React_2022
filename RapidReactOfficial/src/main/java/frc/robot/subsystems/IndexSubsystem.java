@@ -335,7 +335,7 @@ public class IndexSubsystem extends SubsystemBase {
     // Update blocks based on shooter sensor
     if(shooterTriggered) {
       if(!shooterSensorTriggeredPrevious) {
-        if(blocks[verticalToShooterBlock] > 1 && verticalEncoder.getVelocity() > 0) {
+        if(blocks[verticalToShooterBlock] >= 1 && verticalEncoder.getVelocity() > 0) {
           newBlocks[verticalToShooterBlock]--;
         }
       }
