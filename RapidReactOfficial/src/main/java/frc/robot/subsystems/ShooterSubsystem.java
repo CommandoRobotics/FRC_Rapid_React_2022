@@ -260,6 +260,13 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   /**
+   * Takes a single snapshot of what the limelight is currently seeing
+   */
+  public void takeSnapshot() {
+    limelight.getEntry("snapshot").setNumber(1);
+  }
+
+  /**
    * Get the horizontal distance to the hub.
    * @return The horizontal distance to the hub in meters. 
    * Note: This value will be -1 in no target is visible.

@@ -142,12 +142,12 @@ public class RobotContainer {
     new JoystickButton(driverController, XboxController.Button.kLeftBumper.value)
     .whenActive(intakeSubsystem::toggleExtend);
 
-    // Right bumper - Run index to effectively shoot
+    // A - Run index to effectively shoot
     new JoystickButton(driverController, XboxController.Button.kA.value)
-    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem)) //TODO Change to an auto ball spacing command
+    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem).alongWith(new InstantCommand(shooterSubsystem::takeSnapshot))) //TODO Change to an auto ball spacing command
     .whenInactive(indexSubsystem::stopAll, indexSubsystem);
 
-    // A and NOT alt - Auto aim and rev at auto velocity
+    // Right Bumper and NOT alt - Auto aim and rev at auto velocity
     driverAlt.negate().and(
     new JoystickButton(driverController, XboxController.Button.kRightBumper.value))
       .whileActiveOnce(
@@ -160,7 +160,7 @@ public class RobotContainer {
         .alongWith(new RevShooterAtAutoVelocityCommand(shooterSubsystem))
       );
 
-    // A and alt - Auto aim and rev at manual velocity
+    // Right Bumper and alt - Auto aim and rev at manual velocity
     driverAlt.and(
     new JoystickButton(driverController, XboxController.Button.kRightBumper.value))
         .whileActiveOnce(
