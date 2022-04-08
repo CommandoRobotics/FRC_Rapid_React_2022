@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
@@ -60,7 +62,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   double currentManualVelocity = 0;
 
-  private NetworkTable sensorTable;
+  private NetworkTable sensorTable, vectorMapNT;
 
   SlewRateLimiter rateLimiter;
 
@@ -114,6 +116,8 @@ public class ShooterSubsystem extends SubsystemBase {
     
     // Instantiate the limelight
     limelight = NetworkTableInstance.getDefault().getTable("limelight");
+    sensorTable = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData");
+    vectorMapNT = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("VectorMap");
 
     // Create a default angle for the vectors below
     double defaultShotAngle = 15;
@@ -150,13 +154,18 @@ public class ShooterSubsystem extends SubsystemBase {
     ConstantsValues.addToVectorMap(8, 8.5, 4350, defaultShotAngle);
     ConstantsValues.addToVectorMap(8.5, 200, 4350, defaultShotAngle); // Default map for long distances
 
+    //Add vectormap to CDD
+    for(Map.Entry<Range,Vector> entry : ConstantsValues.vectorMap.entrySet()) {
+      Range currRange = entry.getKey();
+      Vector currVector = entry.getValue();
+      vectorMapNT.getEntry(currRange.minValue + " - " + currRange.maxValue).setDouble(currVector.velocity);
+    }
+
     // Add motors to the simulation
     if(Robot.isSimulation()) {
       REVPhysicsSim.getInstance().addSparkMax(flywheelLeader, DCMotor.getNEO(1));
       REVPhysicsSim.getInstance().addSparkMax(flywheelFollower, DCMotor.getNEO(1));
     }
-
-    sensorTable = NetworkTableInstance.getDefault().getTable("CommandoDash").getSubTable("SensorData");
 
     // Add values to smart dashboard
     SmartDashboard.putNumber("flywheelP", ConstantsValues.flywheelP);
@@ -270,6 +279,13 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public double getLimelightYOffset() {
     return limelight.getEntry("ty").getDouble(0);
+  }
+
+  /**
+   * Takes a single snapshot of what the limelight is currently seeing
+   */
+  public void takeSnapshot() {
+    limelight.getEntry("snapshot").setNumber(1);
   }
 
   /**
@@ -443,6 +459,15 @@ public class ShooterSubsystem extends SubsystemBase {
     sensorTable.getEntry("targetRPM").setDouble(currentTargetRpm);
     sensorTable.getEntry("shooterRPM").setDouble(getFlywheelVelocity());
     sensorTable.getEntry("isAtTargetVelocity").setBoolean(isFlywheelAtTargetVelocity());
+    for(Map.Entry<Range,Vector> entry : ConstantsValues.vectorMap.entrySet()) {
+      Range currRange = entry.getKey();
+      Vector currVector = entry.getValue();
+      double newRPM = vectorMapNT.getEntry(currRange.minValue + " - " + currRange.maxValue).getDouble(currVector.velocity);
+      if (newRPM != currVector.velocity) {
+        currVector.velocity = newRPM;
+        System.out.println("Updated VectorMap in Range " + currRange.minValue + " - " + currRange.maxValue + " to " + newRPM + " successfully");
+      }
+    }
   }
 
   @Override
