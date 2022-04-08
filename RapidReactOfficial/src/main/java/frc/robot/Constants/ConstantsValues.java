@@ -96,7 +96,7 @@ public class ConstantsValues {
     public static final double flywheelVelocityConversionFactor = 1;
 
     //TODO adjust Limelight mounting values
-    public static final double flywheelAtVelocityDeadband = 60; // Amount to be added or subtracted from the shooter velocity to determine if we're at velocity
+    public static final double flywheelAtVelocityDeadband = 50; // Amount to be added or subtracted from the shooter velocity to determine if we're at velocity
     public static final double flywheelAtVelocityIterations = 12;
 
     // Limelight values
@@ -156,7 +156,7 @@ public class ConstantsValues {
     public static final double panPositionConversionFactor = 1;
     public static final double tiltPositionConversionFactor = 1;
 
-    public static final double panPidDeadzone = 0.03;
+    public static final double panPidDeadzone = 0.01;
     public static final double panPidMaxOutput = 0.5;
     public static final double panPidMinOutput = 0.15;
     public static final int panPidMaxIterations = 10;

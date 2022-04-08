@@ -123,19 +123,19 @@ public class ShooterSubsystem extends SubsystemBase {
     ConstantsValues.addToVectorMap(0, 2, 2050, defaultShotAngle); // Default map for short distances
     ConstantsValues.addToVectorMap(2, 2.5, 2050, defaultShotAngle);
     ConstantsValues.addToVectorMap(2.5, 3, 2200, defaultShotAngle);
-    ConstantsValues.addToVectorMap(3, 3.5, 2300, defaultShotAngle);
-    ConstantsValues.addToVectorMap(3.5, 4, 2450, defaultShotAngle);
-    ConstantsValues.addToVectorMap(4, 4.5, 2700, defaultShotAngle);
-    ConstantsValues.addToVectorMap(4.5, 5, 2900, defaultShotAngle);
-    ConstantsValues.addToVectorMap(5, 5.5, 3075, defaultShotAngle);
-    ConstantsValues.addToVectorMap(5.5, 6, 3250, defaultShotAngle);
-    ConstantsValues.addToVectorMap(6, 6.25, 3400, defaultShotAngle);
-    ConstantsValues.addToVectorMap(6.25, 6.5, 3450, defaultShotAngle);
-    ConstantsValues.addToVectorMap(6.5, 7, 3650, defaultShotAngle);
-    ConstantsValues.addToVectorMap(7, 7.5, 3850, defaultShotAngle);
-    ConstantsValues.addToVectorMap(7.5, 8, 4050, defaultShotAngle);
-    ConstantsValues.addToVectorMap(8, 8.5, 4250, defaultShotAngle);
-    ConstantsValues.addToVectorMap(8.5, 200, 4250, defaultShotAngle); // Default map for long distances
+    ConstantsValues.addToVectorMap(3, 3.5, 2400, defaultShotAngle);
+    ConstantsValues.addToVectorMap(3.5, 4, 2650, defaultShotAngle);
+    ConstantsValues.addToVectorMap(4, 4.5, 2775, defaultShotAngle);
+    ConstantsValues.addToVectorMap(4.5, 5, 3050, defaultShotAngle);
+    ConstantsValues.addToVectorMap(5, 5.5, 3275, defaultShotAngle);
+    ConstantsValues.addToVectorMap(5.5, 6, 3700, defaultShotAngle);
+    ConstantsValues.addToVectorMap(6, 6.25, 3750, defaultShotAngle);
+    ConstantsValues.addToVectorMap(6.25, 6.5, 3950, defaultShotAngle);
+    ConstantsValues.addToVectorMap(6.5, 7, 4000, defaultShotAngle);
+    ConstantsValues.addToVectorMap(7, 7.5, 4150, defaultShotAngle);
+    ConstantsValues.addToVectorMap(7.5, 8, 4150, defaultShotAngle);
+    ConstantsValues.addToVectorMap(8, 8.5, 4350, defaultShotAngle);
+    ConstantsValues.addToVectorMap(8.5, 200, 4350, defaultShotAngle); // Default map for long distances
 
     // Add motors to the simulation
     if(Robot.isSimulation()) {

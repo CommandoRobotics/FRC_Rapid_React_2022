@@ -15,15 +15,13 @@
       "Y PID Controller": {
         "open": true
       },
-      "houndRPID": {
-        "open": true
-      },
       "houndXPID": {
         "open": true
       },
       "houndYPID": {
         "open": true
-      }
+      },
+      "open": true
     },
     "photonvision": {
       "CargoHound": {
@@ -49,6 +47,8 @@
       "/LiveWindow/Ungrouped/DigitalInput[7]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[8]": "Digital Input",
       "/LiveWindow/Ungrouped/DigitalInput[9]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalOutput[4]": "Digital Output",
+      "/LiveWindow/Ungrouped/DigitalOutput[5]": "Digital Output",
       "/LiveWindow/Ungrouped/MecanumDrive[1]": "MecanumDrive",
       "/LiveWindow/Ungrouped/PIDController[10]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[11]": "PIDController",
