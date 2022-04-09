@@ -32,6 +32,7 @@ import frc.robot.commands.IndexCommands.JogIndexRampReverseCommand;
 import frc.robot.commands.IndexCommands.JogIndexVerticalCommand;
 import frc.robot.commands.IndexCommands.JogIndexVerticalReverseCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootWithBreakCommand;
 import frc.robot.commands.IntakeCommands.HoundCargo;
 import frc.robot.commands.IntakeCommands.IntakeCommand;
 import frc.robot.commands.MiscellanousCommands.ExpelAllCommand;
@@ -144,7 +145,7 @@ public class RobotContainer {
 
     // A - Run index to effectively shoot
     new JoystickButton(driverController, XboxController.Button.kA.value)
-    .whileActiveOnce(new RunIndexToShootCommand(indexSubsystem).alongWith(new InstantCommand(shooterSubsystem::takeSnapshot))) //TODO Change to an auto ball spacing command
+    .whileActiveOnce(new RunIndexToShootWithBreakCommand(indexSubsystem).alongWith(new InstantCommand(shooterSubsystem::takeSnapshot))) //TODO Change to an auto ball spacing command
     .whenInactive(indexSubsystem::stopAll, indexSubsystem);
 
     // Right Bumper and NOT alt - Auto aim and rev at auto velocity

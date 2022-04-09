@@ -18,9 +18,9 @@ public class RunIndexToShootWithBreakCommand extends SequentialCommandGroup {
   public RunIndexToShootWithBreakCommand(IndexSubsystem indexSubsystem) {
     addCommands(
       new RunIndexToShootCommand(indexSubsystem),
-      new WaitCommand(0.25),
+      new WaitCommand(0.35),
       new InstantCommand(indexSubsystem::stopAll, indexSubsystem),
-      new WaitCommand(0.4),
+      new WaitCommand(0.15),
       new RunIndexToShootCommand(indexSubsystem)
     );
   }

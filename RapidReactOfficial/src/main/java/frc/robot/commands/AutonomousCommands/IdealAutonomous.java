@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutoAimCommands.AutoAimAutonomousCommand;
 import frc.robot.commands.IndexCommands.RunIndexToShootAutoEndCommand;
+import frc.robot.commands.IndexCommands.RunIndexToShootAutoEndWithBreakCommand;
 import frc.robot.commands.IntakeCommands.IntakeCommand;
 import frc.robot.commands.ShooterCommands.RevShooterAtAutoVelocityNoStopCommand;
 import frc.robot.subsystems.AutoAimSubsystem;
@@ -74,11 +75,15 @@ public class IdealAutonomous extends SequentialCommandGroup {
         new PrintCommand("Finished stopping the intake"),
 
         // Auto aim
-        new AutoAimAutonomousCommand(0.75, driveSubsystem, autoAimSubsystem),
+        new InstantCommand(shooterSubsystem::takeSnapshot),
+
+        new AutoAimAutonomousCommand(1.5, driveSubsystem, autoAimSubsystem),
         new PrintCommand("Finished auto aim"),
 
+        new InstantCommand(shooterSubsystem::takeSnapshot),
+
         // Actually shoot
-        new RunIndexToShootAutoEndCommand(1.25, 2, indexSubsystem),
+        new RunIndexToShootAutoEndWithBreakCommand(1.25, 2, indexSubsystem),
         new PrintCommand("Finished running the index to shoot"),
 
         // Stop index and intake
@@ -104,7 +109,7 @@ public class IdealAutonomous extends SequentialCommandGroup {
         new PrintCommand("Finished stopping index and intake"),
 
         // Auto aim
-        new AutoAimAutonomousCommand(0.75, driveSubsystem, autoAimSubsystem),
+        new AutoAimAutonomousCommand(1.5, driveSubsystem, autoAimSubsystem),
         new PrintCommand("Finished auto aim"),
 
         // Shoot
@@ -151,11 +156,11 @@ public class IdealAutonomous extends SequentialCommandGroup {
         new PrintCommand("Finished stopping the intake and index"),
 
         // Auto aim
-        new AutoAimAutonomousCommand(0.75, driveSubsystem, autoAimSubsystem),
+        new AutoAimAutonomousCommand(1.5, driveSubsystem, autoAimSubsystem),
         new PrintCommand("Finished auto aim"),
 
         // Run the index to shoot
-        new RunIndexToShootAutoEndCommand(2, 2, indexSubsystem),
+        new RunIndexToShootAutoEndWithBreakCommand(2, 2, indexSubsystem),
         new PrintCommand("Finished running index to shoot"),
 
         // Stop everything

@@ -128,11 +128,11 @@ public class ShooterSubsystem extends SubsystemBase {
     ConstantsValues.addToVectorMap(2, 2.5, 2050, defaultShotAngle);
     ConstantsValues.addToVectorMap(2.5, 3, 2200, defaultShotAngle);
     ConstantsValues.addToVectorMap(3, 3.5, 2400, defaultShotAngle);
-    ConstantsValues.addToVectorMap(3.5, 4, 2650, defaultShotAngle);
+    ConstantsValues.addToVectorMap(3.5, 4, 2600, defaultShotAngle);
     ConstantsValues.addToVectorMap(4, 4.5, 2775, defaultShotAngle);
-    ConstantsValues.addToVectorMap(4.5, 5, 3050, defaultShotAngle);
-    ConstantsValues.addToVectorMap(5, 5.5, 3275, defaultShotAngle);
-    ConstantsValues.addToVectorMap(5.5, 6, 3475, defaultShotAngle);
+    ConstantsValues.addToVectorMap(4.5, 5, 2950, defaultShotAngle);
+    ConstantsValues.addToVectorMap(5, 5.5, 3150, defaultShotAngle);
+    ConstantsValues.addToVectorMap(5.5, 6, 3375, defaultShotAngle);
 
     // Before LL adjust
     // ConstantsValues.addToVectorMap(0, 2, 2050, defaultShotAngle); // Default map for short distances
@@ -146,9 +146,9 @@ public class ShooterSubsystem extends SubsystemBase {
     // ConstantsValues.addToVectorMap(5.5, 6, 3700, defaultShotAngle);
 
     // Maybe bad
-    ConstantsValues.addToVectorMap(6, 6.25, 3650, defaultShotAngle);
-    ConstantsValues.addToVectorMap(6.25, 6.5, 3850, defaultShotAngle);
-    ConstantsValues.addToVectorMap(6.5, 7, 4000, defaultShotAngle);
+    ConstantsValues.addToVectorMap(6, 6.25, 3500, defaultShotAngle);
+    ConstantsValues.addToVectorMap(6.25, 6.5, 3775, defaultShotAngle);
+    ConstantsValues.addToVectorMap(6.5, 7, 3900, defaultShotAngle);
     ConstantsValues.addToVectorMap(7, 7.5, 4150, defaultShotAngle);
     ConstantsValues.addToVectorMap(7.5, 8, 4150, defaultShotAngle);
     ConstantsValues.addToVectorMap(8, 8.5, 4350, defaultShotAngle);

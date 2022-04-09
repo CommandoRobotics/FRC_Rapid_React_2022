@@ -315,14 +315,14 @@ public class IndexSubsystem extends SubsystemBase {
     if(verticalTriggered) {
       if(!verticalSensorTriggeredPrevious) {
         newBlocks[verticalSensorBlock] = 1;
-        if(getVerticalVelocity() > 0) {
+        if(getRampVelocity() > 0 || getVerticalVelocity() > 0) {
           newBlocks[rampToVerticalBlock]--;
-        } else if(getVerticalVelocity() < 0) {
+        } else if(getRampVelocity() < 0 || getVerticalVelocity() < 0) {
           newBlocks[verticalToShooterBlock]--;
         }
       }
     } else {
-      newBlocks[rampSensorBlock] = 0;
+      newBlocks[verticalSensorBlock] = 0;
       if(verticalSensorTriggeredPrevious) {
         if(getVerticalVelocity() > 0) {
           newBlocks[verticalToShooterBlock]++;
