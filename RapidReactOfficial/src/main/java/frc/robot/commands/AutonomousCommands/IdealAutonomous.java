@@ -77,13 +77,13 @@ public class IdealAutonomous extends SequentialCommandGroup {
         // Auto aim
         new InstantCommand(shooterSubsystem::takeSnapshot),
 
-        new AutoAimAutonomousCommand(1.5, driveSubsystem, autoAimSubsystem),
+        new AutoAimAutonomousCommand(1, driveSubsystem, autoAimSubsystem),
         new PrintCommand("Finished auto aim"),
 
         new InstantCommand(shooterSubsystem::takeSnapshot),
 
         // Actually shoot
-        new RunIndexToShootAutoEndWithBreakCommand(1.25, 2, indexSubsystem),
+        new RunIndexToShootAutoEndWithBreakCommand(1, 2, indexSubsystem),
         new PrintCommand("Finished running the index to shoot"),
 
         // Stop index and intake
@@ -109,7 +109,7 @@ public class IdealAutonomous extends SequentialCommandGroup {
         new PrintCommand("Finished stopping index and intake"),
 
         // Auto aim
-        new AutoAimAutonomousCommand(1.5, driveSubsystem, autoAimSubsystem),
+        new AutoAimAutonomousCommand(1, driveSubsystem, autoAimSubsystem),
         new PrintCommand("Finished auto aim"),
 
         // Shoot

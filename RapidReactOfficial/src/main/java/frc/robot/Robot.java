@@ -99,7 +99,8 @@ public class Robot extends TimedRobot {
 
     selectedAuto = commandoDashNT.getEntry("autoSelection").getString("DoubleShot - Default"); //TODO add default clause
     commandoDashNT.getEntry("rioAutoSelection").setString(selectedAuto);
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuto);
+    //m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuto);
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand("IdealAuto");
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
